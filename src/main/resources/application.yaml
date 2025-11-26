@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: zenzy-to-fhir
+  profiles:
+    active: fhir

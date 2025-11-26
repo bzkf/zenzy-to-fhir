@@ -1,0 +1,39 @@
+plugins {
+	id 'java-library'
+	id 'io.spring.dependency-management'
+}
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	set('springCloudVersion', "2025.0.0")
+	set('hapiVersion', '8.4.0')
+}
+
+dependencies {
+	api 'org.springframework.boot:spring-boot'
+	implementation 'org.springframework:spring-beans'
+	
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r4:${hapiVersion}"
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+		mavenBom 'org.springframework.boot:spring-boot-dependencies:3.5.7'
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
