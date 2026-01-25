@@ -1,0 +1,32 @@
+{
+  "resourceType": "Bundle",
+  "id": "b7470fd707048f89a83b77e19e6e331481705d56b94b2efc335b94b53bacfa28",
+  "type": "transaction",
+  "entry": [ {
+    "resource": {
+      "resourceType": "MedicationRequest",
+      "id": "b7470fd707048f89a83b77e19e6e331481705d56b94b2efc335b94b53bacfa28",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-therapie-nr",
+        "value": "1"
+      } ],
+      "status": "active",
+      "intent": "order",
+      "reportedBoolean": false,
+      "medicationCodeableConcept": {
+        "text": "Fluorouracil"
+      },
+      "subject": {
+        "reference": "Patient/1"
+      },
+      "dosageInstruction": [ {
+        "timing": {
+          "event": [ "1999-10-26T11:30:00+02:00" ]
+        },
+        "route": {
+          "text": "Infusion"
+        }
+      } ]
+    }
+  } ]
+}

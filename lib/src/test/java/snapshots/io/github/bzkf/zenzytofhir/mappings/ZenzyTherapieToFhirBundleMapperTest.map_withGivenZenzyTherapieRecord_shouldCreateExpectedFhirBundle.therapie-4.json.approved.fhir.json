@@ -1,0 +1,32 @@
+{
+  "resourceType": "Bundle",
+  "id": "ed97f6864222e5c2380004ed60318375dab7b49625bce3232275d290c9a0102f",
+  "type": "transaction",
+  "entry": [ {
+    "resource": {
+      "resourceType": "MedicationRequest",
+      "id": "ed97f6864222e5c2380004ed60318375dab7b49625bce3232275d290c9a0102f",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-therapie-nr",
+        "value": "4"
+      } ],
+      "status": "active",
+      "intent": "order",
+      "reportedBoolean": false,
+      "medicationCodeableConcept": {
+        "text": "Fluorouracil\\nNatriumfolinat"
+      },
+      "subject": {
+        "reference": "Patient/4"
+      },
+      "dosageInstruction": [ {
+        "timing": {
+          "event": [ "2007-05-02T02:00:00+02:00" ]
+        },
+        "route": {
+          "text": "Baxterpumpe (SV4) über 24 h"
+        }
+      } ]
+    }
+  } ]
+}

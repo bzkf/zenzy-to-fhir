@@ -1,0 +1,32 @@
+{
+  "resourceType": "Bundle",
+  "id": "e9839f8032807fc28f04e41d5d8debc3d8ade8f19cd9dcb404f54244aa8c3c82",
+  "type": "transaction",
+  "entry": [ {
+    "resource": {
+      "resourceType": "MedicationRequest",
+      "id": "e9839f8032807fc28f04e41d5d8debc3d8ade8f19cd9dcb404f54244aa8c3c82",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-therapie-nr",
+        "value": "3"
+      } ],
+      "status": "active",
+      "intent": "order",
+      "reportedBoolean": false,
+      "medicationCodeableConcept": {
+        "text": "Azacitidine"
+      },
+      "subject": {
+        "reference": "Patient/3"
+      },
+      "dosageInstruction": [ {
+        "timing": {
+          "event": [ "2010-10-11T02:00:00+02:00" ]
+        },
+        "route": {
+          "text": "subkutan"
+        }
+      } ]
+    }
+  } ]
+}

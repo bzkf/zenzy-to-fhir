@@ -1,5 +1,66 @@
+app:
+  version: 0.1.0
+
 spring:
   application:
     name: zenzy-to-fhir
   profiles:
-    active: fhir
+    active: mappings
+  kafka:
+    bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS}
+    security.protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
+    ssl:
+      trust-store-type: PKCS12
+      trust-store-location: file://${KAFKA_SSL_TRUST_STORE:/opt/kafka-certs/ca.p12}
+      trust-store-password: ${KAFKA_SSL_TRUST_STORE_PASSWORD}
+      key-store-type: PKCS12
+      key-store-location: file://${KAFKA_SSL_KEY_STORE_FILE:/opt/kafka-certs/user.p12}
+      key-store-password: ${KAFKA_SSL_KEY_STORE_PASSWORD}
+    consumer:
+      properties:
+        allow.auto.create.topics: ${KAFKA_AUTO_CREATE_TOPICS:false}
+        max.request.size: ${KAFKA_MAX_REQUEST_SIZE:1048576}
+  cloud:
+    function:
+      definition: sink
+    stream:
+      bindings:
+        sink-in-0:
+          consumer:
+            concurrency: ${KAFKA_CONSUMER_CONCURRENCY:1}
+            use-native-decoding: true
+          destination: ${KAFKA_INPUT_TOPIC:zenzy.therapie}
+          group: ${KAFKA_GROUP_ID:zenzy-to-fhir}
+        sink-out-0:
+          destination: ${KAFKA_INPUT_TOPIC:zenzy.fhir}
+      kafka:
+        default:
+          consumer:
+            enableDlq: true
+            dlqProducerProperties:
+              configuration:
+                key.serializer: org.springframework.kafka.support.serializer.StringSerializer
+                value.serializer: org.miracum.kafka.serializers.KafkaFhirSerializer
+        bindings:
+          sinkSingle-in-0:
+            consumer:
+              configuration:
+                value.deserializer: org.miracum.kafka.serializers.JsonDeserializer
+  main:
+    banner-mode: off
+
+management:
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "health,prometheus"
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
