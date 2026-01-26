@@ -1,6 +1,7 @@
 FROM docker.io/library/gradle:9.3.0-jdk25@sha256:2e614dffcc0266a28f70b323a3044472dfa75a7f6873d94a759a4fb785dc78da AS build
 SHELL ["/bin/bash", "-eo", "pipefail", "-c"]
 WORKDIR /home/gradle/project
+ENV TZ="Europe/Berlin"
 
 COPY --chown=gradle:gradle . .
 
