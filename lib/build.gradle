@@ -8,6 +8,9 @@ plugins {
     id 'io.gitee.pkmer.sonatype-central-publisher' version '1.1.0'
 }
 
+group = 'io.github.bzkf'
+version = '0.1.0' // x-release-please-version
+
 dependencyManagement {
   imports {
     mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
