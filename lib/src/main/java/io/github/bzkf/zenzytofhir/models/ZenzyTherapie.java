@@ -15,7 +15,10 @@ public record ZenzyTherapie(
     @JsonProperty("THERAPIENUMMER") Integer therapieNummer,
     @JsonProperty("HERSTELLUNGSID") String herstellungsId,
     @JsonProperty("HERSTELLUNGSZEITPUNKT")
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy, hh:mm")
+        @JsonFormat(
+            shape = JsonFormat.Shape.STRING,
+            pattern = "dd.MM.yyyy, hh:mm",
+            timezone = "Europe/Berlin")
         Date herstellungsZeitpunkt,
     @JsonProperty("RETOUREHERSTELLUNGSID") String retourHerstellungsId,
     @JsonProperty("INAPOTHEKEZUBEREITEN") Integer inApothekezubereiten,
