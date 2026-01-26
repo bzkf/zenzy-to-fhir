@@ -1,7 +1,8 @@
+// groovylint-disable NestedBlockDepth
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.5.7'
-	id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'
+    id 'org.springframework.boot' version '3.5.7'
+    id 'io.spring.dependency-management' version '1.1.7'
     id 'com.diffplug.spotless' version '8.1.0'
 }
 
@@ -10,46 +11,48 @@ version = '0.1.0' // x-release-please-version
 description = 'Zenzy to FHIR'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(25)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 ext {
-	set('springCloudVersion', "2025.0.0")
+    set('springCloudVersion', '2025.0.0')
     set('hapiVersion', '8.4.0')
 }
 
 dependencies {
-	implementation project(':lib')
-	implementation 'org.springframework.cloud:spring-cloud-stream'
+    implementation project(':lib')
+    implementation 'org.springframework.cloud:spring-cloud-stream'
     implementation 'org.springframework.cloud:spring-cloud-stream-binder-kafka'
     implementation 'org.springframework.kafka:spring-kafka'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
     implementation 'net.logstash.logback:logstash-logback-encoder:9.0'
+    implementation 'org.miracum:kafka-fhir-serializer:2.0.8'
 
-	testImplementation "ca.uhn.hapi.fhir:hapi-fhir-validation:${hapiVersion}"
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+
+    testImplementation "ca.uhn.hapi.fhir:hapi-fhir-validation:${hapiVersion}"
     testImplementation "ca.uhn.hapi.fhir:hapi-fhir-validation-resources-r4:${hapiVersion}"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.cloud:spring-cloud-stream-test-support'
     testImplementation 'com.approvaltests:approvaltests:25.7.0'
     testImplementation 'org.apache.kafka:kafka-streams-test-utils'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 dependencyManagement {
-	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-	}
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
 spotless {

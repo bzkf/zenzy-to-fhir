@@ -1,7 +1,6 @@
 FROM docker.io/library/gradle:9.3.0-jdk25@sha256:2e614dffcc0266a28f70b323a3044472dfa75a7f6873d94a759a4fb785dc78da AS build
 SHELL ["/bin/bash", "-eo", "pipefail", "-c"]
 WORKDIR /home/gradle/project
-ENV TZ="Europe/Berlin"
 
 COPY --chown=gradle:gradle . .
 
@@ -29,8 +28,9 @@ rm -rf /var/lib/apt/lists/*
 EOF
 
 FROM gcr.io/distroless/java25-debian13:nonroot@sha256:fa9bfc14924fa3b43d43944d93887155d19843b3aa45610b659496f928fe2a9c
-WORKDIR /opt/obds-to-fhir
+WORKDIR /opt/zenzy-to-fhir
 ENV LD_PRELOAD="/usr/lib/x86_64-linux-gnu/libjemalloc.so.2"
+ENV SPRING_PROFILES_ACTIVE="mappings"
 
 COPY --from=jemalloc /usr/lib/x86_64-linux-gnu/libjemalloc.so.2 /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
 

@@ -3,7 +3,9 @@ package io.github.bzkf.zenzytofhir.mappings;
 import ca.uhn.fhir.context.FhirContext;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
 import java.io.IOException;
 import org.approvaltests.Approvals;
@@ -40,7 +42,10 @@ public class ZenzyTherapieToFhirBundleMapperTest {
   void map_withGivenZenzyTherapieRecord_shouldCreateExpectedFhirBundle(String sourceFile)
       throws StreamReadException, DatabindException, IOException {
     final var recordStream = this.getClass().getClassLoader().getResource("fixtures/" + sourceFile);
-    var mapper = new ObjectMapper();
+    var mapper =
+        new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
     final var record = mapper.readValue(recordStream.openStream(), ZenzyTherapie.class);
 
     var mapped = sut.map(record);

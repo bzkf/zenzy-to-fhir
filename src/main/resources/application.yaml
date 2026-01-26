@@ -5,7 +5,7 @@ spring:
   application:
     name: zenzy-to-fhir
   profiles:
-    active: mappings
+    active: dev,mappings
   kafka:
     bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS}
     security.protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
@@ -32,20 +32,32 @@ spring:
           destination: ${KAFKA_INPUT_TOPIC:zenzy.therapie}
           group: ${KAFKA_GROUP_ID:zenzy-to-fhir}
         sink-out-0:
-          destination: ${KAFKA_INPUT_TOPIC:zenzy.fhir}
+          destination: ${KAFKA_OUTPUT_TOPIC:zenzy.fhir}
+          producer:
+            use-native-encoding: true
       kafka:
         default:
           consumer:
             enableDlq: true
             dlqProducerProperties:
               configuration:
-                key.serializer: org.springframework.kafka.support.serializer.StringSerializer
-                value.serializer: org.miracum.kafka.serializers.KafkaFhirSerializer
+                key.serializer: org.apache.kafka.common.serialization.StringSerializer
+                value.serializer: org.springframework.kafka.support.serializer.JsonSerializer
+                spring.json.value.default.type: io.github.bzkf.zenzytofhir.models.ZenzyTherapie
         bindings:
-          sinkSingle-in-0:
+          sink-in-0:
             consumer:
               configuration:
-                value.deserializer: org.miracum.kafka.serializers.JsonDeserializer
+                key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+                value.deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+                spring.json.value.default.type: io.github.bzkf.zenzytofhir.models.ZenzyTherapie
+                spring.json.trusted.packages: io.github.bzkf.zenzytofhir.models
+                spring.json.use.type.headers: false
+          sink-out-0:
+            producer:
+              configuration:
+                key.serializer: org.apache.kafka.common.serialization.StringSerializer
+                value.serializer: org.miracum.kafka.serializers.KafkaFhirSerializer
   main:
     banner-mode: off
 

@@ -1,5 +1,5 @@
 fhir:
-  systems: 
+  systems:
     identifiers:
       base-url: "https://bzkf.github.io/zenzy-to-fhir/identifiers"
       zenzy-therapie-nr: "${fhir.systems.identifiers.base-url}/zenzy-therapie-nr"

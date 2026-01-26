@@ -1,3 +1,4 @@
+// groovylint-disable NestedBlockDepth
 plugins {
     id 'io.spring.dependency-management' version '1.1.7'
     id 'java'
@@ -12,27 +13,29 @@ group = 'io.github.bzkf'
 version = '0.1.0' // x-release-please-version
 
 dependencyManagement {
-  imports {
-    mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
-  }
+    imports {
+        mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+    }
 }
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(25)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
     withJavadocJar()
     withSourcesJar()
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'net.logstash.logback:logstash-logback-encoder:9.0'
 
-	api 'com.fasterxml.jackson.core:jackson-databind'
+    api 'com.fasterxml.jackson.core:jackson-databind'
+    api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     api 'ca.uhn.hapi.fhir:hapi-fhir-structures-r4:8.6.1'
 
     testImplementation platform('org.junit:junit-bom:6.0.2')
@@ -48,7 +51,7 @@ test {
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
 publishing {
