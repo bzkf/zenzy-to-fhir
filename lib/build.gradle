@@ -35,6 +35,7 @@ dependencies {
     implementation 'net.logstash.logback:logstash-logback-encoder:9.0'
 
     api 'com.fasterxml.jackson.core:jackson-databind'
+    api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     api 'ca.uhn.hapi.fhir:hapi-fhir-structures-r4:8.6.1'
 
     testImplementation platform('org.junit:junit-bom:6.0.2')

@@ -3,6 +3,10 @@ package io.github.bzkf.zenzytofhir.mappings;
 import static net.logstash.logback.argument.StructuredArguments.kv;
 
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
 import java.util.function.Function;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.Validate;
@@ -11,6 +15,7 @@ import org.hl7.fhir.r4.model.BooleanType;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleType;
 import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.DateTimeType;
 import org.hl7.fhir.r4.model.Dosage;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Identifier;
@@ -26,6 +31,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ZenzyTherapieToFhirBundleMapper {
   private static final Logger LOG = LoggerFactory.getLogger(ZenzyTherapieToFhirBundleMapper.class);
+  private static final ZoneId DEFAULT_ZONE_ID = ZoneId.of("Europe/Berlin");
   private final FhirProperties fhirProps;
   private final Function<ZenzyTherapie, Reference> patientReferenceGenerator;
 
@@ -64,7 +70,11 @@ public class ZenzyTherapieToFhirBundleMapper {
     // TODO: authoredOn ?
 
     var timing = new Timing();
-    timing.addEvent(record.applikationsZeitpunkt());
+    var dt = record.applikationsZeitpunkt().atZone(DEFAULT_ZONE_ID).toOffsetDateTime();
+    var fhirDateTime = new DateTimeType();
+    fhirDateTime.setValue(Date.from(dt.toInstant()));
+    fhirDateTime.setTimeZone(TimeZone.getTimeZone(dt.getOffset()));
+    timing.setEvent(List.of(fhirDateTime));
 
     var dosage = new Dosage();
     dosage.setTiming(timing);
