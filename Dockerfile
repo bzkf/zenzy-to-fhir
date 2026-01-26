@@ -29,8 +29,9 @@ rm -rf /var/lib/apt/lists/*
 EOF
 
 FROM gcr.io/distroless/java25-debian13:nonroot@sha256:fa9bfc14924fa3b43d43944d93887155d19843b3aa45610b659496f928fe2a9c
-WORKDIR /opt/obds-to-fhir
+WORKDIR /opt/zenzy-to-fhir
 ENV LD_PRELOAD="/usr/lib/x86_64-linux-gnu/libjemalloc.so.2"
+ENV SPRING_PROFILES_ACTIVE="mappings"
 
 COPY --from=jemalloc /usr/lib/x86_64-linux-gnu/libjemalloc.so.2 /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
 

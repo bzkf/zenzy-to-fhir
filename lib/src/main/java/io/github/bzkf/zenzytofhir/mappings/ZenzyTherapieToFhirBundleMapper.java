@@ -1,5 +1,7 @@
 package io.github.bzkf.zenzytofhir.mappings;
 
+import static net.logstash.logback.argument.StructuredArguments.kv;
+
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
 import java.util.function.Function;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -17,10 +19,13 @@ import org.hl7.fhir.r4.model.MedicationRequest.MedicationRequestIntent;
 import org.hl7.fhir.r4.model.MedicationRequest.MedicationRequestStatus;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Timing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ZenzyTherapieToFhirBundleMapper {
+  private static final Logger LOG = LoggerFactory.getLogger(ZenzyTherapieToFhirBundleMapper.class);
   private final FhirProperties fhirProps;
   private final Function<ZenzyTherapie, Reference> patientReferenceGenerator;
 
@@ -31,6 +36,7 @@ public class ZenzyTherapieToFhirBundleMapper {
   }
 
   public Bundle map(ZenzyTherapie record) {
+    LOG.info("Mapping ZenzyTherapie record {} to FHIR", kv("nr", record.nr()));
 
     // Mapping logic to convert ZenzyTherapieRecord to FHIR Bundle goes here
     var medicationRequest = new MedicationRequest();
