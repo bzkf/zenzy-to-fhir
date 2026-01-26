@@ -12,27 +12,27 @@ group = 'io.github.bzkf'
 version = '0.1.0' // x-release-please-version
 
 dependencyManagement {
-  imports {
-    mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
-  }
+    imports {
+        mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+    }
 }
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(25)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
     withJavadocJar()
     withSourcesJar()
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
 
-	api 'com.fasterxml.jackson.core:jackson-databind'
+    api 'com.fasterxml.jackson.core:jackson-databind'
     api 'ca.uhn.hapi.fhir:hapi-fhir-structures-r4:8.6.1'
 
     testImplementation platform('org.junit:junit-bom:6.0.2')
@@ -48,7 +48,7 @@ test {
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
 publishing {
