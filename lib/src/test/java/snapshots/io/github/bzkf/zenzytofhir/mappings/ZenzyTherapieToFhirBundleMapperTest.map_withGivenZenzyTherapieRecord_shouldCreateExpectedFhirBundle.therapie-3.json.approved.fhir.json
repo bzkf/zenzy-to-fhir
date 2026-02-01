@@ -1,20 +1,20 @@
 {
   "resourceType": "Bundle",
-  "id": "e9839f8032807fc28f04e41d5d8debc3d8ade8f19cd9dcb404f54244aa8c3c82",
+  "id": "2d6adbb1909cfd1d58d76cbbb1a4d1ff403265f9b5b6050ef51576c3b250ea43",
   "type": "transaction",
   "entry": [ {
     "resource": {
       "resourceType": "MedicationRequest",
-      "id": "e9839f8032807fc28f04e41d5d8debc3d8ade8f19cd9dcb404f54244aa8c3c82",
+      "id": "2d6adbb1909cfd1d58d76cbbb1a4d1ff403265f9b5b6050ef51576c3b250ea43",
       "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-therapie-nr",
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-therapie-autonr",
         "value": "3"
       } ],
       "status": "active",
       "intent": "order",
       "reportedBoolean": false,
-      "medicationCodeableConcept": {
-        "text": "Azacitidine"
+      "medicationReference": {
+        "reference": "Medication/97e100c1cd88877a4bcb6ce76b780b83081b73e0f2436188004ddd01a3eda2e7"
       },
       "subject": {
         "reference": "Patient/3"
@@ -27,6 +27,51 @@
           "text": "subkutan"
         }
       } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "MedicationRequest/2d6adbb1909cfd1d58d76cbbb1a4d1ff403265f9b5b6050ef51576c3b250ea43"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "97e100c1cd88877a4bcb6ce76b780b83081b73e0f2436188004ddd01a3eda2e7",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-herstellungs-id",
+        "value": "33333333"
+      } ],
+      "status": "active",
+      "ingredient": [ {
+        "itemCodeableConcept": {
+          "text": "unverdünnt"
+        },
+        "isActive": false
+      }, {
+        "itemReference": {
+          "reference": "Medication/3fddf56823cccc01dac2511fb49adc90596d15352323c905efb1a96c0ee80f2a"
+        },
+        "isActive": true
+      } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/97e100c1cd88877a4bcb6ce76b780b83081b73e0f2436188004ddd01a3eda2e7"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "3fddf56823cccc01dac2511fb49adc90596d15352323c905efb1a96c0ee80f2a",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-wirkstoff-id",
+        "value": "azacitidine"
+      } ],
+      "code": {
+        "text": "Azacitidine"
+      }
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/3fddf56823cccc01dac2511fb49adc90596d15352323c905efb1a96c0ee80f2a"
     }
   } ]
 }

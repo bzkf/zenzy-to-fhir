@@ -18,7 +18,13 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(classes = {FhirProperties.class})
+@SpringBootTest(
+    classes = {
+      FhirProperties.class,
+      HergestellteMedicationMapper.class,
+      WirkstoffMapper.class,
+      TraegerLoesungMapper.class
+    })
 @EnableConfigurationProperties
 @ConfigurationPropertiesScan
 public class ZenzyTherapieToFhirBundleMapperTest {
@@ -26,10 +32,18 @@ public class ZenzyTherapieToFhirBundleMapperTest {
   private static ZenzyTherapieToFhirBundleMapper sut;
 
   @BeforeAll
-  static void beforeAll(@Autowired FhirProperties fhirProps) {
+  static void beforeAll(
+      @Autowired FhirProperties fhirProps,
+      @Autowired HergestellteMedicationMapper medicationMapper,
+      @Autowired WirkstoffMapper wirkstoffMapper,
+      @Autowired TraegerLoesungMapper traegerLoesungMapper) {
     sut =
         new ZenzyTherapieToFhirBundleMapper(
-            fhirProps, t -> new Reference("Patient/" + t.kisPatientenId()));
+            fhirProps,
+            t -> new Reference("Patient/" + t.kisPatientenId()),
+            medicationMapper,
+            traegerLoesungMapper,
+            wirkstoffMapper);
   }
 
   @ParameterizedTest

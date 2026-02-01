@@ -1,20 +1,20 @@
 {
   "resourceType": "Bundle",
-  "id": "098097c7dc8ea20130e559262b88bbe1657510476025e3fda97769855d38a7e3",
+  "id": "95b137a739fa2597ca3b830c014e934bc8a5dbd8b1663da4d273b37aabc45cbd",
   "type": "transaction",
   "entry": [ {
     "resource": {
       "resourceType": "MedicationRequest",
-      "id": "098097c7dc8ea20130e559262b88bbe1657510476025e3fda97769855d38a7e3",
+      "id": "95b137a739fa2597ca3b830c014e934bc8a5dbd8b1663da4d273b37aabc45cbd",
       "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-therapie-nr",
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-therapie-autonr",
         "value": "2"
       } ],
       "status": "active",
       "intent": "order",
       "reportedBoolean": false,
-      "medicationCodeableConcept": {
-        "text": "Fluorouracil"
+      "medicationReference": {
+        "reference": "Medication/8b3b5cb27c86030220ad8a9aaed309377b452312c1fce272d08d26909b97800b"
       },
       "subject": {
         "reference": "Patient/2"
@@ -27,6 +27,62 @@
           "text": "Infusion"
         }
       } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "MedicationRequest/95b137a739fa2597ca3b830c014e934bc8a5dbd8b1663da4d273b37aabc45cbd"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "8b3b5cb27c86030220ad8a9aaed309377b452312c1fce272d08d26909b97800b",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-herstellungs-id",
+        "value": "1111111111"
+      } ],
+      "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 500.0,
+          "unit": "milliliter",
+          "system": "http://unitsofmeasure.org",
+          "code": "mL"
+        },
+        "denominator": {
+          "value": 1
+        }
+      },
+      "ingredient": [ {
+        "itemCodeableConcept": {
+          "text": "Glucose 5%"
+        },
+        "isActive": false
+      }, {
+        "itemReference": {
+          "reference": "Medication/a61844b2f16bae5283fe2e454cc8382df2bb056c937bfe238b640ec08613e88d"
+        },
+        "isActive": true
+      } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/8b3b5cb27c86030220ad8a9aaed309377b452312c1fce272d08d26909b97800b"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "a61844b2f16bae5283fe2e454cc8382df2bb056c937bfe238b640ec08613e88d",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-wirkstoff-id",
+        "value": "fluorouracil"
+      } ],
+      "code": {
+        "text": "Fluorouracil"
+      }
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/a61844b2f16bae5283fe2e454cc8382df2bb056c937bfe238b640ec08613e88d"
     }
   } ]
 }
