@@ -20,12 +20,18 @@
         "reference": "Patient/3"
       },
       "dosageInstruction": [ {
+        "text": "subkutan",
         "timing": {
           "event": [ "2010-10-11T02:00:00+02:00" ]
         },
-        "route": {
-          "text": "subkutan"
-        }
+        "doseAndRate": [ {
+          "doseQuantity": {
+            "value": 37.5,
+            "unit": "mg/m2",
+            "system": "http://unitsofmeasure.org",
+            "code": "mg/m2"
+          }
+        } ]
       } ]
     },
     "request": {

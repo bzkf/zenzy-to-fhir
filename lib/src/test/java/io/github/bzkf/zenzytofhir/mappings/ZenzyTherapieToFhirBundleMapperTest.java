@@ -6,10 +6,10 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.github.bzkf.zenzytofhir.ProfileTestConfig;
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
 import java.io.IOException;
 import org.approvaltests.Approvals;
-import org.hl7.fhir.r4.model.Reference;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -23,7 +23,10 @@ import org.springframework.boot.test.context.SpringBootTest;
       FhirProperties.class,
       HergestellteMedicationMapper.class,
       WirkstoffMapper.class,
-      TraegerLoesungMapper.class
+      TraegerLoesungMapper.class,
+      MedicationRequestMapper.class,
+      ProfileTestConfig.class,
+      ApplikationsartToSnomedMapper.class,
     })
 @EnableConfigurationProperties
 @ConfigurationPropertiesScan
@@ -36,14 +39,11 @@ public class ZenzyTherapieToFhirBundleMapperTest {
       @Autowired FhirProperties fhirProps,
       @Autowired HergestellteMedicationMapper medicationMapper,
       @Autowired WirkstoffMapper wirkstoffMapper,
-      @Autowired TraegerLoesungMapper traegerLoesungMapper) {
+      @Autowired TraegerLoesungMapper traegerLoesungMapper,
+      @Autowired MedicationRequestMapper medicationRequestMapper) {
     sut =
         new ZenzyTherapieToFhirBundleMapper(
-            fhirProps,
-            t -> new Reference("Patient/" + t.kisPatientenId()),
-            medicationMapper,
-            traegerLoesungMapper,
-            wirkstoffMapper);
+            fhirProps, medicationMapper, wirkstoffMapper, medicationRequestMapper);
   }
 
   @ParameterizedTest

@@ -2,7 +2,6 @@ package io.github.bzkf.zenzytofhir.mappings;
 
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
 import java.util.List;
-import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Medication;
 import org.hl7.fhir.r4.model.Medication.MedicationStatus;
@@ -10,26 +9,27 @@ import org.hl7.fhir.r4.model.Quantity;
 import org.hl7.fhir.r4.model.Ratio;
 import org.hl7.fhir.r4.model.Reference;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class HergestellteMedicationMapper {
   private final FhirProperties fhirProps;
+  private final TraegerLoesungMapper traegerLoesungMapper;
 
-  public HergestellteMedicationMapper(FhirProperties fhirProperties) {
+  public HergestellteMedicationMapper(
+      FhirProperties fhirProperties, TraegerLoesungMapper traegerLoesungMapper) {
     this.fhirProps = fhirProperties;
+    this.traegerLoesungMapper = traegerLoesungMapper;
   }
 
   public Medication map(
-      @NonNull ZenzyTherapie therapie,
-      @NonNull List<Reference> wirkstoffMedicationReferences,
-      @Nullable CodeableConcept traegerLoesung) {
+      @NonNull ZenzyTherapie therapie, @NonNull List<Reference> wirkstoffMedicationReferences) {
     var medication = new Medication();
     var identifier =
         new Identifier()
             .setSystem(fhirProps.getSystems().identifiers().zenzyHerstellungsId())
-            .setValue(therapie.herstellungsId().toString());
+            .setValue(therapie.herstellungsId());
     medication.addIdentifier(identifier);
     medication.setId(MappingUtils.computeResourceIdFromIdentifier(identifier));
     medication.setStatus(MedicationStatus.ACTIVE);
@@ -47,7 +47,8 @@ public class HergestellteMedicationMapper {
       medication.setAmount(amount);
     }
 
-    if (traegerLoesung != null) {
+    if (StringUtils.hasText(therapie.traegerLoesung())) {
+      var traegerLoesung = traegerLoesungMapper.map(therapie);
       medication.addIngredient().setIsActive(false).setItem(traegerLoesung);
     }
 

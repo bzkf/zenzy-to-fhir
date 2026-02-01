@@ -20,12 +20,38 @@
         "reference": "Patient/1"
       },
       "dosageInstruction": [ {
+        "text": "Kurzinfusion über 30 min",
         "timing": {
-          "event": [ "1999-10-26T11:30:00+02:00" ]
+          "event": [ "1999-10-26T11:30:00+02:00" ],
+          "repeat": {
+            "duration": 30.0,
+            "durationUnit": "min"
+          }
         },
         "route": {
-          "text": "Infusion"
-        }
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+            "code": "47625008",
+            "display": "Intravenous route"
+          } ]
+        },
+        "method": {
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+            "code": "36576007",
+            "display": "Infusion (procedure)"
+          } ]
+        },
+        "doseAndRate": [ {
+          "doseQuantity": {
+            "value": 500.0,
+            "unit": "mg/m2",
+            "system": "http://unitsofmeasure.org",
+            "code": "mg/m2"
+          }
+        } ]
       } ]
     },
     "request": {
