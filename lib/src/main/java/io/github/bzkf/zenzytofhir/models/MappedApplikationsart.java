@@ -3,7 +3,7 @@ package io.github.bzkf.zenzytofhir.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record Applikationsart(
+public record MappedApplikationsart(
     String applikationsart,
     String routeSnomedCode,
     String routeSnomedDisplay,

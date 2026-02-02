@@ -35,12 +35,12 @@ public class MedicationRequestMapper {
 
   private final FhirProperties fhirProps;
   private final Function<ZenzyTherapie, Reference> patientReferenceGenerator;
-  private final ApplikationsartToSnomedMapper applikationsartMapper;
+  private final ToSnomedMapper applikationsartMapper;
 
   public MedicationRequestMapper(
       FhirProperties fhirProperties,
       Function<ZenzyTherapie, Reference> patientReferenceGenerator,
-      ApplikationsartToSnomedMapper applikationsartMapper) {
+      ToSnomedMapper applikationsartMapper) {
     this.fhirProps = fhirProperties;
     this.patientReferenceGenerator = patientReferenceGenerator;
     this.applikationsartMapper = applikationsartMapper;
@@ -87,7 +87,7 @@ public class MedicationRequestMapper {
     dosage.setTiming(timing);
     dosage.setText(therapie.applikationsArt());
 
-    var a = applikationsartMapper.getCode(therapie.applikationsArt());
+    var a = applikationsartMapper.mapApplikationsart(therapie.applikationsArt());
     if (a.isPresent()) {
       var applikationsart = a.get();
 

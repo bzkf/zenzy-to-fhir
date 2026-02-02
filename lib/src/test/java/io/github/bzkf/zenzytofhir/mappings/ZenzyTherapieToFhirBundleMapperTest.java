@@ -22,11 +22,10 @@ import org.springframework.boot.test.context.SpringBootTest;
     classes = {
       FhirProperties.class,
       HergestellteMedicationMapper.class,
-      WirkstoffMapper.class,
       TraegerLoesungMapper.class,
       MedicationRequestMapper.class,
       ProfileTestConfig.class,
-      ApplikationsartToSnomedMapper.class,
+      ToSnomedMapper.class,
     })
 @EnableConfigurationProperties
 @ConfigurationPropertiesScan
@@ -38,12 +37,8 @@ public class ZenzyTherapieToFhirBundleMapperTest {
   static void beforeAll(
       @Autowired FhirProperties fhirProps,
       @Autowired HergestellteMedicationMapper medicationMapper,
-      @Autowired WirkstoffMapper wirkstoffMapper,
-      @Autowired TraegerLoesungMapper traegerLoesungMapper,
       @Autowired MedicationRequestMapper medicationRequestMapper) {
-    sut =
-        new ZenzyTherapieToFhirBundleMapper(
-            fhirProps, medicationMapper, wirkstoffMapper, medicationRequestMapper);
+    sut = new ZenzyTherapieToFhirBundleMapper(fhirProps, medicationMapper, medicationRequestMapper);
   }
 
   @ParameterizedTest

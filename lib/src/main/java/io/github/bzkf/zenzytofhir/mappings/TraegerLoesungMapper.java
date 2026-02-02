@@ -7,29 +7,27 @@ import org.springframework.stereotype.Service;
 @Service
 public class TraegerLoesungMapper {
   private final FhirProperties fhirProps;
+  private final ToSnomedMapper toSnomedMapper;
 
-  public TraegerLoesungMapper(FhirProperties fhirProperties) {
+  public TraegerLoesungMapper(FhirProperties fhirProperties, ToSnomedMapper toSnomedMapper) {
     this.fhirProps = fhirProperties;
+    this.toSnomedMapper = toSnomedMapper;
   }
 
   public CodeableConcept map(ZenzyTherapie record) {
-    // SCTID: 1268456007 - if "Glucose 5%" & Applikationsart = Infusion
-    // Product containing precisely glucose 50 milligram/1 milliliter
-    // conventional release solution for infusion (clinical drug)
-    // 1204430002 | Product containing precisely glucose 50 milligram/1
-    // milliliter conventional release solution for injection (clinical drug)
-
-    // 1263456009 | Product containing precisely sodium chloride 9 milligram/1
-    // milliliter conventional release solution for infusion (clinical drug) |
-
-    // 782104005 | Product containing precisely sodium chloride 9 milligram/1
-    // milliliter conventional release solution for injection (clinical drug)
-
-    // 1338072000 | Product containing precisely sodium chloride 30 milligram/1
-    // milliliter conventional release solution for injection (clinical drug)
 
     var codeableConcept = new CodeableConcept();
     codeableConcept.setText(record.traegerLoesung());
+
+    var maybeMapped = toSnomedMapper.mapTraegerloesung(record.traegerLoesung());
+    if (maybeMapped.isPresent()) {
+      var snomed = fhirProps.getCodings().snomed();
+      var mapped = maybeMapped.get();
+      if (mapped.snomedCode() != null) {
+        snomed.setCode(mapped.snomedCode()).setDisplay(mapped.snomedDisplay());
+        codeableConcept.addCoding(snomed);
+      }
+    }
 
     return codeableConcept;
   }

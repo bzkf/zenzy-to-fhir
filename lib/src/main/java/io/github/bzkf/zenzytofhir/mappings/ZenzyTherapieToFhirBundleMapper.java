@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class ZenzyTherapieToFhirBundleMapper {
 
-  private final WirkstoffMapper wirkstoffMapper;
   private static final Logger LOG = LoggerFactory.getLogger(ZenzyTherapieToFhirBundleMapper.class);
   private final FhirProperties fhirProps;
   private final HergestellteMedicationMapper medicationMapper;
@@ -23,23 +22,16 @@ public class ZenzyTherapieToFhirBundleMapper {
   public ZenzyTherapieToFhirBundleMapper(
       FhirProperties fhirProperties,
       HergestellteMedicationMapper medicationMapper,
-      WirkstoffMapper wirkstoffMapper,
       MedicationRequestMapper medicationRequestMapper) {
     this.fhirProps = fhirProperties;
     this.medicationMapper = medicationMapper;
-    this.wirkstoffMapper = wirkstoffMapper;
     this.medicationRequestMapper = medicationRequestMapper;
   }
 
   public Bundle map(ZenzyTherapie record) {
     LOG.debug("Mapping ZenzyTherapie record {} to FHIR", kv("autoNr", record.autoNr()));
 
-    var wirkstoffMedications = wirkstoffMapper.map(record);
-
-    var wirkstoffReferences =
-        wirkstoffMedications.stream().map(MappingUtils::createReferenceToResource).toList();
-
-    var medication = medicationMapper.map(record, wirkstoffReferences);
+    var medication = medicationMapper.map(record);
 
     var medicationRequest =
         medicationRequestMapper.map(record, MappingUtils.createReferenceToResource(medication));
@@ -49,10 +41,6 @@ public class ZenzyTherapieToFhirBundleMapper {
     bundle.setId(medicationRequest.getId());
     addBundleEntry(bundle, medicationRequest);
     addBundleEntry(bundle, medication);
-
-    for (var wirkstoffMedication : wirkstoffMedications) {
-      addBundleEntry(bundle, wirkstoffMedication);
-    }
 
     return bundle;
   }

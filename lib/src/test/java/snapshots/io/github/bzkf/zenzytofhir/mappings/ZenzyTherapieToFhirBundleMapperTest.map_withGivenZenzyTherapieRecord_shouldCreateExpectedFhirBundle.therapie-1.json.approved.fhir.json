@@ -80,35 +80,36 @@
       },
       "ingredient": [ {
         "itemCodeableConcept": {
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+            "code": "1268457003",
+            "display": "Product containing precisely glucose 50 milligram/1 milliliter conventional release solution for infusion and/or injection (clinical drug)"
+          } ],
           "text": "Glucose 5%"
         },
         "isActive": false
       }, {
-        "itemReference": {
-          "reference": "Medication/a61844b2f16bae5283fe2e454cc8382df2bb056c937bfe238b640ec08613e88d"
+        "itemCodeableConcept": {
+          "text": "Fluorouracil"
         },
-        "isActive": true
+        "isActive": true,
+        "strength": {
+          "numerator": {
+            "value": 900.0,
+            "unit": "mg",
+            "system": "http://unitsofmeasure.org",
+            "code": "mg"
+          },
+          "denominator": {
+            "value": 1
+          }
+        }
       } ]
     },
     "request": {
       "method": "PUT",
       "url": "Medication/e5439f847792dafb16dfb65ed6b61e33a3c7f8dcf5faeecaccda5db41d969f91"
-    }
-  }, {
-    "resource": {
-      "resourceType": "Medication",
-      "id": "a61844b2f16bae5283fe2e454cc8382df2bb056c937bfe238b640ec08613e88d",
-      "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-wirkstoff-id",
-        "value": "fluorouracil"
-      } ],
-      "code": {
-        "text": "Fluorouracil"
-      }
-    },
-    "request": {
-      "method": "PUT",
-      "url": "Medication/a61844b2f16bae5283fe2e454cc8382df2bb056c937bfe238b640ec08613e88d"
     }
   } ]
 }

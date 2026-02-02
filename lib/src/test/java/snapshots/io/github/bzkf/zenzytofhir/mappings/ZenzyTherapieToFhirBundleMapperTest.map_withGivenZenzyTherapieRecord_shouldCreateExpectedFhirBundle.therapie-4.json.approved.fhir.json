@@ -67,56 +67,52 @@
       },
       "ingredient": [ {
         "itemCodeableConcept": {
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+            "code": "1263924005",
+            "display": "Product containing precisely sodium chloride 9 milligram/1 milliliter conventional release solution for infusion and/or injection (clinical drug)"
+          } ],
           "text": "NaCl 0.9%"
         },
         "isActive": false
       }, {
-        "itemReference": {
-          "reference": "Medication/a61844b2f16bae5283fe2e454cc8382df2bb056c937bfe238b640ec08613e88d"
+        "itemCodeableConcept": {
+          "text": "Fluorouracil"
         },
-        "isActive": true
+        "isActive": true,
+        "strength": {
+          "numerator": {
+            "value": 3300.0,
+            "unit": "mg",
+            "system": "http://unitsofmeasure.org",
+            "code": "mg"
+          },
+          "denominator": {
+            "value": 1
+          }
+        }
       }, {
-        "itemReference": {
-          "reference": "Medication/4c97086b8da3343ba8039e33bd57bdd1e06500b6c377d5fe9b62413a9f844d3e"
+        "itemCodeableConcept": {
+          "text": "Natriumfolinat"
         },
-        "isActive": true
+        "isActive": true,
+        "strength": {
+          "numerator": {
+            "value": 800.0,
+            "unit": "mg",
+            "system": "http://unitsofmeasure.org",
+            "code": "mg"
+          },
+          "denominator": {
+            "value": 1
+          }
+        }
       } ]
     },
     "request": {
       "method": "PUT",
       "url": "Medication/bf46ae05f5cd7e565b675568ff75924526b5f920b1757e61d39fc037c3f2fbdd"
-    }
-  }, {
-    "resource": {
-      "resourceType": "Medication",
-      "id": "a61844b2f16bae5283fe2e454cc8382df2bb056c937bfe238b640ec08613e88d",
-      "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-wirkstoff-id",
-        "value": "fluorouracil"
-      } ],
-      "code": {
-        "text": "Fluorouracil"
-      }
-    },
-    "request": {
-      "method": "PUT",
-      "url": "Medication/a61844b2f16bae5283fe2e454cc8382df2bb056c937bfe238b640ec08613e88d"
-    }
-  }, {
-    "resource": {
-      "resourceType": "Medication",
-      "id": "4c97086b8da3343ba8039e33bd57bdd1e06500b6c377d5fe9b62413a9f844d3e",
-      "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-wirkstoff-id",
-        "value": "natriumfolinat"
-      } ],
-      "code": {
-        "text": "Natriumfolinat"
-      }
-    },
-    "request": {
-      "method": "PUT",
-      "url": "Medication/4c97086b8da3343ba8039e33bd57bdd1e06500b6c377d5fe9b62413a9f844d3e"
     }
   } ]
 }
