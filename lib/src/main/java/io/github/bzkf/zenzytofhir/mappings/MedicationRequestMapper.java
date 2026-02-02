@@ -35,12 +35,12 @@ public class MedicationRequestMapper {
 
   private final FhirProperties fhirProps;
   private final Function<ZenzyTherapie, Reference> patientReferenceGenerator;
-  private final ToSnomedMapper applikationsartMapper;
+  private final ToCodingMapper applikationsartMapper;
 
   public MedicationRequestMapper(
       FhirProperties fhirProperties,
       Function<ZenzyTherapie, Reference> patientReferenceGenerator,
-      ToSnomedMapper applikationsartMapper) {
+      ToCodingMapper applikationsartMapper) {
     this.fhirProps = fhirProperties;
     this.patientReferenceGenerator = patientReferenceGenerator;
     this.applikationsartMapper = applikationsartMapper;

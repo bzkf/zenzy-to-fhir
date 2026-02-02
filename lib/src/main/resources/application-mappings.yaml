@@ -6,6 +6,9 @@ fhir:
     snomed:
       system: "http://snomed.info/sct"
       version: "http://snomed.info/sct/900000000000207008/version/20260101"
+    atc:
+      system: "http://fhir.de/CodeSystem/bfarm/atc"
+      version: "2025"
   systems:
     identifiers:
       base-url: "https://bzkf.github.io/zenzy-to-fhir/identifiers"

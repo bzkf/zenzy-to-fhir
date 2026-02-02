@@ -58,6 +58,12 @@
         "isActive": false
       }, {
         "itemCodeableConcept": {
+          "coding": [ {
+            "system": "http://fhir.de/CodeSystem/bfarm/atc",
+            "version": "2025",
+            "code": "L01BC07",
+            "display": "Azacitidin"
+          } ],
           "text": "Azacitidine"
         },
         "isActive": true,

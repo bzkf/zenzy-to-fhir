@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class TraegerLoesungMapper {
   private final FhirProperties fhirProps;
-  private final ToSnomedMapper toSnomedMapper;
+  private final ToCodingMapper toSnomedMapper;
 
-  public TraegerLoesungMapper(FhirProperties fhirProperties, ToSnomedMapper toSnomedMapper) {
+  public TraegerLoesungMapper(FhirProperties fhirProperties, ToCodingMapper toSnomedMapper) {
     this.fhirProps = fhirProperties;
     this.toSnomedMapper = toSnomedMapper;
   }

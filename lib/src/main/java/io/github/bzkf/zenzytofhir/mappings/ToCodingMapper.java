@@ -5,6 +5,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import io.github.bzkf.zenzytofhir.models.MappedApplikationsart;
 import io.github.bzkf.zenzytofhir.models.MappedTraegerloesung;
+import io.github.bzkf.zenzytofhir.models.MappedWirkstoff;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.HashMap;
@@ -15,9 +16,10 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ToSnomedMapper {
+public class ToCodingMapper {
   private final Map<String, MappedApplikationsart> applikationsartMapping = new HashMap<>();
   private final Map<String, MappedTraegerloesung> traegerloesungMapping = new HashMap<>();
+  private final Map<String, MappedWirkstoff> wirkstoffMapping = new HashMap<>();
 
   @PostConstruct
   public void init() throws IOException {
@@ -50,6 +52,18 @@ public class ToSnomedMapper {
       var row = (MappedTraegerloesung) value;
       traegerloesungMapping.put(row.traegerloesung(), row);
     }
+
+    resource = new ClassPathResource("mappings/wirkstoffe.csv");
+    values =
+        mapper
+            .readerFor(MappedWirkstoff.class)
+            .with(schema)
+            .readValues(resource.getInputStream())
+            .readAll();
+    for (var value : values) {
+      var row = (MappedWirkstoff) value;
+      wirkstoffMapping.put(row.wirkstoff(), row);
+    }
   }
 
   public Optional<MappedApplikationsart> mapApplikationsart(@NonNull String applikationsartText) {
@@ -60,5 +74,10 @@ public class ToSnomedMapper {
   public Optional<MappedTraegerloesung> mapTraegerloesung(@NonNull String traegerloesungText) {
     var traegerloesung = traegerloesungMapping.get(traegerloesungText.trim());
     return Optional.ofNullable(traegerloesung);
+  }
+
+  public Optional<MappedWirkstoff> mapWirkstoff(@NonNull String wirkstoffText) {
+    var wirkstoff = wirkstoffMapping.get(wirkstoffText.trim());
+    return Optional.ofNullable(wirkstoff);
   }
 }

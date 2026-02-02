@@ -25,7 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
       TraegerLoesungMapper.class,
       MedicationRequestMapper.class,
       ProfileTestConfig.class,
-      ToSnomedMapper.class,
+      ToCodingMapper.class,
     })
 @EnableConfigurationProperties
 @ConfigurationPropertiesScan

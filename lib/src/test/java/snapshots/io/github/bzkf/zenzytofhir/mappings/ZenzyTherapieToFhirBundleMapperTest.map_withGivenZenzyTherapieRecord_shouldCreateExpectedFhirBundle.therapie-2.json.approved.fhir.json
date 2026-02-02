@@ -92,6 +92,12 @@
         "isActive": false
       }, {
         "itemCodeableConcept": {
+          "coding": [ {
+            "system": "http://fhir.de/CodeSystem/bfarm/atc",
+            "version": "2025",
+            "code": "L01BC02",
+            "display": "Fluorouracil"
+          } ],
           "text": "Fluorouracil"
         },
         "isActive": true,

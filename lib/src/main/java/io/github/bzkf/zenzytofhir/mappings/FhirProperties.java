@@ -27,7 +27,7 @@ public class FhirProperties {
     this.codings = codings;
   }
 
-  public static record Codings(Coding loinc, Coding snomed, Coding ops) {
+  public static record Codings(Coding loinc, Coding snomed, Coding ops, Coding atc) {
     @Override
     public Coding loinc() {
       // return a fresh copy, otherwise the original instance will be modified
@@ -40,8 +40,8 @@ public class FhirProperties {
     }
 
     @Override
-    public Coding ops() {
-      return ops.copy();
+    public Coding atc() {
+      return atc.copy();
     }
   }
 

@@ -23,13 +23,17 @@ public class HergestellteMedicationMapper {
 
   private final FhirProperties fhirProps;
   private final TraegerLoesungMapper traegerLoesungMapper;
+  private final ToCodingMapper toCodingMapper;
 
   private record WirkstoffDosis(String wirkstoff, Number dosis, String dosisEinheit) {}
 
   public HergestellteMedicationMapper(
-      FhirProperties fhirProperties, TraegerLoesungMapper traegerLoesungMapper) {
+      FhirProperties fhirProperties,
+      TraegerLoesungMapper traegerLoesungMapper,
+      ToCodingMapper toCodingMapper) {
     this.fhirProps = fhirProperties;
     this.traegerLoesungMapper = traegerLoesungMapper;
+    this.toCodingMapper = toCodingMapper;
   }
 
   public Medication map(@NonNull ZenzyTherapie therapie) {
@@ -87,6 +91,16 @@ public class HergestellteMedicationMapper {
     for (var wirkstoffDosis : zipped) {
       var codeableConcept = new CodeableConcept();
       codeableConcept.setText(wirkstoffDosis.wirkstoff());
+
+      var maybeMapped = toCodingMapper.mapWirkstoff(wirkstoffDosis.wirkstoff());
+      if (maybeMapped.isPresent()) {
+        var atc = fhirProps.getCodings().atc();
+        var mapped = maybeMapped.get();
+        if (mapped.atcCode() != null) {
+          atc.setCode(mapped.atcCode()).setDisplay(mapped.atcDisplay());
+          codeableConcept.addCoding(atc);
+        }
+      }
 
       var numerator = new Quantity();
       numerator.setValue(wirkstoffDosis.dosis().doubleValue());
