@@ -17,21 +17,26 @@ public class ZenzyTherapieToFhirBundleMapper {
   private static final Logger LOG = LoggerFactory.getLogger(ZenzyTherapieToFhirBundleMapper.class);
   private final FhirProperties fhirProps;
   private final HergestellteMedicationMapper medicationMapper;
-  private MedicationRequestMapper medicationRequestMapper;
+  private final MedicationRequestMapper medicationRequestMapper;
+  private final WirkstoffMedicationMapper wirkstoffMedicationMapper;
 
   public ZenzyTherapieToFhirBundleMapper(
       FhirProperties fhirProperties,
       HergestellteMedicationMapper medicationMapper,
-      MedicationRequestMapper medicationRequestMapper) {
+      MedicationRequestMapper medicationRequestMapper,
+      WirkstoffMedicationMapper wirkstoffMedicationMapper) {
     this.fhirProps = fhirProperties;
     this.medicationMapper = medicationMapper;
     this.medicationRequestMapper = medicationRequestMapper;
+    this.wirkstoffMedicationMapper = wirkstoffMedicationMapper;
   }
 
   public Bundle map(ZenzyTherapie record) {
     LOG.debug("Mapping ZenzyTherapie record {} to FHIR", kv("autoNr", record.autoNr()));
 
-    var medication = medicationMapper.map(record);
+    var wirkstoffe = wirkstoffMedicationMapper.map(record);
+
+    var medication = medicationMapper.map(record, wirkstoffe);
 
     var medicationRequest =
         medicationRequestMapper.map(record, MappingUtils.createReferenceToResource(medication));
@@ -41,6 +46,10 @@ public class ZenzyTherapieToFhirBundleMapper {
     bundle.setId(medicationRequest.getId());
     addBundleEntry(bundle, medicationRequest);
     addBundleEntry(bundle, medication);
+
+    for (var wirkstoff : wirkstoffe) {
+      addBundleEntry(bundle, wirkstoff.medication());
+    }
 
     return bundle;
   }

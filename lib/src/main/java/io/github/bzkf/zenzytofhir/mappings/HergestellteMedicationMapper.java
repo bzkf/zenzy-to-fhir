@@ -1,11 +1,8 @@
 package io.github.bzkf.zenzytofhir.mappings;
 
+import io.github.bzkf.zenzytofhir.models.MedicationAndStrength;
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.Locale;
-import java.util.stream.IntStream;
-import org.hl7.fhir.r4.model.CodeableConcept;
+import java.util.List;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Medication;
 import org.hl7.fhir.r4.model.Medication.MedicationStatus;
@@ -25,8 +22,6 @@ public class HergestellteMedicationMapper {
   private final TraegerLoesungMapper traegerLoesungMapper;
   private final ToCodingMapper toCodingMapper;
 
-  private record WirkstoffDosis(String wirkstoff, Number dosis, String dosisEinheit) {}
-
   public HergestellteMedicationMapper(
       FhirProperties fhirProperties,
       TraegerLoesungMapper traegerLoesungMapper,
@@ -36,7 +31,8 @@ public class HergestellteMedicationMapper {
     this.toCodingMapper = toCodingMapper;
   }
 
-  public Medication map(@NonNull ZenzyTherapie therapie) {
+  public Medication map(
+      @NonNull ZenzyTherapie therapie, @NonNull List<MedicationAndStrength> wirkstoffe) {
     var medication = new Medication();
     var identifier =
         new Identifier()
@@ -64,61 +60,13 @@ public class HergestellteMedicationMapper {
       medication.addIngredient().setIsActive(false).setItem(traegerLoesung);
     }
 
-    var wirkstoffe = therapie.wirkstoff().split("\\\\n");
-    var dosen = therapie.dosis().split("\\\\n");
-    // var dosisEinheit = therapie.dosisEinheit().split("\\\\n");
-
-    if (wirkstoffe.length != dosen.length) {
-      throw new IllegalArgumentException("substance and dosis length mismatch");
-    }
-
-    var zipped =
-        IntStream.range(0, wirkstoffe.length)
-            .mapToObj(
-                i -> {
-                  try {
-                    // TODO: dosis einheit
-                    return new WirkstoffDosis(
-                        wirkstoffe[i],
-                        NumberFormat.getInstance(Locale.GERMAN).parse(dosen[i]),
-                        null);
-                  } catch (ParseException e) {
-                    throw new IllegalArgumentException("Failed to parse dosis", e);
-                  }
-                })
-            .toList();
-
-    for (var wirkstoffDosis : zipped) {
-      var codeableConcept = new CodeableConcept();
-      codeableConcept.setText(wirkstoffDosis.wirkstoff());
-
-      var maybeMapped = toCodingMapper.mapWirkstoff(wirkstoffDosis.wirkstoff());
-      if (maybeMapped.isPresent()) {
-        var atc = fhirProps.getCodings().atc();
-        var mapped = maybeMapped.get();
-        if (mapped.atcCode() != null) {
-          atc.setCode(mapped.atcCode()).setDisplay(mapped.atcDisplay());
-          codeableConcept.addCoding(atc);
-        }
-      }
-
-      var numerator = new Quantity();
-      numerator.setValue(wirkstoffDosis.dosis().doubleValue());
-      numerator.setSystem(fhirProps.getSystems().ucum());
-
-      if (wirkstoffDosis.dosisEinheit() != null) {
-        numerator.setCode(wirkstoffDosis.dosisEinheit());
-      } else {
-        LOG.debug("Dosis unit is unset, defaulting to mg");
-        numerator.setCode("mg");
-        numerator.setUnit("mg");
-      }
-
-      var strength = new Ratio();
-      strength.setNumerator(numerator);
-      strength.setDenominator(new Quantity(1));
-
-      medication.addIngredient().setIsActive(true).setItem(codeableConcept).setStrength(strength);
+    for (var wirkstoff : wirkstoffe) {
+      var reference = MappingUtils.createReferenceToResource(wirkstoff.medication());
+      medication
+          .addIngredient()
+          .setIsActive(false)
+          .setItem(reference)
+          .setStrength(wirkstoff.strength());
     }
 
     return medication;

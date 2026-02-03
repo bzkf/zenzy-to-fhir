@@ -91,16 +91,10 @@
         },
         "isActive": false
       }, {
-        "itemCodeableConcept": {
-          "coding": [ {
-            "system": "http://fhir.de/CodeSystem/bfarm/atc",
-            "version": "2025",
-            "code": "L01BC02",
-            "display": "Fluorouracil"
-          } ],
-          "text": "Fluorouracil"
+        "itemReference": {
+          "reference": "Medication/58655873b22e0ab3acf6f70b3910599606eeb6526764571a213eda3d29e1849a"
         },
-        "isActive": true,
+        "isActive": false,
         "strength": {
           "numerator": {
             "value": 900.0,
@@ -117,6 +111,54 @@
     "request": {
       "method": "PUT",
       "url": "Medication/8b3b5cb27c86030220ad8a9aaed309377b452312c1fce272d08d26909b97800b"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "58655873b22e0ab3acf6f70b3910599606eeb6526764571a213eda3d29e1849a",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-wirkstoff-id",
+        "value": "Fluorouracil"
+      } ],
+      "code": {
+        "coding": [ {
+          "system": "http://fhir.de/CodeSystem/bfarm/atc",
+          "version": "2025",
+          "code": "L01BC02",
+          "display": "Fluorouracil"
+        } ],
+        "text": "Fluorouracil"
+      },
+      "status": "active",
+      "ingredient": [ {
+        "itemCodeableConcept": {
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+            "code": "387172005",
+            "display": "Fluorouracil (substance)"
+          } ]
+        },
+        "isActive": true,
+        "strength": {
+          "numerator": {
+            "value": 1,
+            "unit": "mg",
+            "system": "http://unitsofmeasure.org",
+            "code": "mg"
+          },
+          "denominator": {
+            "value": 1,
+            "unit": "{Piece}",
+            "system": "http://unitsofmeasure.org",
+            "code": "1"
+          }
+        }
+      } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/58655873b22e0ab3acf6f70b3910599606eeb6526764571a213eda3d29e1849a"
     }
   } ]
 }

@@ -26,6 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
       MedicationRequestMapper.class,
       ProfileTestConfig.class,
       ToCodingMapper.class,
+      WirkstoffMedicationMapper.class
     })
 @EnableConfigurationProperties
 @ConfigurationPropertiesScan
@@ -37,8 +38,11 @@ public class ZenzyTherapieToFhirBundleMapperTest {
   static void beforeAll(
       @Autowired FhirProperties fhirProps,
       @Autowired HergestellteMedicationMapper medicationMapper,
-      @Autowired MedicationRequestMapper medicationRequestMapper) {
-    sut = new ZenzyTherapieToFhirBundleMapper(fhirProps, medicationMapper, medicationRequestMapper);
+      @Autowired MedicationRequestMapper medicationRequestMapper,
+      @Autowired WirkstoffMedicationMapper wirkstoffMedicationMapper) {
+    sut =
+        new ZenzyTherapieToFhirBundleMapper(
+            fhirProps, medicationMapper, medicationRequestMapper, wirkstoffMedicationMapper);
   }
 
   @ParameterizedTest

@@ -77,16 +77,10 @@
         },
         "isActive": false
       }, {
-        "itemCodeableConcept": {
-          "coding": [ {
-            "system": "http://fhir.de/CodeSystem/bfarm/atc",
-            "version": "2025",
-            "code": "L01BC02",
-            "display": "Fluorouracil"
-          } ],
-          "text": "Fluorouracil"
+        "itemReference": {
+          "reference": "Medication/58655873b22e0ab3acf6f70b3910599606eeb6526764571a213eda3d29e1849a"
         },
-        "isActive": true,
+        "isActive": false,
         "strength": {
           "numerator": {
             "value": 3300.0,
@@ -99,16 +93,10 @@
           }
         }
       }, {
-        "itemCodeableConcept": {
-          "coding": [ {
-            "system": "http://fhir.de/CodeSystem/bfarm/atc",
-            "version": "2025",
-            "code": "V03AF06",
-            "display": "Natriumfolinat"
-          } ],
-          "text": "Natriumfolinat"
+        "itemReference": {
+          "reference": "Medication/1f2497d56d36964b8c8de60ff98549470d2226669ceb8272caa0801904c9da77"
         },
-        "isActive": true,
+        "isActive": false,
         "strength": {
           "numerator": {
             "value": 800.0,
@@ -125,6 +113,102 @@
     "request": {
       "method": "PUT",
       "url": "Medication/bf46ae05f5cd7e565b675568ff75924526b5f920b1757e61d39fc037c3f2fbdd"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "58655873b22e0ab3acf6f70b3910599606eeb6526764571a213eda3d29e1849a",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-wirkstoff-id",
+        "value": "Fluorouracil"
+      } ],
+      "code": {
+        "coding": [ {
+          "system": "http://fhir.de/CodeSystem/bfarm/atc",
+          "version": "2025",
+          "code": "L01BC02",
+          "display": "Fluorouracil"
+        } ],
+        "text": "Fluorouracil"
+      },
+      "status": "active",
+      "ingredient": [ {
+        "itemCodeableConcept": {
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+            "code": "387172005",
+            "display": "Fluorouracil (substance)"
+          } ]
+        },
+        "isActive": true,
+        "strength": {
+          "numerator": {
+            "value": 1,
+            "unit": "mg",
+            "system": "http://unitsofmeasure.org",
+            "code": "mg"
+          },
+          "denominator": {
+            "value": 1,
+            "unit": "{Piece}",
+            "system": "http://unitsofmeasure.org",
+            "code": "1"
+          }
+        }
+      } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/58655873b22e0ab3acf6f70b3910599606eeb6526764571a213eda3d29e1849a"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "1f2497d56d36964b8c8de60ff98549470d2226669ceb8272caa0801904c9da77",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-wirkstoff-id",
+        "value": "Natriumfolinat"
+      } ],
+      "code": {
+        "coding": [ {
+          "system": "http://fhir.de/CodeSystem/bfarm/atc",
+          "version": "2025",
+          "code": "V03AF06",
+          "display": "Natriumfolinat"
+        } ],
+        "text": "Natriumfolinat"
+      },
+      "status": "active",
+      "ingredient": [ {
+        "itemCodeableConcept": {
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+            "code": "768550004",
+            "display": "Sodium folinate (substance)"
+          } ]
+        },
+        "isActive": true,
+        "strength": {
+          "numerator": {
+            "value": 1,
+            "unit": "mg",
+            "system": "http://unitsofmeasure.org",
+            "code": "mg"
+          },
+          "denominator": {
+            "value": 1,
+            "unit": "{Piece}",
+            "system": "http://unitsofmeasure.org",
+            "code": "1"
+          }
+        }
+      } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/1f2497d56d36964b8c8de60ff98549470d2226669ceb8272caa0801904c9da77"
     }
   } ]
 }

@@ -1,4 +1,8 @@
-wirkstoff;atc_code;atc_display
-Fluorouracil;L01BC02;Fluorouracil
-Azacitidine;L01BC07;Azacitidin
-Natriumfolinat;V03AF06;Natriumfolinat
+wirkstoff;atc_code;atc_display;snomed_code;snomed_display
+Fluorouracil;L01BC02;Fluorouracil;387172005;Fluorouracil (substance)
+Azacitidine;L01BC07;Azacitidin;412328000;Azacitidine (substance)
+Natriumfolinat;V03AF06;Natriumfolinat;768550004;Sodium folinate (substance)
+Bevacizumab;L01FG01;Bevacizumab;409406007;Bevacizumab (substance)
+Paclitaxel;L01CD01;Paclitaxel;409406007;Bevacizumab (substance)
+Carboplatin;L01XA02;Carboplatin;386905002;Carboplatin (substance)
+Cisplatin;L01XA01;Cisplatin;387318005;Cisplatin (substance)

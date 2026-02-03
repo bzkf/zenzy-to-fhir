@@ -57,16 +57,10 @@
         },
         "isActive": false
       }, {
-        "itemCodeableConcept": {
-          "coding": [ {
-            "system": "http://fhir.de/CodeSystem/bfarm/atc",
-            "version": "2025",
-            "code": "L01BC07",
-            "display": "Azacitidin"
-          } ],
-          "text": "Azacitidine"
+        "itemReference": {
+          "reference": "Medication/bac3a0b089b44058cf1948cfdd3940edb418b1c131814cd580bd9f0ee8752c4b"
         },
-        "isActive": true,
+        "isActive": false,
         "strength": {
           "numerator": {
             "value": 65.0,
@@ -83,6 +77,54 @@
     "request": {
       "method": "PUT",
       "url": "Medication/97e100c1cd88877a4bcb6ce76b780b83081b73e0f2436188004ddd01a3eda2e7"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "bac3a0b089b44058cf1948cfdd3940edb418b1c131814cd580bd9f0ee8752c4b",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-wirkstoff-id",
+        "value": "Azacitidine"
+      } ],
+      "code": {
+        "coding": [ {
+          "system": "http://fhir.de/CodeSystem/bfarm/atc",
+          "version": "2025",
+          "code": "L01BC07",
+          "display": "Azacitidin"
+        } ],
+        "text": "Azacitidine"
+      },
+      "status": "active",
+      "ingredient": [ {
+        "itemCodeableConcept": {
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+            "code": "412328000",
+            "display": "Azacitidine (substance)"
+          } ]
+        },
+        "isActive": true,
+        "strength": {
+          "numerator": {
+            "value": 1,
+            "unit": "mg",
+            "system": "http://unitsofmeasure.org",
+            "code": "mg"
+          },
+          "denominator": {
+            "value": 1,
+            "unit": "{Piece}",
+            "system": "http://unitsofmeasure.org",
+            "code": "1"
+          }
+        }
+      } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/bac3a0b089b44058cf1948cfdd3940edb418b1c131814cd580bd9f0ee8752c4b"
     }
   } ]
 }
