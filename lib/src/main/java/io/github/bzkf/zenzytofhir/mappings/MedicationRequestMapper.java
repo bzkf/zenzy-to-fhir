@@ -5,7 +5,6 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.function.Function;
 import org.hl7.fhir.r4.model.BooleanType;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.DateTimeType;
@@ -33,9 +32,7 @@ public class MedicationRequestMapper {
   private final ToCodingMapper applikationsartMapper;
 
   public MedicationRequestMapper(
-      FhirProperties fhirProperties,
-      Function<ZenzyTherapie, Reference> patientReferenceGenerator,
-      ToCodingMapper applikationsartMapper) {
+      FhirProperties fhirProperties, ToCodingMapper applikationsartMapper) {
     this.fhirProps = fhirProperties;
     this.applikationsartMapper = applikationsartMapper;
   }

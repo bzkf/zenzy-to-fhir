@@ -33,6 +33,10 @@
         {
           "type": "generic",
           "path": "lib/build.gradle"
+        },
+        {
+          "type": "generic",
+          "path": "src/main/resources/application.yaml"
         }
       ]
     }
