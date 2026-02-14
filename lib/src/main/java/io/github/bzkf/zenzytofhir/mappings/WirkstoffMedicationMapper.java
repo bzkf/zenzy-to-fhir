@@ -15,9 +15,9 @@ import org.hl7.fhir.r4.model.Medication;
 import org.hl7.fhir.r4.model.Medication.MedicationStatus;
 import org.hl7.fhir.r4.model.Quantity;
 import org.hl7.fhir.r4.model.Ratio;
-import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 @Service
 public class WirkstoffMedicationMapper {
