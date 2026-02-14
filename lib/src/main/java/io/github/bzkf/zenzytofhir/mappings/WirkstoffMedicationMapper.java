@@ -78,7 +78,7 @@ public class WirkstoffMedicationMapper {
       var identifier =
           new Identifier()
               .setSystem(fhirProperties.getSystems().identifiers().zenzyWirkstoffId())
-              .setValue(wirkstoffDosis.wirkstoff());
+              .setValue(MappingUtils.SLUGIFY.slugify(wirkstoffDosis.wirkstoff()));
       medication.addIdentifier(identifier);
       medication.setId(MappingUtils.computeResourceIdFromIdentifier(identifier));
       medication.setStatus(MedicationStatus.ACTIVE);
@@ -88,17 +88,17 @@ public class WirkstoffMedicationMapper {
 
       var maybeMapped = toCodingMapper.mapWirkstoff(wirkstoffDosis.wirkstoff());
       if (maybeMapped.isPresent()) {
-        var atc = fhirProperties.getCodings().atc();
         var mapped = maybeMapped.get();
         if (mapped.atcCode() != null) {
+          var atc = fhirProperties.getCodings().atc();
           atc.setCode(mapped.atcCode()).setDisplay(mapped.atcDisplay());
           codeableConcept.addCoding(atc);
         }
 
         if (mapped.snomedCode() != null) {
-          var substance = fhirProperties.getCodings().snomed();
-          substance.setCode(mapped.snomedCode()).setDisplay(mapped.snomedDisplay());
-          medication.addIngredient().setItem(new CodeableConcept(substance)).setIsActive(true);
+          var snomed = fhirProperties.getCodings().snomed();
+          snomed.setCode(mapped.snomedCode()).setDisplay(mapped.snomedDisplay());
+          codeableConcept.addCoding(snomed);
         }
       } else {
         // TODO: data absent extension
@@ -126,16 +126,18 @@ public class WirkstoffMedicationMapper {
           .setCode("1")
           .setUnit("{Stueck}")
           .setSystem(fhirProperties.getSystems().ucum());
-
       var strength = new Ratio();
-      var denominator =
-          new Quantity()
-              .setValue(therapie.gesamtvolumenNumeric())
-              .setUnit("milliliter")
-              .setCode("mL")
-              .setSystem(fhirProperties.getSystems().ucum());
       strength.setNumerator(numerator);
-      strength.setDenominator(denominator);
+
+      if (therapie.gesamtvolumenNumeric() != null && therapie.gesamtvolumenNumeric() > 0) {
+        var denominator =
+            new Quantity()
+                .setValue(therapie.gesamtvolumenNumeric())
+                .setUnit("milliliter")
+                .setCode("mL")
+                .setSystem(fhirProperties.getSystems().ucum());
+        strength.setDenominator(denominator);
+      }
 
       result.add(new MedicationAndStrength(medication, strength));
     }

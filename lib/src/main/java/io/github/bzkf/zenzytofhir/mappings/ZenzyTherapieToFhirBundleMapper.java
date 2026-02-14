@@ -1,6 +1,7 @@
 package io.github.bzkf.zenzytofhir.mappings;
 
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
+import java.util.function.Function;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleType;
 import org.hl7.fhir.r4.model.Bundle.HTTPVerb;
@@ -20,44 +21,50 @@ public class ZenzyTherapieToFhirBundleMapper {
   private final MedicationRequestMapper medicationRequestMapper;
   private final WirkstoffMedicationMapper wirkstoffMedicationMapper;
   private final TraegerLoesungMedicationMapper traegerLoesungMedicationMapper;
+  private final Function<ZenzyTherapie, Reference> patientReferenceGenerator;
 
   public ZenzyTherapieToFhirBundleMapper(
       FhirProperties fhirProperties,
       HergestellteMedicationMapper medicationMapper,
       MedicationRequestMapper medicationRequestMapper,
       WirkstoffMedicationMapper wirkstoffMedicationMapper,
-      TraegerLoesungMedicationMapper traegerLoesungMedicationMapper) {
+      TraegerLoesungMedicationMapper traegerLoesungMedicationMapper,
+      Function<ZenzyTherapie, Reference> patientReferenceGenerator) {
     this.fhirProps = fhirProperties;
     this.medicationMapper = medicationMapper;
     this.medicationRequestMapper = medicationRequestMapper;
     this.wirkstoffMedicationMapper = wirkstoffMedicationMapper;
     this.traegerLoesungMedicationMapper = traegerLoesungMedicationMapper;
+    this.patientReferenceGenerator = patientReferenceGenerator;
   }
 
-  public Bundle map(ZenzyTherapie record) {
-    MDC.put("autoNr", record.autoNr().toString());
-    MDC.put("nr", record.nr().toString());
-    MDC.put("therapieNummer", record.therapieNummer().toString());
-    MDC.put("herstellungsId", record.herstellungsId());
+  public Bundle map(ZenzyTherapie therapie) {
+    MDC.put("autoNr", therapie.autoNr().toString());
+    MDC.put("nr", therapie.nr().toString());
+    MDC.put("therapieNummer", therapie.therapieNummer().toString());
+    MDC.put("herstellungsId", therapie.herstellungsId());
 
     LOG.debug("Mapping ZenzyTherapie record to FHIR");
 
-    var wirkstoffe = wirkstoffMedicationMapper.map(record);
+    var patientReference = patientReferenceGenerator.apply(therapie);
 
-    var traegerLoesung = traegerLoesungMedicationMapper.map(record);
+    var wirkstoffe = wirkstoffMedicationMapper.map(therapie);
+
+    var traegerLoesung = traegerLoesungMedicationMapper.map(therapie);
 
     Reference traegerLoesungReference = null;
     if (traegerLoesung.isPresent()) {
       traegerLoesungReference = MappingUtils.createReferenceToResource(traegerLoesung.get());
-      traegerLoesungReference.setDisplay(record.traegerloesung());
+      traegerLoesungReference.setDisplay(therapie.traegerloesung());
     } else {
       LOG.debug("No Tragerloesung specified");
     }
 
-    var medication = medicationMapper.map(record, wirkstoffe, traegerLoesungReference);
+    var medication = medicationMapper.map(therapie, wirkstoffe, traegerLoesungReference);
 
     var medicationRequest =
-        medicationRequestMapper.map(record, MappingUtils.createReferenceToResource(medication));
+        medicationRequestMapper.map(
+            therapie, MappingUtils.createReferenceToResource(medication), patientReference);
 
     var bundle = new Bundle();
     bundle.setType(BundleType.TRANSACTION);

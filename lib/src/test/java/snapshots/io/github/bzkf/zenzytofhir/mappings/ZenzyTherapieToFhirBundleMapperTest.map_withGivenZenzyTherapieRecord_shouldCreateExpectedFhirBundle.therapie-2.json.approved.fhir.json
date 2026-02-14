@@ -104,7 +104,7 @@
         }
       }, {
         "itemReference": {
-          "reference": "Medication/58655873b22e0ab3acf6f70b3910599606eeb6526764571a213eda3d29e1849a",
+          "reference": "Medication/a61844b2f16bae5283fe2e454cc8382df2bb056c937bfe238b640ec08613e88d",
           "display": "Fluorouracil"
         },
         "isActive": false,
@@ -131,10 +131,10 @@
   }, {
     "resource": {
       "resourceType": "Medication",
-      "id": "58655873b22e0ab3acf6f70b3910599606eeb6526764571a213eda3d29e1849a",
+      "id": "a61844b2f16bae5283fe2e454cc8382df2bb056c937bfe238b640ec08613e88d",
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-wirkstoff-id",
-        "value": "Fluorouracil"
+        "value": "fluorouracil"
       } ],
       "code": {
         "coding": [ {
@@ -142,6 +142,11 @@
           "version": "2025",
           "code": "L01BC02",
           "display": "Fluorouracil"
+        }, {
+          "system": "http://snomed.info/sct",
+          "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+          "code": "387172005",
+          "display": "Fluorouracil (substance)"
         } ],
         "text": "Fluorouracil"
       },
@@ -159,22 +164,11 @@
           "system": "http://unitsofmeasure.org",
           "code": "1"
         }
-      },
-      "ingredient": [ {
-        "itemCodeableConcept": {
-          "coding": [ {
-            "system": "http://snomed.info/sct",
-            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
-            "code": "387172005",
-            "display": "Fluorouracil (substance)"
-          } ]
-        },
-        "isActive": true
-      } ]
+      }
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/58655873b22e0ab3acf6f70b3910599606eeb6526764571a213eda3d29e1849a"
+      "url": "Medication/a61844b2f16bae5283fe2e454cc8382df2bb056c937bfe238b640ec08613e88d"
     }
   }, {
     "resource": {

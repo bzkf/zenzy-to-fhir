@@ -61,7 +61,7 @@
         }
       }, {
         "itemReference": {
-          "reference": "Medication/bac3a0b089b44058cf1948cfdd3940edb418b1c131814cd580bd9f0ee8752c4b",
+          "reference": "Medication/3fddf56823cccc01dac2511fb49adc90596d15352323c905efb1a96c0ee80f2a",
           "display": "Azacitidine"
         },
         "isActive": false,
@@ -71,12 +71,6 @@
             "unit": "{Stueck}",
             "system": "http://unitsofmeasure.org",
             "code": "1"
-          },
-          "denominator": {
-            "value": 0.0,
-            "unit": "milliliter",
-            "system": "http://unitsofmeasure.org",
-            "code": "mL"
           }
         }
       } ]
@@ -88,10 +82,10 @@
   }, {
     "resource": {
       "resourceType": "Medication",
-      "id": "bac3a0b089b44058cf1948cfdd3940edb418b1c131814cd580bd9f0ee8752c4b",
+      "id": "3fddf56823cccc01dac2511fb49adc90596d15352323c905efb1a96c0ee80f2a",
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-wirkstoff-id",
-        "value": "Azacitidine"
+        "value": "azacitidine"
       } ],
       "code": {
         "coding": [ {
@@ -99,6 +93,11 @@
           "version": "2025",
           "code": "L01BC07",
           "display": "Azacitidin"
+        }, {
+          "system": "http://snomed.info/sct",
+          "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+          "code": "412328000",
+          "display": "Azacitidine (substance)"
         } ],
         "text": "Azacitidine"
       },
@@ -116,22 +115,11 @@
           "system": "http://unitsofmeasure.org",
           "code": "1"
         }
-      },
-      "ingredient": [ {
-        "itemCodeableConcept": {
-          "coding": [ {
-            "system": "http://snomed.info/sct",
-            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
-            "code": "412328000",
-            "display": "Azacitidine (substance)"
-          } ]
-        },
-        "isActive": true
-      } ]
+      }
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/bac3a0b089b44058cf1948cfdd3940edb418b1c131814cd580bd9f0ee8752c4b"
+      "url": "Medication/3fddf56823cccc01dac2511fb49adc90596d15352323c905efb1a96c0ee80f2a"
     }
   }, {
     "resource": {

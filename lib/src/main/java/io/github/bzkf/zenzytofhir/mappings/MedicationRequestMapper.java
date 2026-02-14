@@ -19,6 +19,7 @@ import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Timing;
 import org.hl7.fhir.r4.model.Timing.TimingRepeatComponent;
 import org.hl7.fhir.r4.model.Timing.UnitsOfTime;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,6 @@ public class MedicationRequestMapper {
   private static final ZoneId DEFAULT_ZONE_ID = ZoneId.of("Europe/Berlin");
 
   private final FhirProperties fhirProps;
-  private final Function<ZenzyTherapie, Reference> patientReferenceGenerator;
   private final ToCodingMapper applikationsartMapper;
 
   public MedicationRequestMapper(
@@ -37,11 +37,13 @@ public class MedicationRequestMapper {
       Function<ZenzyTherapie, Reference> patientReferenceGenerator,
       ToCodingMapper applikationsartMapper) {
     this.fhirProps = fhirProperties;
-    this.patientReferenceGenerator = patientReferenceGenerator;
     this.applikationsartMapper = applikationsartMapper;
   }
 
-  public MedicationRequest map(ZenzyTherapie therapie, Reference medicationReference) {
+  public MedicationRequest map(
+      @NonNull ZenzyTherapie therapie,
+      @NonNull Reference medicationReference,
+      @NonNull Reference patient) {
     // Mapping logic to convert ZenzyTherapieRecord to FHIR Bundle goes here
     var medicationRequest = new MedicationRequest();
 
@@ -64,8 +66,7 @@ public class MedicationRequestMapper {
 
     medicationRequest.setReported(new BooleanType(false));
 
-    var patientReference = patientReferenceGenerator.apply(therapie);
-    medicationRequest.setSubject(patientReference);
+    medicationRequest.setSubject(patient);
 
     // TODO: authoredOn ?
 
@@ -128,7 +129,7 @@ public class MedicationRequestMapper {
       LOG.warn("Applikationsart '{}' could not be mapped", therapie.applikationsart());
     }
 
-    if (therapie.gesamtvolumenNumeric() > 0) {
+    if (therapie.gesamtvolumenNumeric() != null && therapie.gesamtvolumenNumeric() > 0) {
       var quantity =
           new Quantity()
               .setCode("mL")

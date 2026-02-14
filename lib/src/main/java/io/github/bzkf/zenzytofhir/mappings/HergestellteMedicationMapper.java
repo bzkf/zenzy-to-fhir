@@ -38,7 +38,7 @@ public class HergestellteMedicationMapper {
     medication.setId(MappingUtils.computeResourceIdFromIdentifier(identifier));
     medication.setStatus(MedicationStatus.ACTIVE);
 
-    if (therapie.gesamtvolumenNumeric() > 0) {
+    if (therapie.gesamtvolumenNumeric() != null && therapie.gesamtvolumenNumeric() > 0) {
       var quantity =
           new Quantity()
               .setValue(therapie.gesamtvolumenNumeric())

@@ -10,7 +10,7 @@ applikationsart;route_snomed_code;route_snomed_display;method_snomed_code;method
 "subkutan, Teildosis";34206005;"Subcutaneous route";300036000;"Subcutaneous infusion (procedure)";;;;"TODO: Teildosis klären, method validieren"
 "Infusion über 16  - 24 Stunden";47625008;"Intravenous route";36576007;"Infusion (procedure)";16;24;h;
 "Infusion über 3 Stunden";47625008;"Intravenous route";36576007;"Infusion (procedure)";3;;h;
-"Injectomat-Spritze";47625008;"Intravenous route";36576007;"Infusion (procedure)";1;;h;
+"Injectomat-Spritze";47625008;"Intravenous route";36576007;"Infusion (procedure)";;;;
 "Infusion über 1,5 -3 Stunden";47625008;"Intravenous route";36576007;"Infusion (procedure)";1.5;3;h;
 "Kurzinfusion";47625008;"Intravenous route";36576007;"Infusion (procedure)";;;;
 "Baxterpumpe (SV4) über 24 h";47625008;"Intravenous route";36576007;"Infusion (procedure)";24;;h;

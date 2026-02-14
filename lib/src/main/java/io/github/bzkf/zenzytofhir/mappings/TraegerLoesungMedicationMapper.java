@@ -1,8 +1,6 @@
 package io.github.bzkf.zenzytofhir.mappings;
 
-import com.github.slugify.Slugify;
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
-import java.util.Locale;
 import java.util.Optional;
 import org.apache.jena.atlas.logging.Log;
 import org.hl7.fhir.r4.model.CodeableConcept;
@@ -16,8 +14,6 @@ import org.springframework.util.StringUtils;
 
 @Service
 public class TraegerLoesungMedicationMapper {
-  private static final Slugify slugify =
-      Slugify.builder().lowerCase(true).locale(Locale.GERMAN).build();
 
   private final FhirProperties fhirProps;
   private final ToCodingMapper toSnomedMapper;
@@ -37,7 +33,7 @@ public class TraegerLoesungMedicationMapper {
     var identifier =
         new Identifier()
             .setSystem(fhirProps.getSystems().identifiers().zenzyTraegerloesungId())
-            .setValue(slugify.slugify(therapie.traegerloesung()));
+            .setValue(MappingUtils.SLUGIFY.slugify(therapie.traegerloesung()));
     medication.addIdentifier(identifier);
     medication.setId(MappingUtils.computeResourceIdFromIdentifier(identifier));
     medication.setStatus(MedicationStatus.ACTIVE);

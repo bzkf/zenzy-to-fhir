@@ -10,7 +10,9 @@ import io.github.bzkf.zenzytofhir.ProfileTestConfig;
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.function.Function;
 import org.approvaltests.Approvals;
+import org.hl7.fhir.r4.model.Reference;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -41,14 +43,16 @@ public class ZenzyTherapieToFhirBundleMapperTest {
       @Autowired HergestellteMedicationMapper medicationMapper,
       @Autowired MedicationRequestMapper medicationRequestMapper,
       @Autowired WirkstoffMedicationMapper wirkstoffMedicationMapper,
-      @Autowired TraegerLoesungMedicationMapper traegerLoesungMedicationMapper) {
+      @Autowired TraegerLoesungMedicationMapper traegerLoesungMedicationMapper,
+      @Autowired Function<ZenzyTherapie, Reference> patientReferenceGenerator) {
     sut =
         new ZenzyTherapieToFhirBundleMapper(
             fhirProps,
             medicationMapper,
             medicationRequestMapper,
             wirkstoffMedicationMapper,
-            traegerLoesungMedicationMapper);
+            traegerLoesungMedicationMapper,
+            patientReferenceGenerator);
   }
 
   @ParameterizedTest
@@ -57,6 +61,7 @@ public class ZenzyTherapieToFhirBundleMapperTest {
     "therapie-2.json",
     "therapie-3.json",
     "therapie-4.json",
+    "therapie-5.json",
   })
   void map_withGivenZenzyTherapieRecord_shouldCreateExpectedFhirBundle(String sourceFile)
       throws StreamReadException, DatabindException, IOException, ParseException {
