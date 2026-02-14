@@ -1,7 +1,5 @@
 package io.github.bzkf.zenzytofhir.mappings;
 
-import static net.logstash.logback.argument.StructuredArguments.kv;
-
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleType;
@@ -10,6 +8,7 @@ import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,7 +35,12 @@ public class ZenzyTherapieToFhirBundleMapper {
   }
 
   public Bundle map(ZenzyTherapie record) {
-    LOG.debug("Mapping ZenzyTherapie record {} to FHIR", kv("autoNr", record.autoNr()));
+    MDC.put("autoNr", record.autoNr().toString());
+    MDC.put("nr", record.nr().toString());
+    MDC.put("therapieNummer", record.therapieNummer().toString());
+    MDC.put("herstellungsId", record.herstellungsId().toString());
+
+    LOG.debug("Mapping ZenzyTherapie record to FHIR");
 
     var wirkstoffe = wirkstoffMedicationMapper.map(record);
 
@@ -46,6 +50,8 @@ public class ZenzyTherapieToFhirBundleMapper {
     if (traegerLoesung.isPresent()) {
       traegerLoesungReference = MappingUtils.createReferenceToResource(traegerLoesung.get());
       traegerLoesungReference.setDisplay(record.traegerLoesung());
+    } else {
+      LOG.debug("No Tragerloesung specified");
     }
 
     var medication = medicationMapper.map(record, wirkstoffe, traegerLoesungReference);

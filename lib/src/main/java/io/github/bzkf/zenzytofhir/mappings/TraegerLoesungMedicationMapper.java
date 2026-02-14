@@ -4,6 +4,7 @@ import com.github.slugify.Slugify;
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
 import java.util.Locale;
 import java.util.Optional;
+import org.apache.jena.atlas.logging.Log;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Medication;
@@ -31,6 +32,7 @@ public class TraegerLoesungMedicationMapper {
     if (!StringUtils.hasText(therapie.traegerLoesung())) {
       return Optional.empty();
     }
+
     var medication = new Medication();
     var identifier =
         new Identifier()
@@ -58,6 +60,8 @@ public class TraegerLoesungMedicationMapper {
         atc.setCode(mapped.atcCode()).setDisplay(mapped.atcDisplay());
         codeableConcept.addCoding(atc);
       }
+    } else {
+      Log.warn("Traegerlösung {} could not be mapped", therapie.traegerLoesung());
     }
 
     medication.setCode(codeableConcept);

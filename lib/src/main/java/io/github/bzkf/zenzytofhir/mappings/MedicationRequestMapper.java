@@ -56,13 +56,12 @@ public class MedicationRequestMapper {
     // figure out what zenzy status to map to "cancelled"
     medicationRequest.setStatus(MedicationRequestStatus.ACTIVE);
 
-    // TODO: verify if this is the correct code
     medicationRequest.setIntent(MedicationRequestIntent.ORDER);
 
     // TODO: we probably can't set the category (?).
+    // or maybe set it to chemotherapy?
     // medicationRequest.setCategory(null)
 
-    // or maybe set it to chemotherapy?
     medicationRequest.setReported(new BooleanType(false));
 
     var patientReference = patientReferenceGenerator.apply(therapie);
@@ -82,9 +81,10 @@ public class MedicationRequestMapper {
     dosage.setTiming(timing);
     dosage.setText(therapie.applikationsArt());
 
-    var a = applikationsartMapper.mapApplikationsart(therapie.applikationsArt());
-    if (a.isPresent()) {
-      var applikationsart = a.get();
+    var mappedApplikationsart =
+        applikationsartMapper.mapApplikationsart(therapie.applikationsArt());
+    if (mappedApplikationsart.isPresent()) {
+      var applikationsart = mappedApplikationsart.get();
 
       if (applikationsart.routeSnomedCode() != null) {
         var route =
@@ -124,6 +124,8 @@ public class MedicationRequestMapper {
       if (applikationsart.durationUcumUnit() != null) {
         repeat.setDurationUnit(UnitsOfTime.fromCode(applikationsart.durationUcumUnit()));
       }
+    } else {
+      LOG.warn("Applikationsart '{}' could not be mapped", therapie.applikationsArt());
     }
 
     if (therapie.gesamtvolumenNumeric() > 0) {
@@ -134,6 +136,8 @@ public class MedicationRequestMapper {
               .setSystem(fhirProps.getSystems().ucum())
               .setValue(therapie.gesamtvolumenNumeric());
       dosage.addDoseAndRate().setDose(quantity);
+    } else {
+      LOG.warn("Gesamtvolumen <= 0");
     }
 
     medicationRequest.addDosageInstruction(dosage);

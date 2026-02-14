@@ -100,6 +100,7 @@ public class WirkstoffMedicationMapper {
         }
       } else {
         // TODO: data absent extension
+        LOG.warn("Couldn't map wirkstoff {}", wirkstoffDosis.wirkstoff());
       }
 
       medication.setCode(codeableConcept);
@@ -111,6 +112,8 @@ public class WirkstoffMedicationMapper {
       if (wirkstoffDosis.dosisEinheit() != null) {
         amount.getNumerator().setCode(wirkstoffDosis.dosisEinheit());
         amount.getNumerator().setUnit(wirkstoffDosis.dosisEinheit());
+      } else {
+        LOG.debug("Dosis einheit unset, assuming mg");
       }
 
       medication.setAmount(amount);
