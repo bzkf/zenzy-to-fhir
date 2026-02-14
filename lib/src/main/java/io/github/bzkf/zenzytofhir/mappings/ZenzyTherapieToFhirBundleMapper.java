@@ -38,7 +38,7 @@ public class ZenzyTherapieToFhirBundleMapper {
     MDC.put("autoNr", record.autoNr().toString());
     MDC.put("nr", record.nr().toString());
     MDC.put("therapieNummer", record.therapieNummer().toString());
-    MDC.put("herstellungsId", record.herstellungsId().toString());
+    MDC.put("herstellungsId", record.herstellungsId());
 
     LOG.debug("Mapping ZenzyTherapie record to FHIR");
 
