@@ -41,26 +41,6 @@
       "status": "active",
       "ingredient": [ {
         "itemReference": {
-          "reference": "Medication/a41740822ca5ac0381cb9aa6452389934d09c1c27a1589a00996e6ff3b7b2a8b",
-          "display": "unverdünnt"
-        },
-        "isActive": false,
-        "strength": {
-          "numerator": {
-            "value": 0.0,
-            "unit": "1",
-            "system": "http://unitsofmeasure.org",
-            "code": "{Stueck}"
-          },
-          "denominator": {
-            "value": 0.0,
-            "unit": "milliliter",
-            "system": "http://unitsofmeasure.org",
-            "code": "mL"
-          }
-        }
-      }, {
-        "itemReference": {
           "reference": "Medication/3fddf56823cccc01dac2511fb49adc90596d15352323c905efb1a96c0ee80f2a",
           "display": "Azacitidine"
         },
