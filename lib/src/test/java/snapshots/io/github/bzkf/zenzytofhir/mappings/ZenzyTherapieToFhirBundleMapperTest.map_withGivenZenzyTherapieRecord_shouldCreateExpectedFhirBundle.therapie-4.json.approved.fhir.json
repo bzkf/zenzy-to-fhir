@@ -22,21 +22,34 @@
       "dosageInstruction": [ {
         "text": "Baxterpumpe (SV4) über 24 h",
         "timing": {
-          "event": [ "2007-05-02T02:00:00+02:00" ]
+          "event": [ "2007-05-02T02:00:00+02:00" ],
+          "repeat": {
+            "duration": 24.0,
+            "durationUnit": "h"
+          }
+        },
+        "route": {
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+            "code": "47625008",
+            "display": "Intravenous route"
+          } ]
+        },
+        "method": {
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+            "code": "36576007",
+            "display": "Infusion (procedure)"
+          } ]
         },
         "doseAndRate": [ {
           "doseQuantity": {
-            "value": 2000.0,
-            "unit": "mg/m2",
+            "value": 100.0,
+            "unit": "milliliter",
             "system": "http://unitsofmeasure.org",
-            "code": "mg/m2"
-          }
-        }, {
-          "doseQuantity": {
-            "value": 500.0,
-            "unit": "mg/m2",
-            "system": "http://unitsofmeasure.org",
-            "code": "mg/m2"
+            "code": "mL"
           }
         } ]
       } ]
@@ -62,50 +75,70 @@
           "code": "mL"
         },
         "denominator": {
-          "value": 1
+          "value": 1,
+          "unit": "1",
+          "system": "http://unitsofmeasure.org",
+          "code": "{Stueck}"
         }
       },
       "ingredient": [ {
-        "itemCodeableConcept": {
-          "coding": [ {
-            "system": "http://snomed.info/sct",
-            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
-            "code": "1263924005",
-            "display": "Product containing precisely sodium chloride 9 milligram/1 milliliter conventional release solution for infusion and/or injection (clinical drug)"
-          } ],
-          "text": "NaCl 0.9%"
+        "itemReference": {
+          "reference": "Medication/fb1567b70a9ef69e338fa2d329ed33bc44b7308cd4358d4c5163f5a796fff4fa",
+          "display": "NaCl 0.9%"
         },
-        "isActive": false
+        "isActive": false,
+        "strength": {
+          "numerator": {
+            "value": 100.0,
+            "unit": "1",
+            "system": "http://unitsofmeasure.org",
+            "code": "{Stueck}"
+          },
+          "denominator": {
+            "value": 100.0,
+            "unit": "milliliter",
+            "system": "http://unitsofmeasure.org",
+            "code": "mL"
+          }
+        }
       }, {
         "itemReference": {
-          "reference": "Medication/58655873b22e0ab3acf6f70b3910599606eeb6526764571a213eda3d29e1849a"
+          "reference": "Medication/58655873b22e0ab3acf6f70b3910599606eeb6526764571a213eda3d29e1849a",
+          "display": "Fluorouracil"
         },
         "isActive": false,
         "strength": {
           "numerator": {
             "value": 3300.0,
-            "unit": "mg",
+            "unit": "{Stueck}",
             "system": "http://unitsofmeasure.org",
-            "code": "mg"
+            "code": "1"
           },
           "denominator": {
-            "value": 1
+            "value": 100.0,
+            "unit": "milliliter",
+            "system": "http://unitsofmeasure.org",
+            "code": "mL"
           }
         }
       }, {
         "itemReference": {
-          "reference": "Medication/1f2497d56d36964b8c8de60ff98549470d2226669ceb8272caa0801904c9da77"
+          "reference": "Medication/1f2497d56d36964b8c8de60ff98549470d2226669ceb8272caa0801904c9da77",
+          "display": "Natriumfolinat"
         },
         "isActive": false,
         "strength": {
           "numerator": {
             "value": 800.0,
-            "unit": "mg",
+            "unit": "{Stueck}",
             "system": "http://unitsofmeasure.org",
-            "code": "mg"
+            "code": "1"
           },
           "denominator": {
-            "value": 1
+            "value": 100.0,
+            "unit": "milliliter",
+            "system": "http://unitsofmeasure.org",
+            "code": "mL"
           }
         }
       } ]
@@ -132,6 +165,20 @@
         "text": "Fluorouracil"
       },
       "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 1,
+          "unit": "mg",
+          "system": "http://unitsofmeasure.org",
+          "code": "mg"
+        },
+        "denominator": {
+          "value": 1,
+          "unit": "{Stueck}",
+          "system": "http://unitsofmeasure.org",
+          "code": "1"
+        }
+      },
       "ingredient": [ {
         "itemCodeableConcept": {
           "coding": [ {
@@ -141,21 +188,7 @@
             "display": "Fluorouracil (substance)"
           } ]
         },
-        "isActive": true,
-        "strength": {
-          "numerator": {
-            "value": 1,
-            "unit": "mg",
-            "system": "http://unitsofmeasure.org",
-            "code": "mg"
-          },
-          "denominator": {
-            "value": 1,
-            "unit": "{Piece}",
-            "system": "http://unitsofmeasure.org",
-            "code": "1"
-          }
-        }
+        "isActive": true
       } ]
     },
     "request": {
@@ -180,6 +213,20 @@
         "text": "Natriumfolinat"
       },
       "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 1,
+          "unit": "mg",
+          "system": "http://unitsofmeasure.org",
+          "code": "mg"
+        },
+        "denominator": {
+          "value": 1,
+          "unit": "{Stueck}",
+          "system": "http://unitsofmeasure.org",
+          "code": "1"
+        }
+      },
       "ingredient": [ {
         "itemCodeableConcept": {
           "coding": [ {
@@ -189,26 +236,54 @@
             "display": "Sodium folinate (substance)"
           } ]
         },
-        "isActive": true,
-        "strength": {
-          "numerator": {
-            "value": 1,
-            "unit": "mg",
-            "system": "http://unitsofmeasure.org",
-            "code": "mg"
-          },
-          "denominator": {
-            "value": 1,
-            "unit": "{Piece}",
-            "system": "http://unitsofmeasure.org",
-            "code": "1"
-          }
-        }
+        "isActive": true
       } ]
     },
     "request": {
       "method": "PUT",
       "url": "Medication/1f2497d56d36964b8c8de60ff98549470d2226669ceb8272caa0801904c9da77"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "fb1567b70a9ef69e338fa2d329ed33bc44b7308cd4358d4c5163f5a796fff4fa",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-traegerloesung-id",
+        "value": "nacl-0-9"
+      } ],
+      "code": {
+        "coding": [ {
+          "system": "http://snomed.info/sct",
+          "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+          "code": "1263924005",
+          "display": "Product containing precisely sodium chloride 9 milligram/1 milliliter conventional release solution for infusion and/or injection (clinical drug)"
+        }, {
+          "system": "http://fhir.de/CodeSystem/bfarm/atc",
+          "version": "2025",
+          "code": "V07AB02",
+          "display": "Physiologische Kochsalzlösung"
+        } ],
+        "text": "NaCl 0.9%"
+      },
+      "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 1,
+          "unit": "milliliter",
+          "system": "http://unitsofmeasure.org",
+          "code": "mL"
+        },
+        "denominator": {
+          "value": 1,
+          "unit": "1",
+          "system": "http://unitsofmeasure.org",
+          "code": "{Stueck}"
+        }
+      }
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/fb1567b70a9ef69e338fa2d329ed33bc44b7308cd4358d4c5163f5a796fff4fa"
     }
   } ]
 }

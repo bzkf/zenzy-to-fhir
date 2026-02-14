@@ -47,9 +47,9 @@
         "doseAndRate": [ {
           "doseQuantity": {
             "value": 500.0,
-            "unit": "mg/m2",
+            "unit": "milliliter",
             "system": "http://unitsofmeasure.org",
-            "code": "mg/m2"
+            "code": "mL"
           }
         } ]
       } ]
@@ -75,34 +75,50 @@
           "code": "mL"
         },
         "denominator": {
-          "value": 1
+          "value": 1,
+          "unit": "1",
+          "system": "http://unitsofmeasure.org",
+          "code": "{Stueck}"
         }
       },
       "ingredient": [ {
-        "itemCodeableConcept": {
-          "coding": [ {
-            "system": "http://snomed.info/sct",
-            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
-            "code": "1268457003",
-            "display": "Product containing precisely glucose 50 milligram/1 milliliter conventional release solution for infusion and/or injection (clinical drug)"
-          } ],
-          "text": "Glucose 5%"
+        "itemReference": {
+          "reference": "Medication/7b0bedd37ab7da30e39737787f8ca4eef72b846160048dbaa2cb74eae461e276",
+          "display": "Glucose 5%"
         },
-        "isActive": false
+        "isActive": false,
+        "strength": {
+          "numerator": {
+            "value": 500.0,
+            "unit": "1",
+            "system": "http://unitsofmeasure.org",
+            "code": "{Stueck}"
+          },
+          "denominator": {
+            "value": 500.0,
+            "unit": "milliliter",
+            "system": "http://unitsofmeasure.org",
+            "code": "mL"
+          }
+        }
       }, {
         "itemReference": {
-          "reference": "Medication/58655873b22e0ab3acf6f70b3910599606eeb6526764571a213eda3d29e1849a"
+          "reference": "Medication/58655873b22e0ab3acf6f70b3910599606eeb6526764571a213eda3d29e1849a",
+          "display": "Fluorouracil"
         },
         "isActive": false,
         "strength": {
           "numerator": {
             "value": 900.0,
-            "unit": "mg",
+            "unit": "{Stueck}",
             "system": "http://unitsofmeasure.org",
-            "code": "mg"
+            "code": "1"
           },
           "denominator": {
-            "value": 1
+            "value": 500.0,
+            "unit": "milliliter",
+            "system": "http://unitsofmeasure.org",
+            "code": "mL"
           }
         }
       } ]
@@ -129,6 +145,20 @@
         "text": "Fluorouracil"
       },
       "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 1,
+          "unit": "mg",
+          "system": "http://unitsofmeasure.org",
+          "code": "mg"
+        },
+        "denominator": {
+          "value": 1,
+          "unit": "{Stueck}",
+          "system": "http://unitsofmeasure.org",
+          "code": "1"
+        }
+      },
       "ingredient": [ {
         "itemCodeableConcept": {
           "coding": [ {
@@ -138,26 +168,54 @@
             "display": "Fluorouracil (substance)"
           } ]
         },
-        "isActive": true,
-        "strength": {
-          "numerator": {
-            "value": 1,
-            "unit": "mg",
-            "system": "http://unitsofmeasure.org",
-            "code": "mg"
-          },
-          "denominator": {
-            "value": 1,
-            "unit": "{Piece}",
-            "system": "http://unitsofmeasure.org",
-            "code": "1"
-          }
-        }
+        "isActive": true
       } ]
     },
     "request": {
       "method": "PUT",
       "url": "Medication/58655873b22e0ab3acf6f70b3910599606eeb6526764571a213eda3d29e1849a"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "7b0bedd37ab7da30e39737787f8ca4eef72b846160048dbaa2cb74eae461e276",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-traegerloesung-id",
+        "value": "glucose-5"
+      } ],
+      "code": {
+        "coding": [ {
+          "system": "http://snomed.info/sct",
+          "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+          "code": "1268457003",
+          "display": "Product containing precisely glucose 50 milligram/1 milliliter conventional release solution for infusion and/or injection (clinical drug)"
+        }, {
+          "system": "http://fhir.de/CodeSystem/bfarm/atc",
+          "version": "2025",
+          "code": "B05BA11",
+          "display": "Glucose"
+        } ],
+        "text": "Glucose 5%"
+      },
+      "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 1,
+          "unit": "milliliter",
+          "system": "http://unitsofmeasure.org",
+          "code": "mL"
+        },
+        "denominator": {
+          "value": 1,
+          "unit": "1",
+          "system": "http://unitsofmeasure.org",
+          "code": "{Stueck}"
+        }
+      }
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/7b0bedd37ab7da30e39737787f8ca4eef72b846160048dbaa2cb74eae461e276"
     }
   } ]
 }

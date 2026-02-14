@@ -13,3 +13,4 @@ applikationsart;route_snomed_code;route_snomed_display;method_snomed_code;method
 "Injectomat-Spritze";47625008;"Intravenous route";36576007;"Infusion (procedure)";1;;h;
 "Infusion über 1,5 -3 Stunden";47625008;"Intravenous route";36576007;"Infusion (procedure)";1.5;3;h;
 "Kurzinfusion";47625008;"Intravenous route";36576007;"Infusion (procedure)";;;;
+"Baxterpumpe (SV4) über 24 h";47625008;"Intravenous route";36576007;"Infusion (procedure)";24;;h;

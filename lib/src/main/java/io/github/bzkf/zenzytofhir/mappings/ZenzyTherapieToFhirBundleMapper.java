@@ -6,6 +6,7 @@ import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleType;
 import org.hl7.fhir.r4.model.Bundle.HTTPVerb;
+import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,16 +20,19 @@ public class ZenzyTherapieToFhirBundleMapper {
   private final HergestellteMedicationMapper medicationMapper;
   private final MedicationRequestMapper medicationRequestMapper;
   private final WirkstoffMedicationMapper wirkstoffMedicationMapper;
+  private final TraegerLoesungMedicationMapper traegerLoesungMedicationMapper;
 
   public ZenzyTherapieToFhirBundleMapper(
       FhirProperties fhirProperties,
       HergestellteMedicationMapper medicationMapper,
       MedicationRequestMapper medicationRequestMapper,
-      WirkstoffMedicationMapper wirkstoffMedicationMapper) {
+      WirkstoffMedicationMapper wirkstoffMedicationMapper,
+      TraegerLoesungMedicationMapper traegerLoesungMedicationMapper) {
     this.fhirProps = fhirProperties;
     this.medicationMapper = medicationMapper;
     this.medicationRequestMapper = medicationRequestMapper;
     this.wirkstoffMedicationMapper = wirkstoffMedicationMapper;
+    this.traegerLoesungMedicationMapper = traegerLoesungMedicationMapper;
   }
 
   public Bundle map(ZenzyTherapie record) {
@@ -36,7 +40,15 @@ public class ZenzyTherapieToFhirBundleMapper {
 
     var wirkstoffe = wirkstoffMedicationMapper.map(record);
 
-    var medication = medicationMapper.map(record, wirkstoffe);
+    var traegerLoesung = traegerLoesungMedicationMapper.map(record);
+
+    Reference traegerLoesungReference = null;
+    if (traegerLoesung.isPresent()) {
+      traegerLoesungReference = MappingUtils.createReferenceToResource(traegerLoesung.get());
+      traegerLoesungReference.setDisplay(record.traegerLoesung());
+    }
+
+    var medication = medicationMapper.map(record, wirkstoffe, traegerLoesungReference);
 
     var medicationRequest =
         medicationRequestMapper.map(record, MappingUtils.createReferenceToResource(medication));
@@ -49,6 +61,10 @@ public class ZenzyTherapieToFhirBundleMapper {
 
     for (var wirkstoff : wirkstoffe) {
       addBundleEntry(bundle, wirkstoff.medication());
+    }
+
+    if (traegerLoesung.isPresent()) {
+      addBundleEntry(bundle, traegerLoesung.get());
     }
 
     return bundle;

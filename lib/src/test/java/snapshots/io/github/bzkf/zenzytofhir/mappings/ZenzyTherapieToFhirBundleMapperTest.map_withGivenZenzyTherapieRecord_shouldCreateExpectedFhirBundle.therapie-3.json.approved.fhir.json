@@ -23,15 +23,7 @@
         "text": "subkutan",
         "timing": {
           "event": [ "2010-10-11T02:00:00+02:00" ]
-        },
-        "doseAndRate": [ {
-          "doseQuantity": {
-            "value": 37.5,
-            "unit": "mg/m2",
-            "system": "http://unitsofmeasure.org",
-            "code": "mg/m2"
-          }
-        } ]
+        }
       } ]
     },
     "request": {
@@ -48,28 +40,43 @@
       } ],
       "status": "active",
       "ingredient": [ {
-        "itemCodeableConcept": {
-          "coding": [ {
-            "system": "http://snomed.info/sct",
-            "version": "http://snomed.info/sct/900000000000207008/version/20260101"
-          } ],
-          "text": "unverdünnt"
+        "itemReference": {
+          "reference": "Medication/a41740822ca5ac0381cb9aa6452389934d09c1c27a1589a00996e6ff3b7b2a8b",
+          "display": "unverdünnt"
         },
-        "isActive": false
+        "isActive": false,
+        "strength": {
+          "numerator": {
+            "value": 0.0,
+            "unit": "1",
+            "system": "http://unitsofmeasure.org",
+            "code": "{Stueck}"
+          },
+          "denominator": {
+            "value": 0.0,
+            "unit": "milliliter",
+            "system": "http://unitsofmeasure.org",
+            "code": "mL"
+          }
+        }
       }, {
         "itemReference": {
-          "reference": "Medication/bac3a0b089b44058cf1948cfdd3940edb418b1c131814cd580bd9f0ee8752c4b"
+          "reference": "Medication/bac3a0b089b44058cf1948cfdd3940edb418b1c131814cd580bd9f0ee8752c4b",
+          "display": "Azacitidine"
         },
         "isActive": false,
         "strength": {
           "numerator": {
             "value": 65.0,
-            "unit": "mg",
+            "unit": "{Stueck}",
             "system": "http://unitsofmeasure.org",
-            "code": "mg"
+            "code": "1"
           },
           "denominator": {
-            "value": 1
+            "value": 0.0,
+            "unit": "milliliter",
+            "system": "http://unitsofmeasure.org",
+            "code": "mL"
           }
         }
       } ]
@@ -96,6 +103,20 @@
         "text": "Azacitidine"
       },
       "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 1,
+          "unit": "mg",
+          "system": "http://unitsofmeasure.org",
+          "code": "mg"
+        },
+        "denominator": {
+          "value": 1,
+          "unit": "{Stueck}",
+          "system": "http://unitsofmeasure.org",
+          "code": "1"
+        }
+      },
       "ingredient": [ {
         "itemCodeableConcept": {
           "coding": [ {
@@ -105,26 +126,47 @@
             "display": "Azacitidine (substance)"
           } ]
         },
-        "isActive": true,
-        "strength": {
-          "numerator": {
-            "value": 1,
-            "unit": "mg",
-            "system": "http://unitsofmeasure.org",
-            "code": "mg"
-          },
-          "denominator": {
-            "value": 1,
-            "unit": "{Piece}",
-            "system": "http://unitsofmeasure.org",
-            "code": "1"
-          }
-        }
+        "isActive": true
       } ]
     },
     "request": {
       "method": "PUT",
       "url": "Medication/bac3a0b089b44058cf1948cfdd3940edb418b1c131814cd580bd9f0ee8752c4b"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "a41740822ca5ac0381cb9aa6452389934d09c1c27a1589a00996e6ff3b7b2a8b",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-traegerloesung-id",
+        "value": "unverduennt"
+      } ],
+      "code": {
+        "coding": [ {
+          "system": "http://snomed.info/sct",
+          "version": "http://snomed.info/sct/900000000000207008/version/20260101"
+        } ],
+        "text": "unverdünnt"
+      },
+      "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 1,
+          "unit": "milliliter",
+          "system": "http://unitsofmeasure.org",
+          "code": "mL"
+        },
+        "denominator": {
+          "value": 1,
+          "unit": "1",
+          "system": "http://unitsofmeasure.org",
+          "code": "{Stueck}"
+        }
+      }
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/a41740822ca5ac0381cb9aa6452389934d09c1c27a1589a00996e6ff3b7b2a8b"
     }
   } ]
 }

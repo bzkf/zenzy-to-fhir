@@ -1,13 +1,9 @@
 package io.github.bzkf.zenzytofhir.mappings;
 
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.TimeZone;
 import java.util.function.Function;
 import org.hl7.fhir.r4.model.BooleanType;
@@ -26,7 +22,6 @@ import org.hl7.fhir.r4.model.Timing.UnitsOfTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 @Service
 public class MedicationRequestMapper {
@@ -131,38 +126,14 @@ public class MedicationRequestMapper {
       }
     }
 
-    if (StringUtils.hasText(therapie.dosierungsArt())) {
-      var dosierungsart = therapie.dosierungsArt().split("\\\\n");
-      var dosierung = therapie.dosierung().split("\\\\n");
-      if (dosierung.length != dosierungsart.length) {
-        throw new IllegalArgumentException(
-            "Dosierung und Dosierungsart differ in length. Unable to map.");
-      }
-
-      var dosierungsartMap = new HashMap<String, String>();
-      dosierungsartMap.put("KOF", "mg/m2");
-      dosierungsartMap.put("GEW", "mg/kg");
-
-      // TODO: verify how it works if one item is either KOF/GEW
-      // and the other isn't. then the doseAndRate elements don't
-      // map to the used medications.
-      for (int i = 0; i < dosierung.length; i++) {
-        var code = dosierungsartMap.get(dosierungsart[i]);
-        var dosierungValue = dosierung[i];
-        try {
-          var dosierungNumeric = NumberFormat.getInstance(Locale.GERMAN).parse(dosierungValue);
-
-          var quantity =
-              new Quantity()
-                  .setCode(code)
-                  .setUnit(code)
-                  .setSystem(fhirProps.getSystems().ucum())
-                  .setValue(dosierungNumeric.doubleValue());
-          dosage.addDoseAndRate().setDose(quantity);
-        } catch (ParseException e) {
-          LOG.error("Failed to parse dosierung value", e);
-        }
-      }
+    if (therapie.gesamtvolumenNumeric() > 0) {
+      var quantity =
+          new Quantity()
+              .setCode("mL")
+              .setUnit("milliliter")
+              .setSystem(fhirProps.getSystems().ucum())
+              .setValue(therapie.gesamtvolumenNumeric());
+      dosage.addDoseAndRate().setDose(quantity);
     }
 
     medicationRequest.addDosageInstruction(dosage);

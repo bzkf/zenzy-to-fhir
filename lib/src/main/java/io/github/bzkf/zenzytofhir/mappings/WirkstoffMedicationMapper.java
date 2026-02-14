@@ -39,7 +39,7 @@ public class WirkstoffMedicationMapper {
     singlePieceStrength
         .getDenominator()
         .setCode("1")
-        .setUnit("{Piece}")
+        .setUnit("{Stueck}")
         .setSystem(fhirProperties.getSystems().ucum())
         .setValue(1);
   }
@@ -96,33 +96,41 @@ public class WirkstoffMedicationMapper {
         if (mapped.snomedCode() != null) {
           var substance = fhirProperties.getCodings().snomed();
           substance.setCode(mapped.snomedCode()).setDisplay(mapped.snomedDisplay());
-          medication
-              .addIngredient()
-              .setItem(new CodeableConcept(substance))
-              .setIsActive(true)
-              .setStrength(singlePieceStrength);
+          medication.addIngredient().setItem(new CodeableConcept(substance)).setIsActive(true);
         }
       } else {
-        // data absent extension
+        // TODO: data absent extension
       }
 
       medication.setCode(codeableConcept);
 
-      var numerator = new Quantity();
-      numerator.setValue(wirkstoffDosis.dosis().doubleValue());
-      numerator.setSystem(fhirProperties.getSystems().ucum());
-
+      // copy() since we are mutating the value if a dosisEinheit is set
+      var amount = singlePieceStrength.copy();
+      // TODO: check if the dosis einheit is actually UCUM
+      // the default is mg
       if (wirkstoffDosis.dosisEinheit() != null) {
-        numerator.setCode(wirkstoffDosis.dosisEinheit());
-      } else {
-        LOG.debug("Dosis unit is unset, defaulting to mg");
-        numerator.setCode("mg");
-        numerator.setUnit("mg");
+        amount.getNumerator().setCode(wirkstoffDosis.dosisEinheit());
+        amount.getNumerator().setUnit(wirkstoffDosis.dosisEinheit());
       }
 
+      medication.setAmount(amount);
+
+      var numerator = new Quantity();
+      numerator
+          .setValue(wirkstoffDosis.dosis().doubleValue())
+          .setCode("1")
+          .setUnit("{Stueck}")
+          .setSystem(fhirProperties.getSystems().ucum());
+
       var strength = new Ratio();
+      var denominator =
+          new Quantity()
+              .setValue(therapie.gesamtvolumenNumeric())
+              .setUnit("milliliter")
+              .setCode("mL")
+              .setSystem(fhirProperties.getSystems().ucum());
       strength.setNumerator(numerator);
-      strength.setDenominator(new Quantity(1));
+      strength.setDenominator(denominator);
 
       result.add(new MedicationAndStrength(medication, strength));
     }

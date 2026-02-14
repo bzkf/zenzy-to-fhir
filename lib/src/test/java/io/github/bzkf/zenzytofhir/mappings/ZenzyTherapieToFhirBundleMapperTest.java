@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.github.bzkf.zenzytofhir.ProfileTestConfig;
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
 import java.io.IOException;
+import java.text.ParseException;
 import org.approvaltests.Approvals;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,7 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     classes = {
       FhirProperties.class,
       HergestellteMedicationMapper.class,
-      TraegerLoesungMapper.class,
+      TraegerLoesungMedicationMapper.class,
       MedicationRequestMapper.class,
       ProfileTestConfig.class,
       ToCodingMapper.class,
@@ -39,10 +40,15 @@ public class ZenzyTherapieToFhirBundleMapperTest {
       @Autowired FhirProperties fhirProps,
       @Autowired HergestellteMedicationMapper medicationMapper,
       @Autowired MedicationRequestMapper medicationRequestMapper,
-      @Autowired WirkstoffMedicationMapper wirkstoffMedicationMapper) {
+      @Autowired WirkstoffMedicationMapper wirkstoffMedicationMapper,
+      @Autowired TraegerLoesungMedicationMapper traegerLoesungMedicationMapper) {
     sut =
         new ZenzyTherapieToFhirBundleMapper(
-            fhirProps, medicationMapper, medicationRequestMapper, wirkstoffMedicationMapper);
+            fhirProps,
+            medicationMapper,
+            medicationRequestMapper,
+            wirkstoffMedicationMapper,
+            traegerLoesungMedicationMapper);
   }
 
   @ParameterizedTest
@@ -53,7 +59,7 @@ public class ZenzyTherapieToFhirBundleMapperTest {
     "therapie-4.json",
   })
   void map_withGivenZenzyTherapieRecord_shouldCreateExpectedFhirBundle(String sourceFile)
-      throws StreamReadException, DatabindException, IOException {
+      throws StreamReadException, DatabindException, IOException, ParseException {
     final var recordStream = this.getClass().getClassLoader().getResource("fixtures/" + sourceFile);
     var mapper =
         new ObjectMapper()
