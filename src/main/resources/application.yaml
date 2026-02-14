@@ -27,7 +27,7 @@ spring:
       bindings:
         sink-in-0:
           consumer:
-            concurrency: ${KAFKA_CONSUMER_CONCURRENCY:1}
+            concurrency: ${KAFKA_CONSUMER_CONCURRENCY:12}
             use-native-decoding: true
           destination: ${KAFKA_INPUT_TOPIC:zenzy.therapie}
           group: ${KAFKA_GROUP_ID:zenzy-to-fhir}
