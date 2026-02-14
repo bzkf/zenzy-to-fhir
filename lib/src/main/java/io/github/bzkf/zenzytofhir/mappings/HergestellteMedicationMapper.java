@@ -56,7 +56,9 @@ public class HergestellteMedicationMapper {
       medication.setAmount(amount);
     }
 
-    if (traegerLoesung != null) {
+    if (traegerLoesung != null
+        && therapie.gesamtvolumenNumeric() != null
+        && therapie.gesamtvolumenNumeric() > 0) {
       var numerator =
           new Quantity()
               .setValue(therapie.gesamtvolumenNumeric())
@@ -71,6 +73,8 @@ public class HergestellteMedicationMapper {
               .setSystem(fhirProps.getSystems().ucum());
       var strength = new Ratio().setNumerator(numerator).setDenominator(denominator);
       medication.addIngredient().setIsActive(false).setItem(traegerLoesung).setStrength(strength);
+    } else {
+      LOG.error("Tragerloesung '{}' is set but the gesamtvolumen isn't", therapie.traegerloesung());
     }
 
     for (var wirkstoff : wirkstoffe) {
