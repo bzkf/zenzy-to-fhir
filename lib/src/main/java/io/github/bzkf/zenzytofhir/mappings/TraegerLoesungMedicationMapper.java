@@ -29,7 +29,7 @@ public class TraegerLoesungMedicationMapper {
   }
 
   public Optional<Medication> map(ZenzyTherapie therapie) {
-    if (!StringUtils.hasText(therapie.traegerLoesung())) {
+    if (!StringUtils.hasText(therapie.traegerloesung())) {
       return Optional.empty();
     }
 
@@ -37,15 +37,15 @@ public class TraegerLoesungMedicationMapper {
     var identifier =
         new Identifier()
             .setSystem(fhirProps.getSystems().identifiers().zenzyTraegerloesungId())
-            .setValue(slugify.slugify(therapie.traegerLoesung()));
+            .setValue(slugify.slugify(therapie.traegerloesung()));
     medication.addIdentifier(identifier);
     medication.setId(MappingUtils.computeResourceIdFromIdentifier(identifier));
     medication.setStatus(MedicationStatus.ACTIVE);
 
     var codeableConcept = new CodeableConcept();
-    codeableConcept.setText(therapie.traegerLoesung());
+    codeableConcept.setText(therapie.traegerloesung());
 
-    var maybeMapped = toSnomedMapper.mapTraegerloesung(therapie.traegerLoesung());
+    var maybeMapped = toSnomedMapper.mapTraegerloesung(therapie.traegerloesung());
     if (maybeMapped.isPresent()) {
       var mapped = maybeMapped.get();
 
@@ -61,7 +61,7 @@ public class TraegerLoesungMedicationMapper {
         codeableConcept.addCoding(atc);
       }
     } else {
-      Log.warn("Traegerlösung {} could not be mapped", therapie.traegerLoesung());
+      Log.warn("Traegerlösung {} could not be mapped", therapie.traegerloesung());
     }
 
     medication.setCode(codeableConcept);

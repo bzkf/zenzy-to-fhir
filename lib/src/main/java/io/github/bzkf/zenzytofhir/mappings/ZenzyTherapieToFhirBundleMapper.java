@@ -49,7 +49,7 @@ public class ZenzyTherapieToFhirBundleMapper {
     Reference traegerLoesungReference = null;
     if (traegerLoesung.isPresent()) {
       traegerLoesungReference = MappingUtils.createReferenceToResource(traegerLoesung.get());
-      traegerLoesungReference.setDisplay(record.traegerLoesung());
+      traegerLoesungReference.setDisplay(record.traegerloesung());
     } else {
       LOG.debug("No Tragerloesung specified");
     }

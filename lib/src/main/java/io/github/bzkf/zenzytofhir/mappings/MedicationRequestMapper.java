@@ -79,10 +79,10 @@ public class MedicationRequestMapper {
 
     var dosage = new Dosage();
     dosage.setTiming(timing);
-    dosage.setText(therapie.applikationsArt());
+    dosage.setText(therapie.applikationsart());
 
     var mappedApplikationsart =
-        applikationsartMapper.mapApplikationsart(therapie.applikationsArt());
+        applikationsartMapper.mapApplikationsart(therapie.applikationsart());
     if (mappedApplikationsart.isPresent()) {
       var applikationsart = mappedApplikationsart.get();
 
@@ -125,7 +125,7 @@ public class MedicationRequestMapper {
         repeat.setDurationUnit(UnitsOfTime.fromCode(applikationsart.durationUcumUnit()));
       }
     } else {
-      LOG.warn("Applikationsart '{}' could not be mapped", therapie.applikationsArt());
+      LOG.warn("Applikationsart '{}' could not be mapped", therapie.applikationsart());
     }
 
     if (therapie.gesamtvolumenNumeric() > 0) {
