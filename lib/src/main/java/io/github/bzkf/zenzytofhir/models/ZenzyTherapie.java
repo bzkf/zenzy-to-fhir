@@ -11,7 +11,9 @@ import java.time.LocalTime;
 public record ZenzyTherapie(
     @JsonProperty("AUTONR") Integer autoNr,
     @JsonProperty("NR") Integer nr,
-    @JsonProperty("APPLIKATIONSDATUM") Instant applikationsDatum,
+    @JsonProperty("APPLIKATIONSDATUM")
+        @JsonFormat(without = JsonFormat.Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+        Instant applikationsDatum,
     @JsonProperty("APPLIKATIONSZEIT") @JsonFormat(pattern = "HH:mm:ss") LocalTime applikationsZeit,
     @JsonProperty("APPLIKATIONSART") String applikationsart,
     @JsonProperty("STATUS") String status,
