@@ -14,7 +14,7 @@ public record ZenzyTherapie(
     @JsonProperty("APPLIKATIONSDATUM") Instant applikationsDatum,
     @JsonProperty("APPLIKATIONSZEIT") @JsonFormat(pattern = "HH:mm:ss") LocalTime applikationsZeit,
     @JsonProperty("APPLIKATIONSZEITPUNKT")
-        @JsonFormat(without = {JsonFormat.Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS}, timezone = "Europe/Berlin")
+        @JsonFormat(without = {JsonFormat.Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS})
         Instant applikationsZeitpunkt,
     @JsonProperty("APPLIKATIONSART") String applikationsart,
     @JsonProperty("STATUS") String status,
