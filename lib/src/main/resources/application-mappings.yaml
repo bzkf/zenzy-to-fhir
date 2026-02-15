@@ -13,10 +13,10 @@ fhir:
     identifiers:
       base-url: "https://bzkf.github.io/zenzy-to-fhir/identifiers"
       patient-id: "${fhir.systems.identifiers.base-url}/patient-id"
-      zenzy-therapie-autonr: "${fhir.systems.identifiers.base-url}/zenzy-therapie-autonr"
-      zenzy-herstellungs-id: "${fhir.systems.identifiers.base-url}/zenzy-herstellungs-id"
-      zenzy-wirkstoff-id: "${fhir.systems.identifiers.base-url}/zenzy-wirkstoff-id"
-      zenzy-traegerloesung-id: "${fhir.systems.identifiers.base-url}/zenzy-traegerloesung-id"
+      therapie-medication-request-id: "${fhir.systems.identifiers.base-url}/therapie-medication-request-id"
+      therapie-medication-id: "${fhir.systems.identifiers.base-url}/therapie-medication-id"
+      therapie-wirkstoff-medication-id: "${fhir.systems.identifiers.base-url}/therapie-wirkstoff-medication-id"
+      therapie-traegerloesung-medication-id: "${fhir.systems.identifiers.base-url}/therapie-traegerloesung-medication-id"
     profiles:
       mii-medication: "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication"
       mii-medication-request: "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/MedicationRequest"

@@ -1,20 +1,20 @@
 {
   "resourceType": "Bundle",
-  "id": "ff1234a0accecda202835ec940cbc037a5cb6c0ec0ef03d56f0f6eada48e0bd7",
+  "id": "8ce8958fc6b03f56b28f0acdaf6ce835088030ec8d68e96698b14bf8485f4bca",
   "type": "transaction",
   "entry": [ {
     "resource": {
       "resourceType": "MedicationRequest",
-      "id": "ff1234a0accecda202835ec940cbc037a5cb6c0ec0ef03d56f0f6eada48e0bd7",
+      "id": "8ce8958fc6b03f56b28f0acdaf6ce835088030ec8d68e96698b14bf8485f4bca",
       "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-therapie-autonr",
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-request-id",
         "value": "1"
       } ],
       "status": "active",
       "intent": "order",
       "reportedBoolean": false,
       "medicationReference": {
-        "reference": "Medication/e5439f847792dafb16dfb65ed6b61e33a3c7f8dcf5faeecaccda5db41d969f91"
+        "reference": "Medication/a68889464122675222d3d6a24c13d219c8fb3cc91c930a0f219ba6d69824d29b"
       },
       "subject": {
         "reference": "Patient/1"
@@ -56,15 +56,15 @@
     },
     "request": {
       "method": "PUT",
-      "url": "MedicationRequest/ff1234a0accecda202835ec940cbc037a5cb6c0ec0ef03d56f0f6eada48e0bd7"
+      "url": "MedicationRequest/8ce8958fc6b03f56b28f0acdaf6ce835088030ec8d68e96698b14bf8485f4bca"
     }
   }, {
     "resource": {
       "resourceType": "Medication",
-      "id": "e5439f847792dafb16dfb65ed6b61e33a3c7f8dcf5faeecaccda5db41d969f91",
+      "id": "a68889464122675222d3d6a24c13d219c8fb3cc91c930a0f219ba6d69824d29b",
       "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-herstellungs-id",
-        "value": "123456789"
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-id",
+        "value": "1"
       } ],
       "status": "active",
       "amount": {
@@ -83,7 +83,7 @@
       },
       "ingredient": [ {
         "itemReference": {
-          "reference": "Medication/7b0bedd37ab7da30e39737787f8ca4eef72b846160048dbaa2cb74eae461e276",
+          "reference": "Medication/43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a",
           "display": "Glucose 5%"
         },
         "isActive": false,
@@ -103,7 +103,7 @@
         }
       }, {
         "itemReference": {
-          "reference": "Medication/a61844b2f16bae5283fe2e454cc8382df2bb056c937bfe238b640ec08613e88d",
+          "reference": "Medication/0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed",
           "display": "Fluorouracil"
         },
         "isActive": false,
@@ -125,14 +125,14 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/e5439f847792dafb16dfb65ed6b61e33a3c7f8dcf5faeecaccda5db41d969f91"
+      "url": "Medication/a68889464122675222d3d6a24c13d219c8fb3cc91c930a0f219ba6d69824d29b"
     }
   }, {
     "resource": {
       "resourceType": "Medication",
-      "id": "a61844b2f16bae5283fe2e454cc8382df2bb056c937bfe238b640ec08613e88d",
+      "id": "0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed",
       "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-wirkstoff-id",
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-wirkstoff-medication-id",
         "value": "fluorouracil"
       } ],
       "code": {
@@ -167,14 +167,14 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/a61844b2f16bae5283fe2e454cc8382df2bb056c937bfe238b640ec08613e88d"
+      "url": "Medication/0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed"
     }
   }, {
     "resource": {
       "resourceType": "Medication",
-      "id": "7b0bedd37ab7da30e39737787f8ca4eef72b846160048dbaa2cb74eae461e276",
+      "id": "43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a",
       "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-traegerloesung-id",
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-traegerloesung-medication-id",
         "value": "glucose-5"
       } ],
       "code": {
@@ -209,7 +209,7 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/7b0bedd37ab7da30e39737787f8ca4eef72b846160048dbaa2cb74eae461e276"
+      "url": "Medication/43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a"
     }
   } ]
 }

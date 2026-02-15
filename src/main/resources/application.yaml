@@ -51,7 +51,6 @@ spring:
                 value.deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
                 spring.json.value.default.type: io.github.bzkf.zenzytofhir.models.ZenzyTherapie
                 spring.json.trusted.packages: io.github.bzkf.zenzytofhir.models
-                spring.json.use.type.headers: false
           sink-out-0:
             producer:
               configuration:

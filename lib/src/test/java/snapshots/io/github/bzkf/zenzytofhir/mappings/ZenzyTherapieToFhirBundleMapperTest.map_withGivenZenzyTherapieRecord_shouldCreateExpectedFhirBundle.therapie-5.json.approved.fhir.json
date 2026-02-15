@@ -1,20 +1,20 @@
 {
   "resourceType": "Bundle",
-  "id": "d687491c4a6603cb4b8445ed258a455f12b470ecff5be38a41c0d918ba896804",
+  "id": "0268a9c0b3b16a771efa8a8991ee96b91f3aa3fa1542e93aa254b6b76a96ac27",
   "type": "transaction",
   "entry": [ {
     "resource": {
       "resourceType": "MedicationRequest",
-      "id": "d687491c4a6603cb4b8445ed258a455f12b470ecff5be38a41c0d918ba896804",
+      "id": "0268a9c0b3b16a771efa8a8991ee96b91f3aa3fa1542e93aa254b6b76a96ac27",
       "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-therapie-autonr",
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-request-id",
         "value": "5"
       } ],
       "status": "active",
       "intent": "order",
       "reportedBoolean": false,
       "medicationReference": {
-        "reference": "Medication/804a5bed081edc913f7f3b55e70329f342783b562a4af6c5bba660fb6e0aec87"
+        "reference": "Medication/a8fc5094e76747fa187182033ea9771f3bcaa7948a7d101dd297a6cf063971f0"
       },
       "subject": {
         "reference": "Patient/1234556"
@@ -52,15 +52,15 @@
     },
     "request": {
       "method": "PUT",
-      "url": "MedicationRequest/d687491c4a6603cb4b8445ed258a455f12b470ecff5be38a41c0d918ba896804"
+      "url": "MedicationRequest/0268a9c0b3b16a771efa8a8991ee96b91f3aa3fa1542e93aa254b6b76a96ac27"
     }
   }, {
     "resource": {
       "resourceType": "Medication",
-      "id": "804a5bed081edc913f7f3b55e70329f342783b562a4af6c5bba660fb6e0aec87",
+      "id": "a8fc5094e76747fa187182033ea9771f3bcaa7948a7d101dd297a6cf063971f0",
       "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-herstellungs-id",
-        "value": "20090824095"
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-id",
+        "value": "5"
       } ],
       "status": "active",
       "amount": {
@@ -79,7 +79,7 @@
       },
       "ingredient": [ {
         "itemReference": {
-          "reference": "Medication/7b0bedd37ab7da30e39737787f8ca4eef72b846160048dbaa2cb74eae461e276",
+          "reference": "Medication/43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a",
           "display": "Glucose 5%"
         },
         "isActive": false,
@@ -99,7 +99,7 @@
         }
       }, {
         "itemReference": {
-          "reference": "Medication/5978a44f5d9e45ddf9a7664d13cb9b413d59ead2ed546951b0ff2b6c480ed40a",
+          "reference": "Medication/77b1715eac0ecc83e9917809ea5aa41c0795ec81dc8ce57806248e8dd523d767",
           "display": "Amphotericin lipos."
         },
         "isActive": false,
@@ -121,14 +121,14 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/804a5bed081edc913f7f3b55e70329f342783b562a4af6c5bba660fb6e0aec87"
+      "url": "Medication/a8fc5094e76747fa187182033ea9771f3bcaa7948a7d101dd297a6cf063971f0"
     }
   }, {
     "resource": {
       "resourceType": "Medication",
-      "id": "5978a44f5d9e45ddf9a7664d13cb9b413d59ead2ed546951b0ff2b6c480ed40a",
+      "id": "77b1715eac0ecc83e9917809ea5aa41c0795ec81dc8ce57806248e8dd523d767",
       "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-wirkstoff-id",
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-wirkstoff-medication-id",
         "value": "amphotericin-lipos"
       } ],
       "code": {
@@ -163,14 +163,14 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/5978a44f5d9e45ddf9a7664d13cb9b413d59ead2ed546951b0ff2b6c480ed40a"
+      "url": "Medication/77b1715eac0ecc83e9917809ea5aa41c0795ec81dc8ce57806248e8dd523d767"
     }
   }, {
     "resource": {
       "resourceType": "Medication",
-      "id": "7b0bedd37ab7da30e39737787f8ca4eef72b846160048dbaa2cb74eae461e276",
+      "id": "43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a",
       "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-traegerloesung-id",
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-traegerloesung-medication-id",
         "value": "glucose-5"
       } ],
       "code": {
@@ -205,7 +205,7 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/7b0bedd37ab7da30e39737787f8ca4eef72b846160048dbaa2cb74eae461e276"
+      "url": "Medication/43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a"
     }
   } ]
 }

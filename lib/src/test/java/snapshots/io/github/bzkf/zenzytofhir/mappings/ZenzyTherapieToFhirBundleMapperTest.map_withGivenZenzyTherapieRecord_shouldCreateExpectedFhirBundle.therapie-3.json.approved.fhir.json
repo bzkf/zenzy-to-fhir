@@ -1,20 +1,20 @@
 {
   "resourceType": "Bundle",
-  "id": "2d6adbb1909cfd1d58d76cbbb1a4d1ff403265f9b5b6050ef51576c3b250ea43",
+  "id": "0325291ceadd38a92099207c91f88d712c776e932f256645fadecc65fb296289",
   "type": "transaction",
   "entry": [ {
     "resource": {
       "resourceType": "MedicationRequest",
-      "id": "2d6adbb1909cfd1d58d76cbbb1a4d1ff403265f9b5b6050ef51576c3b250ea43",
+      "id": "0325291ceadd38a92099207c91f88d712c776e932f256645fadecc65fb296289",
       "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-therapie-autonr",
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-request-id",
         "value": "3"
       } ],
       "status": "active",
       "intent": "order",
       "reportedBoolean": false,
       "medicationReference": {
-        "reference": "Medication/97e100c1cd88877a4bcb6ce76b780b83081b73e0f2436188004ddd01a3eda2e7"
+        "reference": "Medication/ffacc881339c998e84cc9d024b9425356565d1a51d82ff2ad4122c4f574ae106"
       },
       "subject": {
         "reference": "Patient/3"
@@ -28,20 +28,20 @@
     },
     "request": {
       "method": "PUT",
-      "url": "MedicationRequest/2d6adbb1909cfd1d58d76cbbb1a4d1ff403265f9b5b6050ef51576c3b250ea43"
+      "url": "MedicationRequest/0325291ceadd38a92099207c91f88d712c776e932f256645fadecc65fb296289"
     }
   }, {
     "resource": {
       "resourceType": "Medication",
-      "id": "97e100c1cd88877a4bcb6ce76b780b83081b73e0f2436188004ddd01a3eda2e7",
+      "id": "ffacc881339c998e84cc9d024b9425356565d1a51d82ff2ad4122c4f574ae106",
       "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-herstellungs-id",
-        "value": "33333333"
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-id",
+        "value": "3"
       } ],
       "status": "active",
       "ingredient": [ {
         "itemReference": {
-          "reference": "Medication/3fddf56823cccc01dac2511fb49adc90596d15352323c905efb1a96c0ee80f2a",
+          "reference": "Medication/4a91fd6b47e761ece36d1b67c8080e25c206b097de765f4e11baf9dc30d7cab8",
           "display": "Azacitidine"
         },
         "isActive": false,
@@ -57,14 +57,14 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/97e100c1cd88877a4bcb6ce76b780b83081b73e0f2436188004ddd01a3eda2e7"
+      "url": "Medication/ffacc881339c998e84cc9d024b9425356565d1a51d82ff2ad4122c4f574ae106"
     }
   }, {
     "resource": {
       "resourceType": "Medication",
-      "id": "3fddf56823cccc01dac2511fb49adc90596d15352323c905efb1a96c0ee80f2a",
+      "id": "4a91fd6b47e761ece36d1b67c8080e25c206b097de765f4e11baf9dc30d7cab8",
       "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-wirkstoff-id",
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-wirkstoff-medication-id",
         "value": "azacitidine"
       } ],
       "code": {
@@ -99,14 +99,14 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/3fddf56823cccc01dac2511fb49adc90596d15352323c905efb1a96c0ee80f2a"
+      "url": "Medication/4a91fd6b47e761ece36d1b67c8080e25c206b097de765f4e11baf9dc30d7cab8"
     }
   }, {
     "resource": {
       "resourceType": "Medication",
-      "id": "a41740822ca5ac0381cb9aa6452389934d09c1c27a1589a00996e6ff3b7b2a8b",
+      "id": "936944bd8d6bac62cf7c3cc313ab7be68787633004c24a2c44949842b66727eb",
       "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-traegerloesung-id",
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-traegerloesung-medication-id",
         "value": "unverduennt"
       } ],
       "code": {
@@ -134,7 +134,7 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/a41740822ca5ac0381cb9aa6452389934d09c1c27a1589a00996e6ff3b7b2a8b"
+      "url": "Medication/936944bd8d6bac62cf7c3cc313ab7be68787633004c24a2c44949842b66727eb"
     }
   } ]
 }

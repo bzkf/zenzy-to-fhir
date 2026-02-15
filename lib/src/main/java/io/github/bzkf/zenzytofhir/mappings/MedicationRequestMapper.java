@@ -44,10 +44,13 @@ public class MedicationRequestMapper {
     // Mapping logic to convert ZenzyTherapieRecord to FHIR Bundle goes here
     var medicationRequest = new MedicationRequest();
 
+    // TODO: therapie.nr turned out to not be unqiue but for the duplicate
+    // row we found, all other columns had the same value. So it's fine for
+    // it to override the resources
     var identifier =
         new Identifier()
-            .setSystem(fhirProps.getSystems().identifiers().zenzyTherapieAutoNr())
-            .setValue(therapie.autoNr().toString());
+            .setSystem(fhirProps.getSystems().identifiers().therapieMedicationRequestId())
+            .setValue(therapie.nr().toString());
     medicationRequest.addIdentifier(identifier);
     medicationRequest.setId(MappingUtils.computeResourceIdFromIdentifier(identifier));
 

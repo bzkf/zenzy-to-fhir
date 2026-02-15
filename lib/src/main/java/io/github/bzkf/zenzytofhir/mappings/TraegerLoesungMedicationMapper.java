@@ -32,7 +32,7 @@ public class TraegerLoesungMedicationMapper {
     var medication = new Medication();
     var identifier =
         new Identifier()
-            .setSystem(fhirProps.getSystems().identifiers().zenzyTraegerloesungId())
+            .setSystem(fhirProps.getSystems().identifiers().therapieTraegerloesungMedicationId())
             .setValue(MappingUtils.SLUGIFY.slugify(therapie.traegerloesung()));
     medication.addIdentifier(identifier);
     medication.setId(MappingUtils.computeResourceIdFromIdentifier(identifier));

@@ -49,8 +49,8 @@ public class FhirProperties {
 
   public record FhirIdentifiers(
       String patientId,
-      String zenzyTherapieAutoNr,
-      String zenzyHerstellungsId,
-      String zenzyWirkstoffId,
-      String zenzyTraegerloesungId) {}
+      String therapieMedicationRequestId,
+      String therapieMedicationId,
+      String therapieWirkstoffMedicationId,
+      String therapieTraegerloesungMedicationId) {}
 }

@@ -77,7 +77,7 @@ public class WirkstoffMedicationMapper {
       var medication = new Medication();
       var identifier =
           new Identifier()
-              .setSystem(fhirProperties.getSystems().identifiers().zenzyWirkstoffId())
+              .setSystem(fhirProperties.getSystems().identifiers().therapieWirkstoffMedicationId())
               .setValue(MappingUtils.SLUGIFY.slugify(wirkstoffDosis.wirkstoff()));
       medication.addIdentifier(identifier);
       medication.setId(MappingUtils.computeResourceIdFromIdentifier(identifier));

@@ -32,8 +32,8 @@ public class HergestellteMedicationMapper {
     var medication = new Medication();
     var identifier =
         new Identifier()
-            .setSystem(fhirProps.getSystems().identifiers().zenzyHerstellungsId())
-            .setValue(therapie.herstellungsId());
+            .setSystem(fhirProps.getSystems().identifiers().therapieMedicationId())
+            .setValue(therapie.nr().toString());
     medication.addIdentifier(identifier);
     medication.setId(MappingUtils.computeResourceIdFromIdentifier(identifier));
     medication.setStatus(MedicationStatus.ACTIVE);
