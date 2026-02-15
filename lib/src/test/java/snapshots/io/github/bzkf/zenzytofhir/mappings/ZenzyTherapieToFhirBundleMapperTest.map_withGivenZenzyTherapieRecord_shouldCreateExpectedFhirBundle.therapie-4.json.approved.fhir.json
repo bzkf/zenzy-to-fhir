@@ -22,7 +22,7 @@
       "dosageInstruction": [ {
         "text": "Baxterpumpe (SV4) über 24 h",
         "timing": {
-          "event": [ "2007-05-02T02:00:00+02:00" ],
+          "event": [ "2007-05-02T00:00:00+02:00" ],
           "repeat": {
             "duration": 24.0,
             "durationUnit": "h"

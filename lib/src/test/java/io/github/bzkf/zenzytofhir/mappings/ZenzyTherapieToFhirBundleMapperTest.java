@@ -62,6 +62,7 @@ public class ZenzyTherapieToFhirBundleMapperTest {
     "therapie-3.json",
     "therapie-4.json",
     "therapie-5.json",
+    "therapie-6.json",
   })
   void map_withGivenZenzyTherapieRecord_shouldCreateExpectedFhirBundle(String sourceFile)
       throws StreamReadException, DatabindException, IOException, ParseException {

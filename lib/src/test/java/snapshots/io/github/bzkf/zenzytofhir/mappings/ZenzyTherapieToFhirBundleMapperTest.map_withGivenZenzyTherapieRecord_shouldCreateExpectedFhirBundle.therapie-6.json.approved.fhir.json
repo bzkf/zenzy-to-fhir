@@ -1,28 +1,32 @@
 {
   "resourceType": "Bundle",
-  "id": "0268a9c0b3b16a771efa8a8991ee96b91f3aa3fa1542e93aa254b6b76a96ac27",
+  "id": "1a8d43419c1fe653dec23a69b63722d28cc6c7bec66a0c12ded7902696d8c1ba",
   "type": "transaction",
   "entry": [ {
     "resource": {
       "resourceType": "MedicationRequest",
-      "id": "0268a9c0b3b16a771efa8a8991ee96b91f3aa3fa1542e93aa254b6b76a96ac27",
+      "id": "1a8d43419c1fe653dec23a69b63722d28cc6c7bec66a0c12ded7902696d8c1ba",
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-request-id",
-        "value": "5"
+        "value": "6"
       } ],
       "status": "active",
       "intent": "order",
       "reportedBoolean": false,
       "medicationReference": {
-        "reference": "Medication/a8fc5094e76747fa187182033ea9771f3bcaa7948a7d101dd297a6cf063971f0"
+        "reference": "Medication/b6476abdd8364a89212893743b09260dc3960322386de094a0fbfb93ad9b9e74"
       },
       "subject": {
-        "reference": "Patient/1234556"
+        "reference": "Patient/123"
       },
       "dosageInstruction": [ {
-        "text": "Injectomat-Spritze",
+        "text": "Kurzinfusion über 30 min",
         "timing": {
-          "event": [ "2009-08-24T14:00:00+02:00" ]
+          "event": [ "2025-03-11T14:00:00+01:00" ],
+          "repeat": {
+            "duration": 30.0,
+            "durationUnit": "min"
+          }
         },
         "route": {
           "coding": [ {
@@ -42,7 +46,7 @@
         },
         "doseAndRate": [ {
           "doseQuantity": {
-            "value": 25.0,
+            "value": 500.0,
             "unit": "milliliter",
             "system": "http://unitsofmeasure.org",
             "code": "mL"
@@ -52,20 +56,20 @@
     },
     "request": {
       "method": "PUT",
-      "url": "MedicationRequest/0268a9c0b3b16a771efa8a8991ee96b91f3aa3fa1542e93aa254b6b76a96ac27"
+      "url": "MedicationRequest/1a8d43419c1fe653dec23a69b63722d28cc6c7bec66a0c12ded7902696d8c1ba"
     }
   }, {
     "resource": {
       "resourceType": "Medication",
-      "id": "a8fc5094e76747fa187182033ea9771f3bcaa7948a7d101dd297a6cf063971f0",
+      "id": "b6476abdd8364a89212893743b09260dc3960322386de094a0fbfb93ad9b9e74",
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-id",
-        "value": "5"
+        "value": "6"
       } ],
       "status": "active",
       "amount": {
         "numerator": {
-          "value": 25.0,
+          "value": 500.0,
           "unit": "milliliter",
           "system": "http://unitsofmeasure.org",
           "code": "mL"
@@ -85,13 +89,13 @@
         "isActive": false,
         "strength": {
           "numerator": {
-            "value": 25.0,
+            "value": 500.0,
             "unit": "1",
             "system": "http://unitsofmeasure.org",
             "code": "{Stueck}"
           },
           "denominator": {
-            "value": 25.0,
+            "value": 500.0,
             "unit": "milliliter",
             "system": "http://unitsofmeasure.org",
             "code": "mL"
@@ -99,19 +103,19 @@
         }
       }, {
         "itemReference": {
-          "reference": "Medication/77b1715eac0ecc83e9917809ea5aa41c0795ec81dc8ce57806248e8dd523d767",
-          "display": "Amphotericin lipos."
+          "reference": "Medication/7876887cc3b4c2a8f5db9b6bcf131578f1ab217f0157f241b9aa36672fa56339",
+          "display": "Carboplatin"
         },
         "isActive": false,
         "strength": {
           "numerator": {
-            "value": 5.0,
+            "value": 540.0,
             "unit": "{Stueck}",
             "system": "http://unitsofmeasure.org",
             "code": "1"
           },
           "denominator": {
-            "value": 25.0,
+            "value": 500.0,
             "unit": "milliliter",
             "system": "http://unitsofmeasure.org",
             "code": "mL"
@@ -121,29 +125,29 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/a8fc5094e76747fa187182033ea9771f3bcaa7948a7d101dd297a6cf063971f0"
+      "url": "Medication/b6476abdd8364a89212893743b09260dc3960322386de094a0fbfb93ad9b9e74"
     }
   }, {
     "resource": {
       "resourceType": "Medication",
-      "id": "77b1715eac0ecc83e9917809ea5aa41c0795ec81dc8ce57806248e8dd523d767",
+      "id": "7876887cc3b4c2a8f5db9b6bcf131578f1ab217f0157f241b9aa36672fa56339",
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-wirkstoff-medication-id",
-        "value": "amphotericin-lipos"
+        "value": "carboplatin"
       } ],
       "code": {
         "coding": [ {
           "system": "http://fhir.de/CodeSystem/bfarm/atc",
           "version": "2025",
-          "code": "J02AA01",
-          "display": "Amphotericin B"
+          "code": "L01XA02",
+          "display": "Carboplatin"
         }, {
           "system": "http://snomed.info/sct",
           "version": "http://snomed.info/sct/900000000000207008/version/20260101",
-          "code": "77703004",
-          "display": "Amphotericin B (substance)"
+          "code": "386905002",
+          "display": "Carboplatin (substance)"
         } ],
-        "text": "Amphotericin lipos."
+        "text": "Carboplatin"
       },
       "status": "active",
       "amount": {
@@ -163,7 +167,7 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/77b1715eac0ecc83e9917809ea5aa41c0795ec81dc8ce57806248e8dd523d767"
+      "url": "Medication/7876887cc3b4c2a8f5db9b6bcf131578f1ab217f0157f241b9aa36672fa56339"
     }
   }, {
     "resource": {

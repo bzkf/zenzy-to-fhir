@@ -22,7 +22,7 @@
       "dosageInstruction": [ {
         "text": "Kurzinfusion über 30 min",
         "timing": {
-          "event": [ "1999-10-26T11:30:00+02:00" ],
+          "event": [ "1999-10-26T09:30:00+02:00" ],
           "repeat": {
             "duration": 30.0,
             "durationUnit": "min"

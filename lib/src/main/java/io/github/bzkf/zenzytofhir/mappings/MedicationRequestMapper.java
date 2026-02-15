@@ -2,6 +2,7 @@ package io.github.bzkf.zenzytofhir.mappings;
 
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -70,10 +71,13 @@ public class MedicationRequestMapper {
 
     // TODO: authoredOn ?
 
-    var dt = therapie.applikationsZeitpunkt().atZone(DEFAULT_ZONE_ID).toOffsetDateTime();
+    var zone = ZoneId.of("Europe/Berlin");
+    var localDate = therapie.applikationsDatum().atZone(zone).toLocalDate();
+    var zdt = ZonedDateTime.of(localDate, therapie.applikationsZeit(), zone);
+
     var fhirDateTime = new DateTimeType();
-    fhirDateTime.setValue(Date.from(dt.toInstant()));
-    fhirDateTime.setTimeZone(TimeZone.getTimeZone(dt.getOffset()));
+    fhirDateTime.setValue(Date.from(zdt.toInstant()));
+    fhirDateTime.setTimeZone(TimeZone.getTimeZone(zdt.getZone()));
 
     var timing = new Timing();
     timing.setEvent(List.of(fhirDateTime));

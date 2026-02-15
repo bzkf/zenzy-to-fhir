@@ -22,7 +22,7 @@
       "dosageInstruction": [ {
         "text": "Infusion über 1,5 -3 Stunden",
         "timing": {
-          "event": [ "1999-10-25T11:30:00+02:00" ],
+          "event": [ "1999-10-25T09:30:00+02:00" ],
           "repeat": {
             "duration": 1.5,
             "durationMax": 3.0,
