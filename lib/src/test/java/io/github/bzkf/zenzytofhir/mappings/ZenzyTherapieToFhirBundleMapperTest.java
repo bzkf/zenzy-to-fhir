@@ -41,7 +41,6 @@ public class ZenzyTherapieToFhirBundleMapperTest {
 
   @BeforeAll
   static void beforeAll(
-      @Autowired FhirProperties fhirProps,
       @Autowired HergestellteMedicationMapper medicationMapper,
       @Autowired MedicationRequestMapper medicationRequestMapper,
       @Autowired WirkstoffMedicationMapper wirkstoffMedicationMapper,
@@ -49,7 +48,6 @@ public class ZenzyTherapieToFhirBundleMapperTest {
       @Autowired Function<ZenzyTherapie, Reference> patientReferenceGenerator) {
     sut =
         new ZenzyTherapieToFhirBundleMapper(
-            fhirProps,
             medicationMapper,
             medicationRequestMapper,
             wirkstoffMedicationMapper,

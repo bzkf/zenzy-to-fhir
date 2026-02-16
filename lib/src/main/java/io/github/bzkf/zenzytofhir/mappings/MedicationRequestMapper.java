@@ -46,7 +46,7 @@ public class MedicationRequestMapper {
     // Mapping logic to convert ZenzyTherapieRecord to FHIR Bundle goes here
     var medicationRequest = new MedicationRequest();
 
-    // TODO: therapie.nr turned out to not be unqiue but for the duplicate
+    // TODO: therapie.nr turned out to not be unqiue but for the one duplicate
     // row we found, all other columns had the same value. So it's fine for
     // it to override the resources
     var identifier =
@@ -72,9 +72,8 @@ public class MedicationRequestMapper {
 
     // TODO: authoredOn ?
 
-    var zone = ZoneId.of("Europe/Berlin");
-    var localDate = therapie.applikationsDatum().atZone(zone).toLocalDate();
-    var zdt = ZonedDateTime.of(localDate, therapie.applikationsZeit(), zone);
+    var localDate = therapie.applikationsDatum().atZone(DEFAULT_ZONE_ID).toLocalDate();
+    var zdt = ZonedDateTime.of(localDate, therapie.applikationsZeit(), DEFAULT_ZONE_ID);
 
     var fhirDateTime = new DateTimeType();
     fhirDateTime.setValue(Date.from(zdt.toInstant()));

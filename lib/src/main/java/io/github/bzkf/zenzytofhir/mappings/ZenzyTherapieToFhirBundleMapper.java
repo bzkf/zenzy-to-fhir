@@ -18,7 +18,6 @@ import org.springframework.util.StringUtils;
 public class ZenzyTherapieToFhirBundleMapper {
 
   private static final Logger LOG = LoggerFactory.getLogger(ZenzyTherapieToFhirBundleMapper.class);
-  private final FhirProperties fhirProps;
   private final HergestellteMedicationMapper medicationMapper;
   private final MedicationRequestMapper medicationRequestMapper;
   private final WirkstoffMedicationMapper wirkstoffMedicationMapper;
@@ -26,13 +25,11 @@ public class ZenzyTherapieToFhirBundleMapper {
   private final Function<ZenzyTherapie, Reference> patientReferenceGenerator;
 
   public ZenzyTherapieToFhirBundleMapper(
-      FhirProperties fhirProperties,
       HergestellteMedicationMapper medicationMapper,
       MedicationRequestMapper medicationRequestMapper,
       WirkstoffMedicationMapper wirkstoffMedicationMapper,
       TraegerLoesungMedicationMapper traegerLoesungMedicationMapper,
       Function<ZenzyTherapie, Reference> patientReferenceGenerator) {
-    this.fhirProps = fhirProperties;
     this.medicationMapper = medicationMapper;
     this.medicationRequestMapper = medicationRequestMapper;
     this.wirkstoffMedicationMapper = wirkstoffMedicationMapper;
@@ -73,10 +70,10 @@ public class ZenzyTherapieToFhirBundleMapper {
     }
 
     var medication = medicationMapper.map(therapie, wirkstoffe, traegerLoesungReference);
+    var medicationReference = MappingUtils.createReferenceToResource(medication);
 
     var medicationRequest =
-        medicationRequestMapper.map(
-            therapie, MappingUtils.createReferenceToResource(medication), patientReference);
+        medicationRequestMapper.map(therapie, medicationReference, patientReference);
 
     var bundle = new Bundle();
     bundle.setType(BundleType.TRANSACTION);

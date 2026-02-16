@@ -6,6 +6,7 @@ import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.IntStream;
@@ -18,6 +19,7 @@ import org.hl7.fhir.r4.model.Ratio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class WirkstoffMedicationMapper {
@@ -25,25 +27,10 @@ public class WirkstoffMedicationMapper {
 
   private final FhirProperties fhirProperties;
   private final ToCodingMapper toCodingMapper;
-  private final Ratio singlePieceStrength;
 
   public WirkstoffMedicationMapper(FhirProperties fhirProperties, ToCodingMapper toCodingMapper) {
     this.fhirProperties = fhirProperties;
     this.toCodingMapper = toCodingMapper;
-
-    singlePieceStrength = new Ratio();
-    singlePieceStrength
-        .getNumerator()
-        .setCode("mg")
-        .setUnit("mg")
-        .setSystem(fhirProperties.getSystems().ucum())
-        .setValue(1);
-    singlePieceStrength
-        .getDenominator()
-        .setCode("1")
-        .setUnit("{Stueck}")
-        .setSystem(fhirProperties.getSystems().ucum())
-        .setValue(1);
   }
 
   public List<MedicationAndStrength> map(ZenzyTherapie therapie) {
@@ -51,11 +38,23 @@ public class WirkstoffMedicationMapper {
 
     var wirkstoffe = therapie.wirkstoff().split("\\\\n");
     var dosen = therapie.dosis().split("\\\\n");
-    // TODO: dosis einheit
-    // var dosisEinheit = therapie.dosisEinheit().split("\\\\n");
+
+    final var dosisEinheit =
+        StringUtils.hasText(therapie.dosisEinheit())
+            ? therapie.dosisEinheit().split("\\\\n")
+            : new String[wirkstoffe.length];
+
+    if (!StringUtils.hasText(therapie.dosisEinheit())) {
+      LOG.debug("Dosis einheit is not set, defaulting to 'mg'");
+      Arrays.fill(dosisEinheit, "mg");
+    }
 
     if (wirkstoffe.length != dosen.length) {
       throw new IllegalArgumentException("substance and dosis length mismatch");
+    }
+
+    if (dosisEinheit != null && wirkstoffe.length != dosisEinheit.length) {
+      throw new IllegalArgumentException("substance and dosis unit length mismatch");
     }
 
     var zipped =
@@ -63,11 +62,11 @@ public class WirkstoffMedicationMapper {
             .mapToObj(
                 i -> {
                   try {
-                    // TODO: dosis einheit
+                    var einheit = dosisEinheit != null ? dosisEinheit[i] : "mg";
                     return new WirkstoffDosis(
                         wirkstoffe[i],
                         NumberFormat.getInstance(Locale.GERMAN).parse(dosen[i]),
-                        null);
+                        einheit);
                   } catch (ParseException e) {
                     throw new IllegalArgumentException("Failed to parse dosis", e);
                   }
@@ -108,16 +107,20 @@ public class WirkstoffMedicationMapper {
 
       medication.setCode(codeableConcept);
 
-      // copy() since we are mutating the value if a dosisEinheit is set
-      var amount = singlePieceStrength.copy();
-      // TODO: check if the dosis einheit is actually UCUM
-      // the default is mg
-      if (wirkstoffDosis.dosisEinheit() != null) {
-        amount.getNumerator().setCode(wirkstoffDosis.dosisEinheit());
-        amount.getNumerator().setUnit(wirkstoffDosis.dosisEinheit());
-      } else {
-        LOG.debug("Dosis einheit unset, assuming mg");
-      }
+      // TODO: check if dosis einheit is actually mg/ucum
+      var amount = new Ratio();
+      amount
+          .getNumerator()
+          .setCode(wirkstoffDosis.dosisEinheit())
+          .setUnit(wirkstoffDosis.dosisEinheit())
+          .setSystem(fhirProperties.getSystems().ucum())
+          .setValue(1);
+      amount
+          .getDenominator()
+          .setCode("1")
+          .setUnit("{Stueck}")
+          .setSystem(fhirProperties.getSystems().ucum())
+          .setValue(1);
 
       medication.setAmount(amount);
 
