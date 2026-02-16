@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.1.2](https://github.com/bzkf/zenzy-to-fhir/compare/v0.1.1...v0.1.2) (2026-02-16)
+
+
+### Features
+
+* handle dosis einheit ([#8](https://github.com/bzkf/zenzy-to-fhir/issues/8)) ([e7a6aa5](https://github.com/bzkf/zenzy-to-fhir/commit/e7a6aa5a49ee9b43791ba6acd8df4ea970e15407))
+
+
+### Bug Fixes
+
+* handle unverduennt correctly ([#10](https://github.com/bzkf/zenzy-to-fhir/issues/10)) ([e82f25f](https://github.com/bzkf/zenzy-to-fhir/commit/e82f25f5132ebb65fbc5485fc1a33e2943e46362))
+
+
+### Miscellaneous Chores
+
+* **deps:** update miracum/.github action to v1.20.2 ([#7](https://github.com/bzkf/zenzy-to-fhir/issues/7)) ([ad8d95d](https://github.com/bzkf/zenzy-to-fhir/commit/ad8d95d9385d016dcd8cbcc731dde9df7ef7dab2))
+
 ## [0.1.1](https://github.com/bzkf/zenzy-to-fhir/compare/v0.1.0...v0.1.1) (2026-02-16)
 
 
