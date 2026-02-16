@@ -8,7 +8,7 @@ traegerloesung;snomed_code;snomed_display;atc_code;atc_display
 "NaCl 0,9% IMCgp203";1263924005;"Product containing precisely sodium chloride 9 milligram/1 milliliter conventional release solution for infusion and/or injection (clinical drug)";V07AB02;Physiologische Kochsalzlösung
 "NaCl 0,9% BLOC";1263924005;"Product containing precisely sodium chloride 9 milligram/1 milliliter conventional release solution for infusion and/or injection (clinical drug)";V07AB02;Physiologische Kochsalzlösung
 "NaCl 3%";1338072000;"Product containing precisely sodium chloride 30 milligram/1 milliliter conventional release solution for injection (clinical drug)";V07AB02;Physiologische Kochsalzlösung
-"unverdünnt";;
+"unverdünnt";;;;
 "G 5% HA 0,25%";8658008;Human serum albumin-containing product;B05AA51;"Albumin, Kombinationen"
-"unverdünnt in EVA-Beutel";;
-"unverdünnt in PVC-Beutel";;
+"unverdünnt in EVA-Beutel";;;;
+"unverdünnt in PVC-Beutel";;;;

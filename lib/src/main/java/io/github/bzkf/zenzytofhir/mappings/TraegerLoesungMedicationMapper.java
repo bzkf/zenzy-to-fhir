@@ -2,18 +2,20 @@ package io.github.bzkf.zenzytofhir.mappings;
 
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
 import java.util.Optional;
-import org.apache.jena.atlas.logging.Log;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Medication;
 import org.hl7.fhir.r4.model.Medication.MedicationStatus;
 import org.hl7.fhir.r4.model.Quantity;
 import org.hl7.fhir.r4.model.Ratio;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 @Service
 public class TraegerLoesungMedicationMapper {
+  private static final Logger LOG = LoggerFactory.getLogger(TraegerLoesungMedicationMapper.class);
 
   private final FhirProperties fhirProps;
   private final ToCodingMapper toSnomedMapper;
@@ -45,6 +47,11 @@ public class TraegerLoesungMedicationMapper {
     if (maybeMapped.isPresent()) {
       var mapped = maybeMapped.get();
 
+      if (!StringUtils.hasText(mapped.snomedCode()) && !StringUtils.hasText(mapped.atcCode())) {
+        LOG.debug("No mapping code available, likely undiluted.");
+        return Optional.empty();
+      }
+
       var snomed = fhirProps.getCodings().snomed();
       if (mapped.snomedCode() != null) {
         snomed.setCode(mapped.snomedCode()).setDisplay(mapped.snomedDisplay());
@@ -57,7 +64,7 @@ public class TraegerLoesungMedicationMapper {
         codeableConcept.addCoding(atc);
       }
     } else {
-      Log.warn("Traegerlösung {} could not be mapped", therapie.traegerloesung());
+      LOG.warn("Traegerlösung {} could not be mapped", therapie.traegerloesung());
     }
 
     medication.setCode(codeableConcept);
