@@ -138,17 +138,13 @@ public class MedicationRequestMapper {
       LOG.warn("Applikationsart is unset");
     }
 
-    if (therapie.gesamtvolumenNumeric() != null && therapie.gesamtvolumenNumeric() > 0) {
-      var quantity =
-          new Quantity()
-              .setCode("mL")
-              .setUnit("milliliter")
-              .setSystem(fhirProps.getSystems().ucum())
-              .setValue(therapie.gesamtvolumenNumeric());
-      dosage.addDoseAndRate().setDose(quantity);
-    } else {
-      LOG.warn("Gesamtvolumen <= 0");
-    }
+    var quantity =
+        new Quantity()
+            .setCode("{Stueck}")
+            .setUnit("1")
+            .setSystem(fhirProps.getSystems().ucum())
+            .setValue(1);
+    dosage.addDoseAndRate().setDose(quantity);
 
     medicationRequest.addDosageInstruction(dosage);
 

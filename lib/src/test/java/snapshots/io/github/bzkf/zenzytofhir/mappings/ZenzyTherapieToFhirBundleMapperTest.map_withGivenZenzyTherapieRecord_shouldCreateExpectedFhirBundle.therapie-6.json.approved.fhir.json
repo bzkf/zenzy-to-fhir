@@ -46,10 +46,10 @@
         },
         "doseAndRate": [ {
           "doseQuantity": {
-            "value": 500.0,
-            "unit": "milliliter",
+            "value": 1,
+            "unit": "1",
             "system": "http://unitsofmeasure.org",
-            "code": "mL"
+            "code": "{Stueck}"
           }
         } ]
       } ]
