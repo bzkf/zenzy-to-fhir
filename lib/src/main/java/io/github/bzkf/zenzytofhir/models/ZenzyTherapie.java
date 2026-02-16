@@ -34,4 +34,5 @@ public record ZenzyTherapie(
     @JsonProperty("DOSIERUNGEINHEIT") String dosierungEinheit,
     @JsonProperty("DOSIERUNGSART") String dosierungsart,
     @JsonProperty("DOSIS") String dosis,
+    @JsonProperty("DOSISEINHEIT") String dosisEinheit,
     @JsonProperty("KISPATIENTENID") String kisPatientenId) {}

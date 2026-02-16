@@ -20,5 +20,6 @@
   "DOSIERUNGEINHEIT": null,
   "DOSIERUNGSART": "KOF\\nKOF",
   "DOSIS": "3300,00\\n800,00",
+  "DOSISEINHEIT": "mg\\nmg",
   "KISPATIENTENID": "4"
 }
