@@ -24,6 +24,22 @@
         "timing": {
           "event": [ "2010-10-11T00:00:00+02:00" ]
         },
+        "route": {
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+            "code": "34206005",
+            "display": "Subcutaneous route"
+          } ]
+        },
+        "method": {
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+            "code": "300036000",
+            "display": "Subcutaneous infusion (procedure)"
+          } ]
+        },
         "doseAndRate": [ {
           "doseQuantity": {
             "value": 1,
