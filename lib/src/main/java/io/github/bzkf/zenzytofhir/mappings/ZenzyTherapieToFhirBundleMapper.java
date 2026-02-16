@@ -1,111 +1,108 @@
 package io.github.bzkf.zenzytofhir.mappings;
 
-import static net.logstash.logback.argument.StructuredArguments.kv;
-
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.Optional;
 import java.util.function.Function;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.Validate;
-import org.hl7.fhir.instance.model.api.IIdType;
-import org.hl7.fhir.r4.model.BooleanType;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleType;
-import org.hl7.fhir.r4.model.CodeableConcept;
-import org.hl7.fhir.r4.model.DateTimeType;
-import org.hl7.fhir.r4.model.Dosage;
-import org.hl7.fhir.r4.model.IdType;
-import org.hl7.fhir.r4.model.Identifier;
-import org.hl7.fhir.r4.model.MedicationRequest;
-import org.hl7.fhir.r4.model.MedicationRequest.MedicationRequestIntent;
-import org.hl7.fhir.r4.model.MedicationRequest.MedicationRequestStatus;
+import org.hl7.fhir.r4.model.Bundle.HTTPVerb;
 import org.hl7.fhir.r4.model.Reference;
-import org.hl7.fhir.r4.model.Timing;
+import org.hl7.fhir.r4.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class ZenzyTherapieToFhirBundleMapper {
+
   private static final Logger LOG = LoggerFactory.getLogger(ZenzyTherapieToFhirBundleMapper.class);
-  private static final ZoneId DEFAULT_ZONE_ID = ZoneId.of("Europe/Berlin");
   private final FhirProperties fhirProps;
+  private final HergestellteMedicationMapper medicationMapper;
+  private final MedicationRequestMapper medicationRequestMapper;
+  private final WirkstoffMedicationMapper wirkstoffMedicationMapper;
+  private final TraegerLoesungMedicationMapper traegerLoesungMedicationMapper;
   private final Function<ZenzyTherapie, Reference> patientReferenceGenerator;
 
   public ZenzyTherapieToFhirBundleMapper(
-      FhirProperties fhirProperties, Function<ZenzyTherapie, Reference> patientReferenceGenerator) {
+      FhirProperties fhirProperties,
+      HergestellteMedicationMapper medicationMapper,
+      MedicationRequestMapper medicationRequestMapper,
+      WirkstoffMedicationMapper wirkstoffMedicationMapper,
+      TraegerLoesungMedicationMapper traegerLoesungMedicationMapper,
+      Function<ZenzyTherapie, Reference> patientReferenceGenerator) {
     this.fhirProps = fhirProperties;
+    this.medicationMapper = medicationMapper;
+    this.medicationRequestMapper = medicationRequestMapper;
+    this.wirkstoffMedicationMapper = wirkstoffMedicationMapper;
+    this.traegerLoesungMedicationMapper = traegerLoesungMedicationMapper;
     this.patientReferenceGenerator = patientReferenceGenerator;
   }
 
-  public Bundle map(ZenzyTherapie record) {
-    LOG.info("Mapping ZenzyTherapie record {} to FHIR", kv("nr", record.nr()));
+  public Optional<Bundle> map(ZenzyTherapie therapie) {
+    MDC.put("autoNr", therapie.autoNr().toString());
+    MDC.put("nr", therapie.nr().toString());
+    MDC.put("therapieNummer", therapie.therapieNummer().toString());
+    MDC.put("herstellungsId", therapie.herstellungsId());
 
-    // Mapping logic to convert ZenzyTherapieRecord to FHIR Bundle goes here
-    var medicationRequest = new MedicationRequest();
+    LOG.debug("Mapping ZenzyTherapie record to FHIR");
 
-    var identifier =
-        new Identifier()
-            .setSystem(fhirProps.getSystems().identifiers().zenzyTherapieNr())
-            .setValue(record.nr().toString());
-    medicationRequest.addIdentifier(identifier);
-    medicationRequest.setId(computeResourceIdFromIdentifier(identifier));
+    if (!StringUtils.hasText(therapie.wirkstoff())) {
+      LOG.error("Wirkstoff is unset. Unable to map.");
+      return Optional.empty();
+    }
 
-    // TODO: set the status based on the record data
-    medicationRequest.setStatus(MedicationRequestStatus.ACTIVE);
+    if (!StringUtils.hasText(therapie.dosis())) {
+      LOG.error("Dosis is unset. Unable to map.");
+      return Optional.empty();
+    }
 
-    // TODO: verify if this is the correct code
-    medicationRequest.setIntent(MedicationRequestIntent.ORDER);
+    var patientReference = patientReferenceGenerator.apply(therapie);
 
-    // TODO: we probably can't set the category (?).
-    // or maybe set it to chemotherapy?
-    medicationRequest.setReported(new BooleanType(false));
+    var wirkstoffe = wirkstoffMedicationMapper.map(therapie);
 
-    var patientReference = patientReferenceGenerator.apply(record);
-    medicationRequest.setSubject(patientReference);
+    var traegerLoesung = traegerLoesungMedicationMapper.map(therapie);
 
-    // TODO: authoredOn ?
+    Reference traegerLoesungReference = null;
+    if (traegerLoesung.isPresent()) {
+      traegerLoesungReference = MappingUtils.createReferenceToResource(traegerLoesung.get());
+      traegerLoesungReference.setDisplay(therapie.traegerloesung());
+    } else {
+      LOG.debug("No Tragerloesung specified");
+    }
 
-    var timing = new Timing();
-    var dt = record.applikationsZeitpunkt().atZone(DEFAULT_ZONE_ID).toOffsetDateTime();
-    var fhirDateTime = new DateTimeType();
-    fhirDateTime.setValue(Date.from(dt.toInstant()));
-    fhirDateTime.setTimeZone(TimeZone.getTimeZone(dt.getOffset()));
-    timing.setEvent(List.of(fhirDateTime));
+    var medication = medicationMapper.map(therapie, wirkstoffe, traegerLoesungReference);
 
-    var dosage = new Dosage();
-    dosage.setTiming(timing);
-
-    var dosageRoute = new CodeableConcept();
-    dosageRoute.setText(record.applikationsArt());
-    dosage.setRoute(dosageRoute);
-
-    medicationRequest.addDosageInstruction(dosage);
-
-    var medication = new CodeableConcept();
-    medication.setText(record.wirkstoff());
-    medicationRequest.setMedication(medication);
+    var medicationRequest =
+        medicationRequestMapper.map(
+            therapie, MappingUtils.createReferenceToResource(medication), patientReference);
 
     var bundle = new Bundle();
     bundle.setType(BundleType.TRANSACTION);
     bundle.setId(medicationRequest.getId());
-    bundle.addEntry().setResource(medicationRequest);
+    addBundleEntry(bundle, medicationRequest);
+    addBundleEntry(bundle, medication);
 
-    return bundle;
+    for (var wirkstoff : wirkstoffe) {
+      addBundleEntry(bundle, wirkstoff.medication());
+    }
+
+    if (traegerLoesung.isPresent()) {
+      addBundleEntry(bundle, traegerLoesung.get());
+    }
+
+    return Optional.of(bundle);
   }
 
-  private static final IIdType computeResourceIdFromIdentifier(Identifier identifier) {
-    Validate.notBlank(identifier.getSystem());
-    Validate.notBlank(
-        identifier.getValue(),
-        "Identifier value must not be blank. System: %s",
-        identifier.getSystem());
-    var id =
-        new DigestUtils("SHA-256")
-            .digestAsHex(identifier.getSystem() + "|" + identifier.getValue());
-    return new IdType(id);
+  private static Bundle addBundleEntry(Bundle bundle, Resource resource) {
+    var resourceReference = MappingUtils.createReferenceToResource(resource);
+    bundle
+        .addEntry()
+        .setResource(resource)
+        .getRequest()
+        .setMethod(HTTPVerb.PUT)
+        .setUrl(resourceReference.getReference());
+    return bundle;
   }
 }

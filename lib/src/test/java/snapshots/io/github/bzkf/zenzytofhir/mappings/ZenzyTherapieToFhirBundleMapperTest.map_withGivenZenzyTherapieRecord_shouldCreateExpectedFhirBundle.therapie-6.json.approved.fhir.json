@@ -1,31 +1,31 @@
 {
   "resourceType": "Bundle",
-  "id": "5a53594fb4666f601a7b1cd7fd70ae9d86fc93ceed2274302fbba92e7c538770",
+  "id": "1a8d43419c1fe653dec23a69b63722d28cc6c7bec66a0c12ded7902696d8c1ba",
   "type": "transaction",
   "entry": [ {
     "resource": {
       "resourceType": "MedicationRequest",
-      "id": "5a53594fb4666f601a7b1cd7fd70ae9d86fc93ceed2274302fbba92e7c538770",
+      "id": "1a8d43419c1fe653dec23a69b63722d28cc6c7bec66a0c12ded7902696d8c1ba",
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-request-id",
-        "value": "4"
+        "value": "6"
       } ],
       "status": "active",
       "intent": "order",
       "reportedBoolean": false,
       "medicationReference": {
-        "reference": "Medication/329a64b62174c1d06b65721a1824dee9e7ddd36f948fc8cedd3cdc98dabc42f9"
+        "reference": "Medication/b6476abdd8364a89212893743b09260dc3960322386de094a0fbfb93ad9b9e74"
       },
       "subject": {
-        "reference": "Patient/4"
+        "reference": "Patient/123"
       },
       "dosageInstruction": [ {
-        "text": "Baxterpumpe (SV4) über 24 h",
+        "text": "Kurzinfusion über 30 min",
         "timing": {
-          "event": [ "2007-05-02T00:00:00+02:00" ],
+          "event": [ "2025-03-11T14:00:00+01:00" ],
           "repeat": {
-            "duration": 24.0,
-            "durationUnit": "h"
+            "duration": 30.0,
+            "durationUnit": "min"
           }
         },
         "route": {
@@ -56,20 +56,20 @@
     },
     "request": {
       "method": "PUT",
-      "url": "MedicationRequest/5a53594fb4666f601a7b1cd7fd70ae9d86fc93ceed2274302fbba92e7c538770"
+      "url": "MedicationRequest/1a8d43419c1fe653dec23a69b63722d28cc6c7bec66a0c12ded7902696d8c1ba"
     }
   }, {
     "resource": {
       "resourceType": "Medication",
-      "id": "329a64b62174c1d06b65721a1824dee9e7ddd36f948fc8cedd3cdc98dabc42f9",
+      "id": "b6476abdd8364a89212893743b09260dc3960322386de094a0fbfb93ad9b9e74",
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-id",
-        "value": "4"
+        "value": "6"
       } ],
       "status": "active",
       "amount": {
         "numerator": {
-          "value": 100.0,
+          "value": 500.0,
           "unit": "milliliter",
           "system": "http://unitsofmeasure.org",
           "code": "mL"
@@ -83,19 +83,19 @@
       },
       "ingredient": [ {
         "itemReference": {
-          "reference": "Medication/410c64c9959c8ef6947befce25112f6d21e66f8f9a8a56fcea4e246f3a45ca40",
-          "display": "NaCl 0.9%"
+          "reference": "Medication/43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a",
+          "display": "Glucose 5%"
         },
         "isActive": false,
         "strength": {
           "numerator": {
-            "value": 100.0,
+            "value": 500.0,
             "unit": "1",
             "system": "http://unitsofmeasure.org",
             "code": "{Stueck}"
           },
           "denominator": {
-            "value": 100.0,
+            "value": 500.0,
             "unit": "milliliter",
             "system": "http://unitsofmeasure.org",
             "code": "mL"
@@ -103,39 +103,19 @@
         }
       }, {
         "itemReference": {
-          "reference": "Medication/0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed",
-          "display": "Fluorouracil"
+          "reference": "Medication/7876887cc3b4c2a8f5db9b6bcf131578f1ab217f0157f241b9aa36672fa56339",
+          "display": "Carboplatin"
         },
         "isActive": false,
         "strength": {
           "numerator": {
-            "value": 3300.0,
+            "value": 540.0,
             "unit": "{Stueck}",
             "system": "http://unitsofmeasure.org",
             "code": "1"
           },
           "denominator": {
-            "value": 100.0,
-            "unit": "milliliter",
-            "system": "http://unitsofmeasure.org",
-            "code": "mL"
-          }
-        }
-      }, {
-        "itemReference": {
-          "reference": "Medication/45d2dc95af808c4138fd216b474debdf0c98ae3ad30fbe5a08e0ab41a081591d",
-          "display": "Natriumfolinat"
-        },
-        "isActive": false,
-        "strength": {
-          "numerator": {
-            "value": 800.0,
-            "unit": "{Stueck}",
-            "system": "http://unitsofmeasure.org",
-            "code": "1"
-          },
-          "denominator": {
-            "value": 100.0,
+            "value": 500.0,
             "unit": "milliliter",
             "system": "http://unitsofmeasure.org",
             "code": "mL"
@@ -145,29 +125,29 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/329a64b62174c1d06b65721a1824dee9e7ddd36f948fc8cedd3cdc98dabc42f9"
+      "url": "Medication/b6476abdd8364a89212893743b09260dc3960322386de094a0fbfb93ad9b9e74"
     }
   }, {
     "resource": {
       "resourceType": "Medication",
-      "id": "0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed",
+      "id": "7876887cc3b4c2a8f5db9b6bcf131578f1ab217f0157f241b9aa36672fa56339",
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-wirkstoff-medication-id",
-        "value": "fluorouracil"
+        "value": "carboplatin"
       } ],
       "code": {
         "coding": [ {
           "system": "http://fhir.de/CodeSystem/bfarm/atc",
           "version": "2025",
-          "code": "L01BC02",
-          "display": "Fluorouracil"
+          "code": "L01XA02",
+          "display": "Carboplatin"
         }, {
           "system": "http://snomed.info/sct",
           "version": "http://snomed.info/sct/900000000000207008/version/20260101",
-          "code": "387172005",
-          "display": "Fluorouracil (substance)"
+          "code": "386905002",
+          "display": "Carboplatin (substance)"
         } ],
-        "text": "Fluorouracil"
+        "text": "Carboplatin"
       },
       "status": "active",
       "amount": {
@@ -187,71 +167,29 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed"
+      "url": "Medication/7876887cc3b4c2a8f5db9b6bcf131578f1ab217f0157f241b9aa36672fa56339"
     }
   }, {
     "resource": {
       "resourceType": "Medication",
-      "id": "45d2dc95af808c4138fd216b474debdf0c98ae3ad30fbe5a08e0ab41a081591d",
-      "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-wirkstoff-medication-id",
-        "value": "natriumfolinat"
-      } ],
-      "code": {
-        "coding": [ {
-          "system": "http://fhir.de/CodeSystem/bfarm/atc",
-          "version": "2025",
-          "code": "V03AF06",
-          "display": "Natriumfolinat"
-        }, {
-          "system": "http://snomed.info/sct",
-          "version": "http://snomed.info/sct/900000000000207008/version/20260101",
-          "code": "768550004",
-          "display": "Sodium folinate (substance)"
-        } ],
-        "text": "Natriumfolinat"
-      },
-      "status": "active",
-      "amount": {
-        "numerator": {
-          "value": 1,
-          "unit": "mg",
-          "system": "http://unitsofmeasure.org",
-          "code": "mg"
-        },
-        "denominator": {
-          "value": 1,
-          "unit": "{Stueck}",
-          "system": "http://unitsofmeasure.org",
-          "code": "1"
-        }
-      }
-    },
-    "request": {
-      "method": "PUT",
-      "url": "Medication/45d2dc95af808c4138fd216b474debdf0c98ae3ad30fbe5a08e0ab41a081591d"
-    }
-  }, {
-    "resource": {
-      "resourceType": "Medication",
-      "id": "410c64c9959c8ef6947befce25112f6d21e66f8f9a8a56fcea4e246f3a45ca40",
+      "id": "43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a",
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-traegerloesung-medication-id",
-        "value": "nacl-0-9"
+        "value": "glucose-5"
       } ],
       "code": {
         "coding": [ {
           "system": "http://snomed.info/sct",
           "version": "http://snomed.info/sct/900000000000207008/version/20260101",
-          "code": "1263924005",
-          "display": "Product containing precisely sodium chloride 9 milligram/1 milliliter conventional release solution for infusion and/or injection (clinical drug)"
+          "code": "1268457003",
+          "display": "Product containing precisely glucose 50 milligram/1 milliliter conventional release solution for infusion and/or injection (clinical drug)"
         }, {
           "system": "http://fhir.de/CodeSystem/bfarm/atc",
           "version": "2025",
-          "code": "V07AB02",
-          "display": "Physiologische Kochsalzlösung"
+          "code": "B05BA11",
+          "display": "Glucose"
         } ],
-        "text": "NaCl 0.9%"
+        "text": "Glucose 5%"
       },
       "status": "active",
       "amount": {
@@ -271,7 +209,7 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/410c64c9959c8ef6947befce25112f6d21e66f8f9a8a56fcea4e246f3a45ca40"
+      "url": "Medication/43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a"
     }
   } ]
 }

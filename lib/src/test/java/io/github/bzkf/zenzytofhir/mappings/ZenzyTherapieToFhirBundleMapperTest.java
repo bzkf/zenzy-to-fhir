@@ -1,13 +1,18 @@
 package io.github.bzkf.zenzytofhir.mappings;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import ca.uhn.fhir.context.FhirContext;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.github.bzkf.zenzytofhir.ProfileTestConfig;
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
 import java.io.IOException;
+import java.text.ParseException;
+import java.util.function.Function;
 import org.approvaltests.Approvals;
 import org.hl7.fhir.r4.model.Reference;
 import org.junit.jupiter.api.BeforeAll;
@@ -18,7 +23,16 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(classes = {FhirProperties.class})
+@SpringBootTest(
+    classes = {
+      FhirProperties.class,
+      HergestellteMedicationMapper.class,
+      TraegerLoesungMedicationMapper.class,
+      MedicationRequestMapper.class,
+      ProfileTestConfig.class,
+      ToCodingMapper.class,
+      WirkstoffMedicationMapper.class
+    })
 @EnableConfigurationProperties
 @ConfigurationPropertiesScan
 public class ZenzyTherapieToFhirBundleMapperTest {
@@ -26,10 +40,21 @@ public class ZenzyTherapieToFhirBundleMapperTest {
   private static ZenzyTherapieToFhirBundleMapper sut;
 
   @BeforeAll
-  static void beforeAll(@Autowired FhirProperties fhirProps) {
+  static void beforeAll(
+      @Autowired FhirProperties fhirProps,
+      @Autowired HergestellteMedicationMapper medicationMapper,
+      @Autowired MedicationRequestMapper medicationRequestMapper,
+      @Autowired WirkstoffMedicationMapper wirkstoffMedicationMapper,
+      @Autowired TraegerLoesungMedicationMapper traegerLoesungMedicationMapper,
+      @Autowired Function<ZenzyTherapie, Reference> patientReferenceGenerator) {
     sut =
         new ZenzyTherapieToFhirBundleMapper(
-            fhirProps, t -> new Reference("Patient/" + t.kisPatientenId()));
+            fhirProps,
+            medicationMapper,
+            medicationRequestMapper,
+            wirkstoffMedicationMapper,
+            traegerLoesungMedicationMapper,
+            patientReferenceGenerator);
   }
 
   @ParameterizedTest
@@ -38,9 +63,14 @@ public class ZenzyTherapieToFhirBundleMapperTest {
     "therapie-2.json",
     "therapie-3.json",
     "therapie-4.json",
+    "therapie-5.json",
+    "therapie-6.json",
+    "therapie-10.json",
+    "therapie-11.json",
+    "therapie-12.json",
   })
   void map_withGivenZenzyTherapieRecord_shouldCreateExpectedFhirBundle(String sourceFile)
-      throws StreamReadException, DatabindException, IOException {
+      throws StreamReadException, DatabindException, IOException, ParseException {
     final var recordStream = this.getClass().getClassLoader().getResource("fixtures/" + sourceFile);
     var mapper =
         new ObjectMapper()
@@ -51,8 +81,26 @@ public class ZenzyTherapieToFhirBundleMapperTest {
     var mapped = sut.map(record);
 
     var fhirParser = fhirContext.newJsonParser().setPrettyPrint(true);
-    var fhirJson = fhirParser.encodeResourceToString(mapped);
+    var fhirJson = fhirParser.encodeResourceToString(mapped.get());
     Approvals.verify(
         fhirJson, Approvals.NAMES.withParameters(sourceFile).forFile().withExtension(".fhir.json"));
+  }
+
+  @ParameterizedTest
+  @CsvSource({
+    "therapie-9.json",
+  })
+  void map_withUnmappableZenzyTherapieRecord_shouldNotCreateBundle(String sourceFile)
+      throws StreamReadException, DatabindException, IOException, ParseException {
+    final var recordStream = this.getClass().getClassLoader().getResource("fixtures/" + sourceFile);
+    var mapper =
+        new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
+    final var record = mapper.readValue(recordStream.openStream(), ZenzyTherapie.class);
+
+    var mapped = sut.map(record);
+
+    assertTrue(mapped.isEmpty());
   }
 }

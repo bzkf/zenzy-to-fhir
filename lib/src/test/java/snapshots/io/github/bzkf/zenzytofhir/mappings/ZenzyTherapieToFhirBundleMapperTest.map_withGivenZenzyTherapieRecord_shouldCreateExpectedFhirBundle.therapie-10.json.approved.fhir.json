@@ -1,48 +1,27 @@
 {
   "resourceType": "Bundle",
-  "id": "8ce8958fc6b03f56b28f0acdaf6ce835088030ec8d68e96698b14bf8485f4bca",
+  "id": "f4813d59a970bb601ef9feb9fccd32a72e327ffd302a0d9dba58bdb232090f51",
   "type": "transaction",
   "entry": [ {
     "resource": {
       "resourceType": "MedicationRequest",
-      "id": "8ce8958fc6b03f56b28f0acdaf6ce835088030ec8d68e96698b14bf8485f4bca",
+      "id": "f4813d59a970bb601ef9feb9fccd32a72e327ffd302a0d9dba58bdb232090f51",
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-request-id",
-        "value": "1"
+        "value": "10"
       } ],
       "status": "active",
       "intent": "order",
       "reportedBoolean": false,
       "medicationReference": {
-        "reference": "Medication/a68889464122675222d3d6a24c13d219c8fb3cc91c930a0f219ba6d69824d29b"
+        "reference": "Medication/c6617c1b9c251783e412b7a1bba650551e3682467a965067bf8892596d18ba93"
       },
       "subject": {
-        "reference": "Patient/1"
+        "reference": "Patient/10"
       },
       "dosageInstruction": [ {
-        "text": "Kurzinfusion über 30 min",
         "timing": {
-          "event": [ "1999-10-26T09:30:00+02:00" ],
-          "repeat": {
-            "duration": 30.0,
-            "durationUnit": "min"
-          }
-        },
-        "route": {
-          "coding": [ {
-            "system": "http://snomed.info/sct",
-            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
-            "code": "47625008",
-            "display": "Intravenous route"
-          } ]
-        },
-        "method": {
-          "coding": [ {
-            "system": "http://snomed.info/sct",
-            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
-            "code": "36576007",
-            "display": "Infusion (procedure)"
-          } ]
+          "event": [ "2009-11-10T15:00:00+01:00" ]
         },
         "doseAndRate": [ {
           "doseQuantity": {
@@ -56,20 +35,20 @@
     },
     "request": {
       "method": "PUT",
-      "url": "MedicationRequest/8ce8958fc6b03f56b28f0acdaf6ce835088030ec8d68e96698b14bf8485f4bca"
+      "url": "MedicationRequest/f4813d59a970bb601ef9feb9fccd32a72e327ffd302a0d9dba58bdb232090f51"
     }
   }, {
     "resource": {
       "resourceType": "Medication",
-      "id": "a68889464122675222d3d6a24c13d219c8fb3cc91c930a0f219ba6d69824d29b",
+      "id": "c6617c1b9c251783e412b7a1bba650551e3682467a965067bf8892596d18ba93",
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-id",
-        "value": "1"
+        "value": "10"
       } ],
       "status": "active",
       "amount": {
         "numerator": {
-          "value": 500.0,
+          "value": 25.0,
           "unit": "milliliter",
           "system": "http://unitsofmeasure.org",
           "code": "mL"
@@ -89,13 +68,13 @@
         "isActive": false,
         "strength": {
           "numerator": {
-            "value": 500.0,
+            "value": 25.0,
             "unit": "1",
             "system": "http://unitsofmeasure.org",
             "code": "{Stueck}"
           },
           "denominator": {
-            "value": 500.0,
+            "value": 25.0,
             "unit": "milliliter",
             "system": "http://unitsofmeasure.org",
             "code": "mL"
@@ -103,19 +82,19 @@
         }
       }, {
         "itemReference": {
-          "reference": "Medication/0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed",
-          "display": "Fluorouracil"
+          "reference": "Medication/77b1715eac0ecc83e9917809ea5aa41c0795ec81dc8ce57806248e8dd523d767",
+          "display": "Amphotericin lipos."
         },
         "isActive": false,
         "strength": {
           "numerator": {
-            "value": 900.0,
+            "value": 15.0,
             "unit": "{Stueck}",
             "system": "http://unitsofmeasure.org",
             "code": "1"
           },
           "denominator": {
-            "value": 500.0,
+            "value": 25.0,
             "unit": "milliliter",
             "system": "http://unitsofmeasure.org",
             "code": "mL"
@@ -125,29 +104,29 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/a68889464122675222d3d6a24c13d219c8fb3cc91c930a0f219ba6d69824d29b"
+      "url": "Medication/c6617c1b9c251783e412b7a1bba650551e3682467a965067bf8892596d18ba93"
     }
   }, {
     "resource": {
       "resourceType": "Medication",
-      "id": "0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed",
+      "id": "77b1715eac0ecc83e9917809ea5aa41c0795ec81dc8ce57806248e8dd523d767",
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-wirkstoff-medication-id",
-        "value": "fluorouracil"
+        "value": "amphotericin-lipos"
       } ],
       "code": {
         "coding": [ {
           "system": "http://fhir.de/CodeSystem/bfarm/atc",
           "version": "2025",
-          "code": "L01BC02",
-          "display": "Fluorouracil"
+          "code": "J02AA01",
+          "display": "Amphotericin B"
         }, {
           "system": "http://snomed.info/sct",
           "version": "http://snomed.info/sct/900000000000207008/version/20260101",
-          "code": "387172005",
-          "display": "Fluorouracil (substance)"
+          "code": "77703004",
+          "display": "Amphotericin B (substance)"
         } ],
-        "text": "Fluorouracil"
+        "text": "Amphotericin lipos."
       },
       "status": "active",
       "amount": {
@@ -167,7 +146,7 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed"
+      "url": "Medication/77b1715eac0ecc83e9917809ea5aa41c0795ec81dc8ce57806248e8dd523d767"
     }
   }, {
     "resource": {

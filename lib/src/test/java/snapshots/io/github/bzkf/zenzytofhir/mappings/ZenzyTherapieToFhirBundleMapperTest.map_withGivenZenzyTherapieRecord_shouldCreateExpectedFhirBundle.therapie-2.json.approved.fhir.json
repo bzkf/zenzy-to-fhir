@@ -1,32 +1,216 @@
 {
   "resourceType": "Bundle",
-  "id": "098097c7dc8ea20130e559262b88bbe1657510476025e3fda97769855d38a7e3",
+  "id": "a21e96ccce99eb4cb9c9046adb434116633050325c7c5a2454c1c984ef2a5f32",
   "type": "transaction",
   "entry": [ {
     "resource": {
       "resourceType": "MedicationRequest",
-      "id": "098097c7dc8ea20130e559262b88bbe1657510476025e3fda97769855d38a7e3",
+      "id": "a21e96ccce99eb4cb9c9046adb434116633050325c7c5a2454c1c984ef2a5f32",
       "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-therapie-nr",
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-request-id",
         "value": "2"
       } ],
       "status": "active",
       "intent": "order",
       "reportedBoolean": false,
-      "medicationCodeableConcept": {
-        "text": "Fluorouracil"
+      "medicationReference": {
+        "reference": "Medication/c97024e8d795b72ae6e7b44961a92f33edd35cd6a394188cd557e97a22d07ea1"
       },
       "subject": {
         "reference": "Patient/2"
       },
       "dosageInstruction": [ {
+        "text": "Infusion über 1,5 -3 Stunden",
         "timing": {
-          "event": [ "1999-10-25T11:30:00+02:00" ]
+          "event": [ "1999-10-25T09:30:00+02:00" ],
+          "repeat": {
+            "duration": 1.5,
+            "durationMax": 3.0,
+            "durationUnit": "h"
+          }
         },
         "route": {
-          "text": "Infusion"
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+            "code": "47625008",
+            "display": "Intravenous route"
+          } ]
+        },
+        "method": {
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+            "code": "36576007",
+            "display": "Infusion (procedure)"
+          } ]
+        },
+        "doseAndRate": [ {
+          "doseQuantity": {
+            "value": 1,
+            "unit": "1",
+            "system": "http://unitsofmeasure.org",
+            "code": "{Stueck}"
+          }
+        } ]
+      } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "MedicationRequest/a21e96ccce99eb4cb9c9046adb434116633050325c7c5a2454c1c984ef2a5f32"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "c97024e8d795b72ae6e7b44961a92f33edd35cd6a394188cd557e97a22d07ea1",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-id",
+        "value": "2"
+      } ],
+      "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 500.0,
+          "unit": "milliliter",
+          "system": "http://unitsofmeasure.org",
+          "code": "mL"
+        },
+        "denominator": {
+          "value": 1,
+          "unit": "1",
+          "system": "http://unitsofmeasure.org",
+          "code": "{Stueck}"
+        }
+      },
+      "ingredient": [ {
+        "itemReference": {
+          "reference": "Medication/43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a",
+          "display": "Glucose 5%"
+        },
+        "isActive": false,
+        "strength": {
+          "numerator": {
+            "value": 500.0,
+            "unit": "1",
+            "system": "http://unitsofmeasure.org",
+            "code": "{Stueck}"
+          },
+          "denominator": {
+            "value": 500.0,
+            "unit": "milliliter",
+            "system": "http://unitsofmeasure.org",
+            "code": "mL"
+          }
+        }
+      }, {
+        "itemReference": {
+          "reference": "Medication/0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed",
+          "display": "Fluorouracil"
+        },
+        "isActive": false,
+        "strength": {
+          "numerator": {
+            "value": 900.0,
+            "unit": "{Stueck}",
+            "system": "http://unitsofmeasure.org",
+            "code": "1"
+          },
+          "denominator": {
+            "value": 500.0,
+            "unit": "milliliter",
+            "system": "http://unitsofmeasure.org",
+            "code": "mL"
+          }
         }
       } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/c97024e8d795b72ae6e7b44961a92f33edd35cd6a394188cd557e97a22d07ea1"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-wirkstoff-medication-id",
+        "value": "fluorouracil"
+      } ],
+      "code": {
+        "coding": [ {
+          "system": "http://fhir.de/CodeSystem/bfarm/atc",
+          "version": "2025",
+          "code": "L01BC02",
+          "display": "Fluorouracil"
+        }, {
+          "system": "http://snomed.info/sct",
+          "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+          "code": "387172005",
+          "display": "Fluorouracil (substance)"
+        } ],
+        "text": "Fluorouracil"
+      },
+      "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 1,
+          "unit": "mg",
+          "system": "http://unitsofmeasure.org",
+          "code": "mg"
+        },
+        "denominator": {
+          "value": 1,
+          "unit": "{Stueck}",
+          "system": "http://unitsofmeasure.org",
+          "code": "1"
+        }
+      }
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-traegerloesung-medication-id",
+        "value": "glucose-5"
+      } ],
+      "code": {
+        "coding": [ {
+          "system": "http://snomed.info/sct",
+          "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+          "code": "1268457003",
+          "display": "Product containing precisely glucose 50 milligram/1 milliliter conventional release solution for infusion and/or injection (clinical drug)"
+        }, {
+          "system": "http://fhir.de/CodeSystem/bfarm/atc",
+          "version": "2025",
+          "code": "B05BA11",
+          "display": "Glucose"
+        } ],
+        "text": "Glucose 5%"
+      },
+      "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 1,
+          "unit": "milliliter",
+          "system": "http://unitsofmeasure.org",
+          "code": "mL"
+        },
+        "denominator": {
+          "value": 1,
+          "unit": "1",
+          "system": "http://unitsofmeasure.org",
+          "code": "{Stueck}"
+        }
+      }
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a"
     }
   } ]
 }

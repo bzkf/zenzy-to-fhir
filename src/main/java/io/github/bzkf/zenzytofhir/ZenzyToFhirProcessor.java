@@ -37,12 +37,16 @@ public class ZenzyToFhirProcessor {
       LOG.debug("Processing single therapie message {}", kv("nr", record.nr()));
 
       var mapped = mapper.map(record);
-      var messageKey = mapped.getId();
+      if (mapped.isPresent()) {
+        var messageKey = mapped.get().getId();
 
-      var messageBuilder =
-          MessageBuilder.withPayload(mapped).setHeader(KafkaHeaders.KEY, messageKey);
+        var messageBuilder =
+            MessageBuilder.withPayload(mapped.get()).setHeader(KafkaHeaders.KEY, messageKey);
 
-      return messageBuilder.build();
+        return messageBuilder.build();
+      } else {
+        return null;
+      }
     };
   }
 }

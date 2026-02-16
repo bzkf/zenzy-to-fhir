@@ -1,48 +1,27 @@
 {
   "resourceType": "Bundle",
-  "id": "5a53594fb4666f601a7b1cd7fd70ae9d86fc93ceed2274302fbba92e7c538770",
+  "id": "667c989137209b35b15792c614a61030c3522c497b4b8df86f85d09c2f03776b",
   "type": "transaction",
   "entry": [ {
     "resource": {
       "resourceType": "MedicationRequest",
-      "id": "5a53594fb4666f601a7b1cd7fd70ae9d86fc93ceed2274302fbba92e7c538770",
+      "id": "667c989137209b35b15792c614a61030c3522c497b4b8df86f85d09c2f03776b",
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-request-id",
-        "value": "4"
+        "value": "12"
       } ],
       "status": "active",
       "intent": "order",
       "reportedBoolean": false,
       "medicationReference": {
-        "reference": "Medication/329a64b62174c1d06b65721a1824dee9e7ddd36f948fc8cedd3cdc98dabc42f9"
+        "reference": "Medication/df8add0bfb681b8711b123b3e37c414be96b82cae5fa57151382fb20030aaf1c"
       },
       "subject": {
-        "reference": "Patient/4"
+        "reference": "Patient/12"
       },
       "dosageInstruction": [ {
-        "text": "Baxterpumpe (SV4) über 24 h",
         "timing": {
-          "event": [ "2007-05-02T00:00:00+02:00" ],
-          "repeat": {
-            "duration": 24.0,
-            "durationUnit": "h"
-          }
-        },
-        "route": {
-          "coding": [ {
-            "system": "http://snomed.info/sct",
-            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
-            "code": "47625008",
-            "display": "Intravenous route"
-          } ]
-        },
-        "method": {
-          "coding": [ {
-            "system": "http://snomed.info/sct",
-            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
-            "code": "36576007",
-            "display": "Infusion (procedure)"
-          } ]
+          "event": [ "2024-06-26T00:00:00+02:00" ]
         },
         "doseAndRate": [ {
           "doseQuantity": {
@@ -56,20 +35,20 @@
     },
     "request": {
       "method": "PUT",
-      "url": "MedicationRequest/5a53594fb4666f601a7b1cd7fd70ae9d86fc93ceed2274302fbba92e7c538770"
+      "url": "MedicationRequest/667c989137209b35b15792c614a61030c3522c497b4b8df86f85d09c2f03776b"
     }
   }, {
     "resource": {
       "resourceType": "Medication",
-      "id": "329a64b62174c1d06b65721a1824dee9e7ddd36f948fc8cedd3cdc98dabc42f9",
+      "id": "df8add0bfb681b8711b123b3e37c414be96b82cae5fa57151382fb20030aaf1c",
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-id",
-        "value": "4"
+        "value": "12"
       } ],
       "status": "active",
       "amount": {
         "numerator": {
-          "value": 100.0,
+          "value": 2.0,
           "unit": "milliliter",
           "system": "http://unitsofmeasure.org",
           "code": "mL"
@@ -89,13 +68,13 @@
         "isActive": false,
         "strength": {
           "numerator": {
-            "value": 100.0,
+            "value": 2.0,
             "unit": "1",
             "system": "http://unitsofmeasure.org",
             "code": "{Stueck}"
           },
           "denominator": {
-            "value": 100.0,
+            "value": 2.0,
             "unit": "milliliter",
             "system": "http://unitsofmeasure.org",
             "code": "mL"
@@ -103,39 +82,19 @@
         }
       }, {
         "itemReference": {
-          "reference": "Medication/0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed",
-          "display": "Fluorouracil"
+          "reference": "Medication/5d29fcf0b6c100f8a9cce321c4947f73d6d6eff16fd221258b81c386bc8112d4",
+          "display": "Methotrexat"
         },
         "isActive": false,
         "strength": {
           "numerator": {
-            "value": 3300.0,
+            "value": 75.0,
             "unit": "{Stueck}",
             "system": "http://unitsofmeasure.org",
             "code": "1"
           },
           "denominator": {
-            "value": 100.0,
-            "unit": "milliliter",
-            "system": "http://unitsofmeasure.org",
-            "code": "mL"
-          }
-        }
-      }, {
-        "itemReference": {
-          "reference": "Medication/45d2dc95af808c4138fd216b474debdf0c98ae3ad30fbe5a08e0ab41a081591d",
-          "display": "Natriumfolinat"
-        },
-        "isActive": false,
-        "strength": {
-          "numerator": {
-            "value": 800.0,
-            "unit": "{Stueck}",
-            "system": "http://unitsofmeasure.org",
-            "code": "1"
-          },
-          "denominator": {
-            "value": 100.0,
+            "value": 2.0,
             "unit": "milliliter",
             "system": "http://unitsofmeasure.org",
             "code": "mL"
@@ -145,29 +104,29 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/329a64b62174c1d06b65721a1824dee9e7ddd36f948fc8cedd3cdc98dabc42f9"
+      "url": "Medication/df8add0bfb681b8711b123b3e37c414be96b82cae5fa57151382fb20030aaf1c"
     }
   }, {
     "resource": {
       "resourceType": "Medication",
-      "id": "0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed",
+      "id": "5d29fcf0b6c100f8a9cce321c4947f73d6d6eff16fd221258b81c386bc8112d4",
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-wirkstoff-medication-id",
-        "value": "fluorouracil"
+        "value": "methotrexat"
       } ],
       "code": {
         "coding": [ {
           "system": "http://fhir.de/CodeSystem/bfarm/atc",
           "version": "2025",
-          "code": "L01BC02",
-          "display": "Fluorouracil"
+          "code": "L04AX03",
+          "display": "Methotrexat"
         }, {
           "system": "http://snomed.info/sct",
           "version": "http://snomed.info/sct/900000000000207008/version/20260101",
-          "code": "387172005",
-          "display": "Fluorouracil (substance)"
+          "code": "387381009",
+          "display": "Methotrexate (substance)"
         } ],
-        "text": "Fluorouracil"
+        "text": "Methotrexat"
       },
       "status": "active",
       "amount": {
@@ -187,49 +146,7 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed"
-    }
-  }, {
-    "resource": {
-      "resourceType": "Medication",
-      "id": "45d2dc95af808c4138fd216b474debdf0c98ae3ad30fbe5a08e0ab41a081591d",
-      "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-wirkstoff-medication-id",
-        "value": "natriumfolinat"
-      } ],
-      "code": {
-        "coding": [ {
-          "system": "http://fhir.de/CodeSystem/bfarm/atc",
-          "version": "2025",
-          "code": "V03AF06",
-          "display": "Natriumfolinat"
-        }, {
-          "system": "http://snomed.info/sct",
-          "version": "http://snomed.info/sct/900000000000207008/version/20260101",
-          "code": "768550004",
-          "display": "Sodium folinate (substance)"
-        } ],
-        "text": "Natriumfolinat"
-      },
-      "status": "active",
-      "amount": {
-        "numerator": {
-          "value": 1,
-          "unit": "mg",
-          "system": "http://unitsofmeasure.org",
-          "code": "mg"
-        },
-        "denominator": {
-          "value": 1,
-          "unit": "{Stueck}",
-          "system": "http://unitsofmeasure.org",
-          "code": "1"
-        }
-      }
-    },
-    "request": {
-      "method": "PUT",
-      "url": "Medication/45d2dc95af808c4138fd216b474debdf0c98ae3ad30fbe5a08e0ab41a081591d"
+      "url": "Medication/5d29fcf0b6c100f8a9cce321c4947f73d6d6eff16fd221258b81c386bc8112d4"
     }
   }, {
     "resource": {

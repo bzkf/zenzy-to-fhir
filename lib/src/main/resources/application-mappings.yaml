@@ -1,6 +1,23 @@
 fhir:
+  codings:
+    loinc:
+      system: "http://loinc.org"
+      version: "2.81"
+    snomed:
+      system: "http://snomed.info/sct"
+      version: "http://snomed.info/sct/900000000000207008/version/20260101"
+    atc:
+      system: "http://fhir.de/CodeSystem/bfarm/atc"
+      version: "2025"
   systems:
     identifiers:
       base-url: "https://bzkf.github.io/zenzy-to-fhir/identifiers"
-      zenzy-therapie-nr: "${fhir.systems.identifiers.base-url}/zenzy-therapie-nr"
       patient-id: "${fhir.systems.identifiers.base-url}/patient-id"
+      therapie-medication-request-id: "${fhir.systems.identifiers.base-url}/therapie-medication-request-id"
+      therapie-medication-id: "${fhir.systems.identifiers.base-url}/therapie-medication-id"
+      therapie-wirkstoff-medication-id: "${fhir.systems.identifiers.base-url}/therapie-wirkstoff-medication-id"
+      therapie-traegerloesung-medication-id: "${fhir.systems.identifiers.base-url}/therapie-traegerloesung-medication-id"
+    profiles:
+      mii-medication: "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication"
+      mii-medication-request: "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/MedicationRequest"
+    ucum: "http://unitsofmeasure.org"

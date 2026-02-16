@@ -1,32 +1,164 @@
 {
   "resourceType": "Bundle",
-  "id": "e9839f8032807fc28f04e41d5d8debc3d8ade8f19cd9dcb404f54244aa8c3c82",
+  "id": "0325291ceadd38a92099207c91f88d712c776e932f256645fadecc65fb296289",
   "type": "transaction",
   "entry": [ {
     "resource": {
       "resourceType": "MedicationRequest",
-      "id": "e9839f8032807fc28f04e41d5d8debc3d8ade8f19cd9dcb404f54244aa8c3c82",
+      "id": "0325291ceadd38a92099207c91f88d712c776e932f256645fadecc65fb296289",
       "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/zenzy-therapie-nr",
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-request-id",
         "value": "3"
       } ],
       "status": "active",
       "intent": "order",
       "reportedBoolean": false,
-      "medicationCodeableConcept": {
-        "text": "Azacitidine"
+      "medicationReference": {
+        "reference": "Medication/ffacc881339c998e84cc9d024b9425356565d1a51d82ff2ad4122c4f574ae106"
       },
       "subject": {
         "reference": "Patient/3"
       },
       "dosageInstruction": [ {
+        "text": "subkutan",
         "timing": {
-          "event": [ "2010-10-11T02:00:00+02:00" ]
+          "event": [ "2010-10-11T00:00:00+02:00" ]
         },
         "route": {
-          "text": "subkutan"
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+            "code": "34206005",
+            "display": "Subcutaneous route"
+          } ]
+        },
+        "method": {
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+            "code": "300036000",
+            "display": "Subcutaneous infusion (procedure)"
+          } ]
+        },
+        "doseAndRate": [ {
+          "doseQuantity": {
+            "value": 1,
+            "unit": "1",
+            "system": "http://unitsofmeasure.org",
+            "code": "{Stueck}"
+          }
+        } ]
+      } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "MedicationRequest/0325291ceadd38a92099207c91f88d712c776e932f256645fadecc65fb296289"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "ffacc881339c998e84cc9d024b9425356565d1a51d82ff2ad4122c4f574ae106",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-id",
+        "value": "3"
+      } ],
+      "status": "active",
+      "ingredient": [ {
+        "itemReference": {
+          "reference": "Medication/4a91fd6b47e761ece36d1b67c8080e25c206b097de765f4e11baf9dc30d7cab8",
+          "display": "Azacitidine"
+        },
+        "isActive": false,
+        "strength": {
+          "numerator": {
+            "value": 65.0,
+            "unit": "{Stueck}",
+            "system": "http://unitsofmeasure.org",
+            "code": "1"
+          }
         }
       } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/ffacc881339c998e84cc9d024b9425356565d1a51d82ff2ad4122c4f574ae106"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "4a91fd6b47e761ece36d1b67c8080e25c206b097de765f4e11baf9dc30d7cab8",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-wirkstoff-medication-id",
+        "value": "azacitidine"
+      } ],
+      "code": {
+        "coding": [ {
+          "system": "http://fhir.de/CodeSystem/bfarm/atc",
+          "version": "2025",
+          "code": "L01BC07",
+          "display": "Azacitidin"
+        }, {
+          "system": "http://snomed.info/sct",
+          "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+          "code": "412328000",
+          "display": "Azacitidine (substance)"
+        } ],
+        "text": "Azacitidine"
+      },
+      "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 1,
+          "unit": "mg",
+          "system": "http://unitsofmeasure.org",
+          "code": "mg"
+        },
+        "denominator": {
+          "value": 1,
+          "unit": "{Stueck}",
+          "system": "http://unitsofmeasure.org",
+          "code": "1"
+        }
+      }
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/4a91fd6b47e761ece36d1b67c8080e25c206b097de765f4e11baf9dc30d7cab8"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "936944bd8d6bac62cf7c3cc313ab7be68787633004c24a2c44949842b66727eb",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-traegerloesung-medication-id",
+        "value": "unverduennt"
+      } ],
+      "code": {
+        "coding": [ {
+          "system": "http://snomed.info/sct",
+          "version": "http://snomed.info/sct/900000000000207008/version/20260101"
+        } ],
+        "text": "unverdünnt"
+      },
+      "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 1,
+          "unit": "milliliter",
+          "system": "http://unitsofmeasure.org",
+          "code": "mL"
+        },
+        "denominator": {
+          "value": 1,
+          "unit": "1",
+          "system": "http://unitsofmeasure.org",
+          "code": "{Stueck}"
+        }
+      }
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/936944bd8d6bac62cf7c3cc313ab7be68787633004c24a2c44949842b66727eb"
     }
   } ]
 }

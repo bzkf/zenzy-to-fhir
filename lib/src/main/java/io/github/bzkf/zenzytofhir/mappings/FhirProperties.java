@@ -1,5 +1,6 @@
 package io.github.bzkf.zenzytofhir.mappings;
 
+import org.hl7.fhir.r4.model.Coding;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -8,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class FhirProperties {
   // TODO: need to figure out how to use a record for systems as well
   private FhirSystems systems;
+  private Codings codings;
 
   public FhirSystems getSystems() {
     return systems;
@@ -17,7 +19,38 @@ public class FhirProperties {
     this.systems = systems;
   }
 
-  public record FhirSystems(FhirIdentifiers identifiers) {}
+  public Codings getCodings() {
+    return codings;
+  }
 
-  public record FhirIdentifiers(String baseUrl, String zenzyTherapieNr, String patientId) {}
+  public void setCodings(Codings codings) {
+    this.codings = codings;
+  }
+
+  public static record Codings(Coding loinc, Coding snomed, Coding ops, Coding atc) {
+    @Override
+    public Coding loinc() {
+      // return a fresh copy, otherwise the original instance will be modified
+      return loinc.copy();
+    }
+
+    @Override
+    public Coding snomed() {
+      return snomed.copy();
+    }
+
+    @Override
+    public Coding atc() {
+      return atc.copy();
+    }
+  }
+
+  public record FhirSystems(FhirIdentifiers identifiers, String ucum) {}
+
+  public record FhirIdentifiers(
+      String patientId,
+      String therapieMedicationRequestId,
+      String therapieMedicationId,
+      String therapieWirkstoffMedicationId,
+      String therapieTraegerloesungMedicationId) {}
 }

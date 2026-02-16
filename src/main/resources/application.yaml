@@ -1,5 +1,4 @@
-app:
-  version: 0.1.0
+app-version: 0.1.0 # x-release-please-version
 
 spring:
   application:
@@ -27,7 +26,7 @@ spring:
       bindings:
         sink-in-0:
           consumer:
-            concurrency: ${KAFKA_CONSUMER_CONCURRENCY:1}
+            concurrency: ${KAFKA_CONSUMER_CONCURRENCY:12}
             use-native-decoding: true
           destination: ${KAFKA_INPUT_TOPIC:zenzy.therapie}
           group: ${KAFKA_GROUP_ID:zenzy-to-fhir}
@@ -52,7 +51,6 @@ spring:
                 value.deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
                 spring.json.value.default.type: io.github.bzkf.zenzytofhir.models.ZenzyTherapie
                 spring.json.trusted.packages: io.github.bzkf.zenzytofhir.models
-                spring.json.use.type.headers: false
           sink-out-0:
             producer:
               configuration:
@@ -76,3 +74,7 @@ management:
       enabled: true
     readinessstate:
       enabled: true
+
+logging:
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr(-){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m %X %n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
