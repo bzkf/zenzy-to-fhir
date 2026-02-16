@@ -125,40 +125,5 @@
       "method": "PUT",
       "url": "Medication/4a91fd6b47e761ece36d1b67c8080e25c206b097de765f4e11baf9dc30d7cab8"
     }
-  }, {
-    "resource": {
-      "resourceType": "Medication",
-      "id": "936944bd8d6bac62cf7c3cc313ab7be68787633004c24a2c44949842b66727eb",
-      "identifier": [ {
-        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-traegerloesung-medication-id",
-        "value": "unverduennt"
-      } ],
-      "code": {
-        "coding": [ {
-          "system": "http://snomed.info/sct",
-          "version": "http://snomed.info/sct/900000000000207008/version/20260101"
-        } ],
-        "text": "unverdünnt"
-      },
-      "status": "active",
-      "amount": {
-        "numerator": {
-          "value": 1,
-          "unit": "milliliter",
-          "system": "http://unitsofmeasure.org",
-          "code": "mL"
-        },
-        "denominator": {
-          "value": 1,
-          "unit": "1",
-          "system": "http://unitsofmeasure.org",
-          "code": "{Stueck}"
-        }
-      }
-    },
-    "request": {
-      "method": "PUT",
-      "url": "Medication/936944bd8d6bac62cf7c3cc313ab7be68787633004c24a2c44949842b66727eb"
-    }
   } ]
 }
