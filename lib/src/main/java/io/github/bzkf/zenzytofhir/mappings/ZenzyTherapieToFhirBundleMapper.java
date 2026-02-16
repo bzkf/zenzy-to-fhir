@@ -1,6 +1,7 @@
 package io.github.bzkf.zenzytofhir.mappings;
 
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
+import java.util.Optional;
 import java.util.function.Function;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleType;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class ZenzyTherapieToFhirBundleMapper {
@@ -38,13 +40,23 @@ public class ZenzyTherapieToFhirBundleMapper {
     this.patientReferenceGenerator = patientReferenceGenerator;
   }
 
-  public Bundle map(ZenzyTherapie therapie) {
+  public Optional<Bundle> map(ZenzyTherapie therapie) {
     MDC.put("autoNr", therapie.autoNr().toString());
     MDC.put("nr", therapie.nr().toString());
     MDC.put("therapieNummer", therapie.therapieNummer().toString());
     MDC.put("herstellungsId", therapie.herstellungsId());
 
     LOG.debug("Mapping ZenzyTherapie record to FHIR");
+
+    if (!StringUtils.hasText(therapie.wirkstoff())) {
+      LOG.error("Wirkstoff is unset. Unable to map.");
+      return Optional.empty();
+    }
+
+    if (!StringUtils.hasText(therapie.dosis())) {
+      LOG.error("Dosis is unset. Unable to map.");
+      return Optional.empty();
+    }
 
     var patientReference = patientReferenceGenerator.apply(therapie);
 
@@ -80,7 +92,7 @@ public class ZenzyTherapieToFhirBundleMapper {
       addBundleEntry(bundle, traegerLoesung.get());
     }
 
-    return bundle;
+    return Optional.of(bundle);
   }
 
   private static Bundle addBundleEntry(Bundle bundle, Resource resource) {

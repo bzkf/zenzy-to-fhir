@@ -23,6 +23,7 @@ import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class MedicationRequestMapper {
@@ -86,51 +87,55 @@ public class MedicationRequestMapper {
     dosage.setTiming(timing);
     dosage.setText(therapie.applikationsart());
 
-    var mappedApplikationsart =
-        applikationsartMapper.mapApplikationsart(therapie.applikationsart());
-    if (mappedApplikationsart.isPresent()) {
-      var applikationsart = mappedApplikationsart.get();
+    if (StringUtils.hasText(therapie.applikationsart())) {
+      var mappedApplikationsart =
+          applikationsartMapper.mapApplikationsart(therapie.applikationsart());
+      if (mappedApplikationsart.isPresent()) {
+        var applikationsart = mappedApplikationsart.get();
 
-      if (applikationsart.routeSnomedCode() != null) {
-        var route =
-            new CodeableConcept()
-                .addCoding(
-                    fhirProps
-                        .getCodings()
-                        .snomed()
-                        .setCode(applikationsart.routeSnomedCode())
-                        .setDisplay(applikationsart.routeSnomedDisplay()));
-        dosage.setRoute(route);
-      }
+        if (applikationsart.routeSnomedCode() != null) {
+          var route =
+              new CodeableConcept()
+                  .addCoding(
+                      fhirProps
+                          .getCodings()
+                          .snomed()
+                          .setCode(applikationsart.routeSnomedCode())
+                          .setDisplay(applikationsart.routeSnomedDisplay()));
+          dosage.setRoute(route);
+        }
 
-      if (applikationsart.methodSnomedCode() != null) {
-        var method =
-            new CodeableConcept()
-                .addCoding(
-                    fhirProps
-                        .getCodings()
-                        .snomed()
-                        .setCode(applikationsart.methodSnomedCode())
-                        .setDisplay(applikationsart.methodSnomedDisplay()));
-        dosage.setMethod(method);
-      }
+        if (applikationsart.methodSnomedCode() != null) {
+          var method =
+              new CodeableConcept()
+                  .addCoding(
+                      fhirProps
+                          .getCodings()
+                          .snomed()
+                          .setCode(applikationsart.methodSnomedCode())
+                          .setDisplay(applikationsart.methodSnomedDisplay()));
+          dosage.setMethod(method);
+        }
 
-      var repeat = new TimingRepeatComponent();
-      timing.setRepeat(repeat);
+        var repeat = new TimingRepeatComponent();
+        timing.setRepeat(repeat);
 
-      if (applikationsart.duration() != null) {
-        repeat.setDuration(applikationsart.duration());
-      }
+        if (applikationsart.duration() != null) {
+          repeat.setDuration(applikationsart.duration());
+        }
 
-      if (applikationsart.durationMax() != null) {
-        repeat.setDurationMax(applikationsart.durationMax());
-      }
+        if (applikationsart.durationMax() != null) {
+          repeat.setDurationMax(applikationsart.durationMax());
+        }
 
-      if (applikationsart.durationUcumUnit() != null) {
-        repeat.setDurationUnit(UnitsOfTime.fromCode(applikationsart.durationUcumUnit()));
+        if (applikationsart.durationUcumUnit() != null) {
+          repeat.setDurationUnit(UnitsOfTime.fromCode(applikationsart.durationUcumUnit()));
+        }
+      } else {
+        LOG.warn("Applikationsart '{}' could not be mapped", therapie.applikationsart());
       }
     } else {
-      LOG.warn("Applikationsart '{}' could not be mapped", therapie.applikationsart());
+      LOG.warn("Applikationsart is unset");
     }
 
     if (therapie.gesamtvolumenNumeric() != null && therapie.gesamtvolumenNumeric() > 0) {

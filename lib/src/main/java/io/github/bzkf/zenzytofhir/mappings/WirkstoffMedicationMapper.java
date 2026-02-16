@@ -51,6 +51,7 @@ public class WirkstoffMedicationMapper {
 
     var wirkstoffe = therapie.wirkstoff().split("\\\\n");
     var dosen = therapie.dosis().split("\\\\n");
+    // TODO: dosis einheit
     // var dosisEinheit = therapie.dosisEinheit().split("\\\\n");
 
     if (wirkstoffe.length != dosen.length) {

@@ -1,0 +1,194 @@
+{
+  "resourceType": "Bundle",
+  "id": "15d0744b6bee9b0294ce58322d0be2807c717b02d0097ffed21203737fc36a67",
+  "type": "transaction",
+  "entry": [ {
+    "resource": {
+      "resourceType": "MedicationRequest",
+      "id": "15d0744b6bee9b0294ce58322d0be2807c717b02d0097ffed21203737fc36a67",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-request-id",
+        "value": "11"
+      } ],
+      "status": "active",
+      "intent": "order",
+      "reportedBoolean": false,
+      "medicationReference": {
+        "reference": "Medication/254fb4fa51c5e65343f4901cadc3d29be136fa6f8c1fa7ff8ca56784c3396e27"
+      },
+      "subject": {
+        "reference": "Patient/11"
+      },
+      "dosageInstruction": [ {
+        "timing": {
+          "event": [ "2009-11-10T15:00:00+01:00" ]
+        },
+        "doseAndRate": [ {
+          "doseQuantity": {
+            "value": 25.0,
+            "unit": "milliliter",
+            "system": "http://unitsofmeasure.org",
+            "code": "mL"
+          }
+        } ]
+      } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "MedicationRequest/15d0744b6bee9b0294ce58322d0be2807c717b02d0097ffed21203737fc36a67"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "254fb4fa51c5e65343f4901cadc3d29be136fa6f8c1fa7ff8ca56784c3396e27",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-id",
+        "value": "11"
+      } ],
+      "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 25.0,
+          "unit": "milliliter",
+          "system": "http://unitsofmeasure.org",
+          "code": "mL"
+        },
+        "denominator": {
+          "value": 1,
+          "unit": "1",
+          "system": "http://unitsofmeasure.org",
+          "code": "{Stueck}"
+        }
+      },
+      "ingredient": [ {
+        "itemReference": {
+          "reference": "Medication/43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a",
+          "display": "Glucose 5%"
+        },
+        "isActive": false,
+        "strength": {
+          "numerator": {
+            "value": 25.0,
+            "unit": "1",
+            "system": "http://unitsofmeasure.org",
+            "code": "{Stueck}"
+          },
+          "denominator": {
+            "value": 25.0,
+            "unit": "milliliter",
+            "system": "http://unitsofmeasure.org",
+            "code": "mL"
+          }
+        }
+      }, {
+        "itemReference": {
+          "reference": "Medication/77b1715eac0ecc83e9917809ea5aa41c0795ec81dc8ce57806248e8dd523d767",
+          "display": "Amphotericin lipos."
+        },
+        "isActive": false,
+        "strength": {
+          "numerator": {
+            "value": 15.0,
+            "unit": "{Stueck}",
+            "system": "http://unitsofmeasure.org",
+            "code": "1"
+          },
+          "denominator": {
+            "value": 25.0,
+            "unit": "milliliter",
+            "system": "http://unitsofmeasure.org",
+            "code": "mL"
+          }
+        }
+      } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/254fb4fa51c5e65343f4901cadc3d29be136fa6f8c1fa7ff8ca56784c3396e27"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "77b1715eac0ecc83e9917809ea5aa41c0795ec81dc8ce57806248e8dd523d767",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-wirkstoff-medication-id",
+        "value": "amphotericin-lipos"
+      } ],
+      "code": {
+        "coding": [ {
+          "system": "http://fhir.de/CodeSystem/bfarm/atc",
+          "version": "2025",
+          "code": "J02AA01",
+          "display": "Amphotericin B"
+        }, {
+          "system": "http://snomed.info/sct",
+          "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+          "code": "77703004",
+          "display": "Amphotericin B (substance)"
+        } ],
+        "text": "Amphotericin lipos."
+      },
+      "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 1,
+          "unit": "mg",
+          "system": "http://unitsofmeasure.org",
+          "code": "mg"
+        },
+        "denominator": {
+          "value": 1,
+          "unit": "{Stueck}",
+          "system": "http://unitsofmeasure.org",
+          "code": "1"
+        }
+      }
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/77b1715eac0ecc83e9917809ea5aa41c0795ec81dc8ce57806248e8dd523d767"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-traegerloesung-medication-id",
+        "value": "glucose-5"
+      } ],
+      "code": {
+        "coding": [ {
+          "system": "http://snomed.info/sct",
+          "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+          "code": "1268457003",
+          "display": "Product containing precisely glucose 50 milligram/1 milliliter conventional release solution for infusion and/or injection (clinical drug)"
+        }, {
+          "system": "http://fhir.de/CodeSystem/bfarm/atc",
+          "version": "2025",
+          "code": "B05BA11",
+          "display": "Glucose"
+        } ],
+        "text": "Glucose 5%"
+      },
+      "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 1,
+          "unit": "milliliter",
+          "system": "http://unitsofmeasure.org",
+          "code": "mL"
+        },
+        "denominator": {
+          "value": 1,
+          "unit": "1",
+          "system": "http://unitsofmeasure.org",
+          "code": "{Stueck}"
+        }
+      }
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a"
+    }
+  } ]
+}

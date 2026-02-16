@@ -1,5 +1,7 @@
 package io.github.bzkf.zenzytofhir.mappings;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import ca.uhn.fhir.context.FhirContext;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
@@ -63,6 +65,8 @@ public class ZenzyTherapieToFhirBundleMapperTest {
     "therapie-4.json",
     "therapie-5.json",
     "therapie-6.json",
+    "therapie-10.json",
+    "therapie-11.json",
   })
   void map_withGivenZenzyTherapieRecord_shouldCreateExpectedFhirBundle(String sourceFile)
       throws StreamReadException, DatabindException, IOException, ParseException {
@@ -76,8 +80,26 @@ public class ZenzyTherapieToFhirBundleMapperTest {
     var mapped = sut.map(record);
 
     var fhirParser = fhirContext.newJsonParser().setPrettyPrint(true);
-    var fhirJson = fhirParser.encodeResourceToString(mapped);
+    var fhirJson = fhirParser.encodeResourceToString(mapped.get());
     Approvals.verify(
         fhirJson, Approvals.NAMES.withParameters(sourceFile).forFile().withExtension(".fhir.json"));
+  }
+
+  @ParameterizedTest
+  @CsvSource({
+    "therapie-9.json",
+  })
+  void map_withUnmappableZenzyTherapieRecord_shouldNotCreateBundle(String sourceFile)
+      throws StreamReadException, DatabindException, IOException, ParseException {
+    final var recordStream = this.getClass().getClassLoader().getResource("fixtures/" + sourceFile);
+    var mapper =
+        new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
+    final var record = mapper.readValue(recordStream.openStream(), ZenzyTherapie.class);
+
+    var mapped = sut.map(record);
+
+    assertTrue(mapped.isEmpty());
   }
 }

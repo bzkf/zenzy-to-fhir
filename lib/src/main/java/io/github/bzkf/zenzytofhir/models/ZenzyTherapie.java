@@ -3,6 +3,7 @@ package io.github.bzkf.zenzytofhir.models;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -19,7 +20,8 @@ public record ZenzyTherapie(
     @JsonProperty("STATUS") String status,
     @JsonProperty("THERAPIENUMMER") Integer therapieNummer,
     @JsonProperty("HERSTELLUNGSID") String herstellungsId,
-    @JsonProperty("HERSTELLUNGSZEITPUNKT") @JsonFormat(pattern = "dd.MM.yyyy, HH:mm *")
+    @JsonProperty("HERSTELLUNGSZEITPUNKT")
+        @JsonDeserialize(using = LenientLocalDateTimeDeserializer.class)
         LocalDateTime herstellungsZeitpunkt,
     @JsonProperty("RETOUREHERSTELLUNGSID") String retourHerstellungsId,
     @JsonProperty("INAPOTHEKEZUBEREITEN") Integer inApothekezubereiten,
