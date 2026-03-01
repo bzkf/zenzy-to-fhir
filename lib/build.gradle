@@ -36,13 +36,13 @@ dependencies {
     implementation 'com.github.slugify:slugify:3.0.7'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv'
 
-    api 'ca.uhn.hapi.fhir:hapi-fhir-structures-r4:8.6.1'
+    api 'ca.uhn.hapi.fhir:hapi-fhir-structures-r4:8.8.0'
 
-    testImplementation platform('org.junit:junit-bom:6.0.2')
+    testImplementation platform('org.junit:junit-bom:6.0.3')
     testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'org.assertj:assertj-core:3.27.6'
+    testImplementation 'org.assertj:assertj-core:3.27.7'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'com.approvaltests:approvaltests:26.5.0'
+    testImplementation 'com.approvaltests:approvaltests:26.7.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
