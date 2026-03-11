@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/bzkf/zenzy-to-fhir/compare/v0.1.2...v0.1.3) (2026-03-11)
+
+
+### Miscellaneous Chores
+
+* **deps:** update github-actions ([#12](https://github.com/bzkf/zenzy-to-fhir/issues/12)) ([cad402c](https://github.com/bzkf/zenzy-to-fhir/commit/cad402cf60f5aff42ff9769382d41655b187281f))
+
 ## [0.1.2](https://github.com/bzkf/zenzy-to-fhir/compare/v0.1.1...v0.1.2) (2026-02-16)
 
 
