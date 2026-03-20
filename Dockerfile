@@ -17,7 +17,7 @@ WORKDIR /test
 COPY --from=build /home/gradle/project/build/reports/ .
 ENTRYPOINT [ "true" ]
 
-FROM docker.io/library/debian:13.3-slim@sha256:77ba0164de17b88dd0bf6cdc8f65569e6e5fa6cd256562998b62553134a00ef0 AS jemalloc
+FROM docker.io/library/debian:13.3-slim@sha256:1d3c811171a08a5adaa4a163fbafd96b61b87aa871bbc7aa15431ac275d3d430 AS jemalloc
 # hadolint ignore=DL3008
 RUN <<EOF
 set -e
@@ -27,7 +27,7 @@ apt-get clean
 rm -rf /var/lib/apt/lists/*
 EOF
 
-FROM gcr.io/distroless/java25-debian13:nonroot@sha256:fa9bfc14924fa3b43d43944d93887155d19843b3aa45610b659496f928fe2a9c
+FROM gcr.io/distroless/java25-debian13:nonroot@sha256:7c2ef3e630046d73ae8372add70a23cbf6f0c334c76c6a9196a21b01abb45559
 WORKDIR /opt/zenzy-to-fhir
 ENV LD_PRELOAD="/usr/lib/x86_64-linux-gnu/libjemalloc.so.2"
 ENV SPRING_PROFILES_ACTIVE="mappings"
