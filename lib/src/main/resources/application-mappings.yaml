@@ -21,3 +21,8 @@ fhir:
       mii-medication: "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication"
       mii-medication-request: "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/MedicationRequest"
     ucum: "http://unitsofmeasure.org"
+
+zenzy-to-fhir:
+  mappings:
+    wirkstoff:
+      extra-path: ""
