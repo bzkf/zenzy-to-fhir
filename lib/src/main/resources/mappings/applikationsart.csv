@@ -53,7 +53,7 @@ applikationsart;route_snomed_code;route_snomed_display;method_snomed_code;method
 "Surefuser 100 2D/ 48h";47625008;"Intravenous route";36576007;"Infusion (procedure)";48;;h;
 "Schwerkraft über 5 min";47625008;"Intravenous route";433853007;"Infusion of drug or medicament via intravenous drip (procedure)";5;;min;
 "Infusion intravenös";47625008;"Intravenous route";36576007;"Infusion (procedure)";;;;
-"intraventrikulär";420287000;"Intraventricular route - cardiac (qualifier value)";;;
+"intraventrikulär";420287000;"Intraventricular route - cardiac (qualifier value)";;;;;;
 "Kurzinfusion über 45 min";47625008;"Intravenous route";36576007;"Infusion (procedure)";45;;min;
 "i.v.";47625008;"Intravenous route";36576007;"Infusion (procedure)";;;;
 "Injektomat-Spritze über 24 St.";47625008;"Intravenous route";36576007;"Infusion (procedure)";24;;h;
@@ -106,7 +106,7 @@ applikationsart;route_snomed_code;route_snomed_display;method_snomed_code;method
 "Augenspr./Vorderkammerspülung";418821007;"Intracameral route (qualifier value)";49288009;"Irrigation of anterior chamber of eye (procedure)";;;;
 "Pegasus light Pumpe über 46h";47625008;"Intravenous route";36576007;"Infusion (procedure)";46;;h;
 "i.v. über 2-10 Minuten";47625008;"Intravenous route";36576007;"Infusion (procedure)";2;10;min;
-"Instillation in verschl. Kath.";;;738994005;"Instill (administration method)";;;;;
+"Instillation in verschl. Kath.";;;738994005;"Instill (administration method)";;;;
 "Pegasus light Pumpe über 48h";47625008;"Intravenous route";36576007;"Infusion (procedure)";48;;h;
 "Injektomat-Spritze über 3 St.";47625008;"Intravenous route";36576007;"Infusion (procedure)";3;;h;
 "Bolus i.v. über 2 Minuten";47625008;"Intravenous route";431393006;"Administration of intravenous fluid bolus (procedure)";2;;min;
