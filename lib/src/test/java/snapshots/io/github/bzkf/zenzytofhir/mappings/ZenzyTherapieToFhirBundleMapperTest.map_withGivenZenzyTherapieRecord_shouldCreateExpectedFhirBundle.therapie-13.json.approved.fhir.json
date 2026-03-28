@@ -1,0 +1,129 @@
+{
+  "resourceType": "Bundle",
+  "id": "9088a55059313dbfd72c7e218708e8a1b21254cadd241ba6ec976607eb9ee868",
+  "type": "transaction",
+  "entry": [ {
+    "resource": {
+      "resourceType": "MedicationRequest",
+      "id": "9088a55059313dbfd72c7e218708e8a1b21254cadd241ba6ec976607eb9ee868",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-request-id",
+        "value": "13"
+      } ],
+      "status": "cancelled",
+      "intent": "order",
+      "reportedBoolean": false,
+      "medicationReference": {
+        "reference": "Medication/3bb731180abbf2e3faa2cd64e2427dbe2c82b64dae1f956566a999feaee47d9f"
+      },
+      "subject": {
+        "reference": "Patient/13"
+      },
+      "dosageInstruction": [ {
+        "text": "subcutan!",
+        "timing": {
+          "event": [ "2021-01-05T18:00:00+01:00" ]
+        },
+        "route": {
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+            "code": "34206005",
+            "display": "Subcutaneous route"
+          } ]
+        },
+        "method": {
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+            "code": "300036000",
+            "display": "Subcutaneous infusion (procedure)"
+          } ]
+        },
+        "doseAndRate": [ {
+          "doseQuantity": {
+            "value": 1,
+            "unit": "1",
+            "system": "http://unitsofmeasure.org",
+            "code": "{Stueck}"
+          }
+        } ]
+      } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "MedicationRequest/9088a55059313dbfd72c7e218708e8a1b21254cadd241ba6ec976607eb9ee868"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "3bb731180abbf2e3faa2cd64e2427dbe2c82b64dae1f956566a999feaee47d9f",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-id",
+        "value": "13"
+      } ],
+      "status": "active",
+      "ingredient": [ {
+        "itemReference": {
+          "reference": "Medication/df7c66a899576afdfd57c61eb56f85fd0b7a995cc9fe256120bd7a0c521e3d14",
+          "display": "Bortezomib"
+        },
+        "isActive": false,
+        "strength": {
+          "numerator": {
+            "value": 2.2,
+            "unit": "{Stueck}",
+            "system": "http://unitsofmeasure.org",
+            "code": "1"
+          }
+        }
+      } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/3bb731180abbf2e3faa2cd64e2427dbe2c82b64dae1f956566a999feaee47d9f"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Medication",
+      "id": "df7c66a899576afdfd57c61eb56f85fd0b7a995cc9fe256120bd7a0c521e3d14",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-wirkstoff-medication-id",
+        "value": "bortezomib"
+      } ],
+      "code": {
+        "coding": [ {
+          "system": "http://fhir.de/CodeSystem/bfarm/atc",
+          "version": "2025",
+          "code": "L01XG01",
+          "display": "Bortezomib"
+        }, {
+          "system": "http://snomed.info/sct",
+          "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+          "code": "407097007",
+          "display": "Bortezomib (substance)"
+        } ],
+        "text": "Bortezomib"
+      },
+      "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 1,
+          "unit": "mg",
+          "system": "http://unitsofmeasure.org",
+          "code": "mg"
+        },
+        "denominator": {
+          "value": 1,
+          "unit": "{Stueck}",
+          "system": "http://unitsofmeasure.org",
+          "code": "1"
+        }
+      }
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/df7c66a899576afdfd57c61eb56f85fd0b7a995cc9fe256120bd7a0c521e3d14"
+    }
+  } ]
+}
