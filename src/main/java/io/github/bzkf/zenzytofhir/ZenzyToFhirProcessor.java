@@ -8,6 +8,7 @@ import java.util.function.Function;
 import org.hl7.fhir.r4.model.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
@@ -34,18 +35,22 @@ public class ZenzyToFhirProcessor {
 
       var record = message.getPayload();
 
-      LOG.debug("Processing single therapie message {}", kv("nr", record.nr()));
+      try (var _ = MDC.putCloseable("autoNr", record.autoNr().toString());
+          var _ = MDC.putCloseable("nr", record.nr().toString());
+          var _ = MDC.putCloseable("therapieNummer", record.therapieNummer().toString());
+          var _ = MDC.putCloseable("herstellungsId", record.herstellungsId()); ) {
+        LOG.debug("Processing single therapie message {}", kv("nr", record.nr()));
+        var mapped = mapper.map(record);
+        if (mapped.isPresent()) {
+          var messageKey = mapped.get().getId();
 
-      var mapped = mapper.map(record);
-      if (mapped.isPresent()) {
-        var messageKey = mapped.get().getId();
+          var messageBuilder =
+              MessageBuilder.withPayload(mapped.get()).setHeader(KafkaHeaders.KEY, messageKey);
 
-        var messageBuilder =
-            MessageBuilder.withPayload(mapped.get()).setHeader(KafkaHeaders.KEY, messageKey);
-
-        return messageBuilder.build();
-      } else {
-        return null;
+          return messageBuilder.build();
+        } else {
+          return null;
+        }
       }
     };
   }

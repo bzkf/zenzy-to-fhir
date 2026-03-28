@@ -10,7 +10,6 @@ import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -38,11 +37,6 @@ public class ZenzyTherapieToFhirBundleMapper {
   }
 
   public Optional<Bundle> map(ZenzyTherapie therapie) {
-    MDC.put("autoNr", therapie.autoNr().toString());
-    MDC.put("nr", therapie.nr().toString());
-    MDC.put("therapieNummer", therapie.therapieNummer().toString());
-    MDC.put("herstellungsId", therapie.herstellungsId());
-
     LOG.debug("Mapping ZenzyTherapie record to FHIR");
 
     if (!StringUtils.hasText(therapie.wirkstoff())) {

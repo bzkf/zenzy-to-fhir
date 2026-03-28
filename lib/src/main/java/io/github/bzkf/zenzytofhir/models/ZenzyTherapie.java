@@ -1,6 +1,7 @@
 package io.github.bzkf.zenzytofhir.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonFormat(with = Feature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
 public record ZenzyTherapie(
     @JsonProperty("AUTONR") Integer autoNr,
     @JsonProperty("NR") Integer nr,
