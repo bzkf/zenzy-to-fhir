@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.3](https://github.com/bzkf/zenzy-to-fhir/compare/v0.1.2...v0.1.3) (2026-03-28)
+
+
+### Features
+
+* implemented status mapping ([#19](https://github.com/bzkf/zenzy-to-fhir/issues/19)) ([f0a416e](https://github.com/bzkf/zenzy-to-fhir/commit/f0a416e4b099f8739b388733053c4b95b1205cea))
+
+
+### Miscellaneous Chores
+
+* **deps:** update github-actions ([#12](https://github.com/bzkf/zenzy-to-fhir/issues/12)) ([cad402c](https://github.com/bzkf/zenzy-to-fhir/commit/cad402cf60f5aff42ff9769382d41655b187281f))
+* **deps:** update github-actions ([#14](https://github.com/bzkf/zenzy-to-fhir/issues/14)) ([6c9ebe1](https://github.com/bzkf/zenzy-to-fhir/commit/6c9ebe151754db0a67ba40ea8c24feb44e2e61af))
+* **deps:** update github-actions ([#17](https://github.com/bzkf/zenzy-to-fhir/issues/17)) ([c2dd858](https://github.com/bzkf/zenzy-to-fhir/commit/c2dd858b6f0d258f189e8df9ad2bcea81c0cbb31))
+
 ## [0.1.2](https://github.com/bzkf/zenzy-to-fhir/compare/v0.1.1...v0.1.2) (2026-02-16)
 
 
