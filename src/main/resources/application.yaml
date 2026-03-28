@@ -19,6 +19,8 @@ spring:
       properties:
         allow.auto.create.topics: ${KAFKA_AUTO_CREATE_TOPICS:false}
         max.request.size: ${KAFKA_MAX_REQUEST_SIZE:1048576}
+    producer:
+      compression-type: ${KAFKA_PRODUCER_COMPRESSION_TYPE:zstd}
   cloud:
     function:
       definition: sink
