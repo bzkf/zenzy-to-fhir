@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.1.4](https://github.com/bzkf/zenzy-to-fhir/compare/v0.1.3...v0.1.4) (2026-03-28)
+
+
+### Features
+
+* support for custom extra wirkstoff mappings ([#22](https://github.com/bzkf/zenzy-to-fhir/issues/22)) ([78a4f27](https://github.com/bzkf/zenzy-to-fhir/commit/78a4f2743a51de0791395a47fd13fafe8719edc7))
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#13](https://github.com/bzkf/zenzy-to-fhir/issues/13)) ([8e94fa1](https://github.com/bzkf/zenzy-to-fhir/commit/8e94fa11531a430f2261210d879fadedb98af542))
+* **deps:** update dependency com.approvaltests:approvaltests to v30 ([#18](https://github.com/bzkf/zenzy-to-fhir/issues/18)) ([82295f1](https://github.com/bzkf/zenzy-to-fhir/commit/82295f159ce488a292bdd143e313a8b8a129eb54))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all digest updates ([#11](https://github.com/bzkf/zenzy-to-fhir/issues/11)) ([7f5e4da](https://github.com/bzkf/zenzy-to-fhir/commit/7f5e4da0ca7d5634d0c0242d44b485bf3851b4fc))
+
 ## [0.1.3](https://github.com/bzkf/zenzy-to-fhir/compare/v0.1.2...v0.1.3) (2026-03-28)
 
 
