@@ -8,18 +8,25 @@ import io.github.bzkf.zenzytofhir.models.MappedTraegerloesung;
 import io.github.bzkf.zenzytofhir.models.MappedWirkstoff;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.jspecify.annotations.NonNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class ToCodingMapper {
   private final Map<String, MappedApplikationsart> applikationsartMapping = new HashMap<>();
   private final Map<String, MappedTraegerloesung> traegerloesungMapping = new HashMap<>();
   private final Map<String, MappedWirkstoff> wirkstoffMapping = new HashMap<>();
+
+  @Value("${zenzy-to-fhir.mappings.wirkstoff.extra-path:}")
+  private String extraWirkstoffPath;
 
   @PostConstruct
   public void init() throws IOException {
@@ -63,6 +70,23 @@ public class ToCodingMapper {
     for (var value : values) {
       var row = (MappedWirkstoff) value;
       wirkstoffMapping.put(row.wirkstoff(), row);
+    }
+
+    // Load extra wirkstoff mappings if path is configured
+    if (StringUtils.hasText(extraWirkstoffPath)) {
+      var extraPath = Paths.get(extraWirkstoffPath);
+      if (Files.exists(extraPath)) {
+        values =
+            mapper
+                .readerFor(MappedWirkstoff.class)
+                .with(schema)
+                .readValues(Files.newInputStream(extraPath))
+                .readAll();
+        for (var value : values) {
+          var row = (MappedWirkstoff) value;
+          wirkstoffMapping.put(row.wirkstoff(), row);
+        }
+      }
     }
   }
 
