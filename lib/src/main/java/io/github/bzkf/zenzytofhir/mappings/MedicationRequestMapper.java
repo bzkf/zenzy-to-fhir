@@ -56,9 +56,22 @@ public class MedicationRequestMapper {
     medicationRequest.addIdentifier(identifier);
     medicationRequest.setId(MappingUtils.computeResourceIdFromIdentifier(identifier));
 
-    // TODO: set the status based on the record data
-    // figure out what zenzy status to map to "cancelled"
-    medicationRequest.setStatus(MedicationRequestStatus.ACTIVE);
+    if (!StringUtils.hasText(therapie.status())) {
+      LOG.warn("Status is unset. Defaulting to 'active'");
+      medicationRequest.setStatus(MedicationRequestStatus.ACTIVE);
+    } else {
+      // Retoure if the third status flag is '1'
+      if (therapie.status().charAt(2) == '1') {
+        medicationRequest.setStatus(MedicationRequestStatus.CANCELLED);
+      } else if (therapie.status().charAt(10) == '1') {
+        medicationRequest.setStatus(MedicationRequestStatus.COMPLETED);
+      } else {
+        // set it to active by default, only cancelled or completed
+        // are possible alternatives. In zenzy multiple
+        // status can be set at the same time
+        medicationRequest.setStatus(MedicationRequestStatus.ACTIVE);
+      }
+    }
 
     medicationRequest.setIntent(MedicationRequestIntent.ORDER);
 
