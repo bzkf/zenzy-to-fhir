@@ -3,9 +3,13 @@
   "id": "0325291ceadd38a92099207c91f88d712c776e932f256645fadecc65fb296289",
   "type": "transaction",
   "entry": [ {
+    "fullUrl": "MedicationRequest/0325291ceadd38a92099207c91f88d712c776e932f256645fadecc65fb296289",
     "resource": {
       "resourceType": "MedicationRequest",
       "id": "0325291ceadd38a92099207c91f88d712c776e932f256645fadecc65fb296289",
+      "meta": {
+        "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/MedicationRequest" ]
+      },
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-request-id",
         "value": "3"
@@ -55,9 +59,13 @@
       "url": "MedicationRequest/0325291ceadd38a92099207c91f88d712c776e932f256645fadecc65fb296289"
     }
   }, {
+    "fullUrl": "Medication/ffacc881339c998e84cc9d024b9425356565d1a51d82ff2ad4122c4f574ae106",
     "resource": {
       "resourceType": "Medication",
       "id": "ffacc881339c998e84cc9d024b9425356565d1a51d82ff2ad4122c4f574ae106",
+      "meta": {
+        "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication" ]
+      },
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-id",
         "value": "3"
@@ -84,9 +92,13 @@
       "url": "Medication/ffacc881339c998e84cc9d024b9425356565d1a51d82ff2ad4122c4f574ae106"
     }
   }, {
+    "fullUrl": "Medication/4a91fd6b47e761ece36d1b67c8080e25c206b097de765f4e11baf9dc30d7cab8",
     "resource": {
       "resourceType": "Medication",
       "id": "4a91fd6b47e761ece36d1b67c8080e25c206b097de765f4e11baf9dc30d7cab8",
+      "meta": {
+        "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication" ]
+      },
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-wirkstoff-medication-id",
         "value": "azacitidine"

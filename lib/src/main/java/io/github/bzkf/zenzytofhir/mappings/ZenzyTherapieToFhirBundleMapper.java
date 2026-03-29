@@ -1,13 +1,12 @@
 package io.github.bzkf.zenzytofhir.mappings;
 
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
+import io.github.dizuker.tofhir.ReferenceUtils;
+import io.github.dizuker.tofhir.TransactionBuilder;
 import java.util.Optional;
 import java.util.function.Function;
 import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.Bundle.BundleType;
-import org.hl7.fhir.r4.model.Bundle.HTTPVerb;
 import org.hl7.fhir.r4.model.Reference;
-import org.hl7.fhir.r4.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -57,43 +56,29 @@ public class ZenzyTherapieToFhirBundleMapper {
 
     Reference traegerLoesungReference = null;
     if (traegerLoesung.isPresent()) {
-      traegerLoesungReference = MappingUtils.createReferenceToResource(traegerLoesung.get());
+      traegerLoesungReference = ReferenceUtils.createReferenceTo(traegerLoesung.get());
       traegerLoesungReference.setDisplay(therapie.traegerloesung());
     } else {
       LOG.debug("No Tragerloesung specified");
     }
 
     var medication = medicationMapper.map(therapie, wirkstoffe, traegerLoesungReference);
-    var medicationReference = MappingUtils.createReferenceToResource(medication);
+    var medicationReference = ReferenceUtils.createReferenceTo(medication);
 
     var medicationRequest =
         medicationRequestMapper.map(therapie, medicationReference, patientReference);
 
-    var bundle = new Bundle();
-    bundle.setType(BundleType.TRANSACTION);
-    bundle.setId(medicationRequest.getId());
-    addBundleEntry(bundle, medicationRequest);
-    addBundleEntry(bundle, medication);
-
-    for (var wirkstoff : wirkstoffe) {
-      addBundleEntry(bundle, wirkstoff.medication());
-    }
+    var builder =
+        new TransactionBuilder()
+            .withId(medicationRequest.getId())
+            .addEntry(medicationRequest)
+            .addEntry(medication)
+            .addEntries(wirkstoffe.stream().map(w -> w.medication()).toList());
 
     if (traegerLoesung.isPresent()) {
-      addBundleEntry(bundle, traegerLoesung.get());
+      builder.addEntry(traegerLoesung.get());
     }
 
-    return Optional.of(bundle);
-  }
-
-  private static Bundle addBundleEntry(Bundle bundle, Resource resource) {
-    var resourceReference = MappingUtils.createReferenceToResource(resource);
-    bundle
-        .addEntry()
-        .setResource(resource)
-        .getRequest()
-        .setMethod(HTTPVerb.PUT)
-        .setUrl(resourceReference.getReference());
-    return bundle;
+    return Optional.of(builder.build());
   }
 }
