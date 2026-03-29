@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5](https://github.com/bzkf/zenzy-to-fhir/compare/v0.1.4...v0.1.5) (2026-03-29)
+
+
+### Features
+
+* use to-fhir lib and added profiles ([#23](https://github.com/bzkf/zenzy-to-fhir/issues/23)) ([42827ce](https://github.com/bzkf/zenzy-to-fhir/commit/42827ce37ebe0cd2171274e34d7ea6564ffdc980))
+
 ## [0.1.4](https://github.com/bzkf/zenzy-to-fhir/compare/v0.1.3...v0.1.4) (2026-03-28)
 
 
