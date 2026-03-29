@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/bzkf/zenzy-to-fhir/compare/v0.1.5...v0.1.6) (2026-03-29)
+
+
+### CI/CD
+
+* fhir validation ([#25](https://github.com/bzkf/zenzy-to-fhir/issues/25)) ([946659c](https://github.com/bzkf/zenzy-to-fhir/commit/946659cf01df9baf0c7f9e39824ada13d0e6a6a0))
+
 ## [0.1.5](https://github.com/bzkf/zenzy-to-fhir/compare/v0.1.4...v0.1.5) (2026-03-29)
 
 
