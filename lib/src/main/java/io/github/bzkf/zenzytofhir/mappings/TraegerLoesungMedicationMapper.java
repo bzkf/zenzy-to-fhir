@@ -3,6 +3,7 @@ package io.github.bzkf.zenzytofhir.mappings;
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
 import io.github.dizuker.tofhir.IdUtils;
 import java.util.Optional;
+import org.hl7.fhir.r4.model.CodeType;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Medication;
@@ -86,6 +87,16 @@ public class TraegerLoesungMedicationMapper {
             .setSystem(fhirProps.getSystems().ucum());
     var amount = new Ratio().setNumerator(quantity).setDenominator(denominator);
     medication.setAmount(amount);
+
+    // MII Medications require ingredient to be set, even if it's the same as the medication
+    // itself
+    var absentCodeableConcept = new CodeableConcept();
+    var absentCode = fhirProps.getCodings().snomed();
+    absentCode
+        .getCodeElement()
+        .addExtension(fhirProps.getExtensions().dataAbsentReason(), new CodeType("not-applicable"));
+    absentCodeableConcept.addCoding(absentCode);
+    medication.addIngredient().setItem(absentCodeableConcept);
 
     return Optional.of(medication);
   }

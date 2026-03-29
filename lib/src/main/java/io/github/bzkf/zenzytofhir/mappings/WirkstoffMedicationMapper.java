@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.IntStream;
+import org.hl7.fhir.r4.model.CodeType;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Medication;
@@ -136,15 +137,34 @@ public class WirkstoffMedicationMapper {
       var strength = new Ratio();
       strength.setNumerator(numerator);
 
+      var denominator = new Quantity();
       if (therapie.gesamtvolumenNumeric() != null && therapie.gesamtvolumenNumeric() > 0) {
-        var denominator =
-            new Quantity()
-                .setValue(therapie.gesamtvolumenNumeric())
-                .setUnit("milliliter")
-                .setCode("mL")
-                .setSystem(fhirProperties.getSystems().ucum());
-        strength.setDenominator(denominator);
+        denominator
+            .setValue(therapie.gesamtvolumenNumeric())
+            .setUnit("milliliter")
+            .setCode("mL")
+            .setSystem(fhirProperties.getSystems().ucum());
+      } else {
+        LOG.debug("gesamtvolumen is unset, assuming undiluted medication");
+        denominator
+            .setValue(1)
+            .setCode("1")
+            .setUnit("{Stueck}")
+            .setSystem(fhirProperties.getSystems().ucum());
       }
+
+      strength.setDenominator(denominator);
+
+      // MII Medications require ingredient to be set, even if it's the same as the medication
+      // itself
+      var absentCodeableConcept = new CodeableConcept();
+      var absentCode = fhirProperties.getCodings().snomed();
+      absentCode
+          .getCodeElement()
+          .addExtension(
+              fhirProperties.getExtensions().dataAbsentReason(), new CodeType("not-applicable"));
+      absentCodeableConcept.addCoding(absentCode);
+      medication.addIngredient().setItem(absentCodeableConcept);
 
       result.add(new MedicationAndStrength(medication, strength));
     }

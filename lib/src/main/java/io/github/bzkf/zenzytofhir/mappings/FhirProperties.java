@@ -11,6 +11,15 @@ public class FhirProperties {
   private FhirSystems systems;
   private Codings codings;
   private FhirProfiles profiles;
+  private FhirExtensions extensions;
+
+  public FhirExtensions getExtensions() {
+    return extensions;
+  }
+
+  public void setExtensions(FhirExtensions extensions) {
+    this.extensions = extensions;
+  }
 
   public FhirSystems getSystems() {
     return systems;
@@ -64,4 +73,6 @@ public class FhirProperties {
       String therapieTraegerloesungMedicationId) {}
 
   public record FhirProfiles(String miiMedication, String miiMedicationRequest) {}
+
+  public record FhirExtensions(String dataAbsentReason) {}
 }
