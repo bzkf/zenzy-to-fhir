@@ -3,9 +3,13 @@
   "id": "1a8d43419c1fe653dec23a69b63722d28cc6c7bec66a0c12ded7902696d8c1ba",
   "type": "transaction",
   "entry": [ {
+    "fullUrl": "MedicationRequest/1a8d43419c1fe653dec23a69b63722d28cc6c7bec66a0c12ded7902696d8c1ba",
     "resource": {
       "resourceType": "MedicationRequest",
       "id": "1a8d43419c1fe653dec23a69b63722d28cc6c7bec66a0c12ded7902696d8c1ba",
+      "meta": {
+        "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/MedicationRequest" ]
+      },
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-request-id",
         "value": "6"
@@ -59,9 +63,13 @@
       "url": "MedicationRequest/1a8d43419c1fe653dec23a69b63722d28cc6c7bec66a0c12ded7902696d8c1ba"
     }
   }, {
+    "fullUrl": "Medication/b6476abdd8364a89212893743b09260dc3960322386de094a0fbfb93ad9b9e74",
     "resource": {
       "resourceType": "Medication",
       "id": "b6476abdd8364a89212893743b09260dc3960322386de094a0fbfb93ad9b9e74",
+      "meta": {
+        "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication" ]
+      },
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-id",
         "value": "6"
@@ -128,9 +136,13 @@
       "url": "Medication/b6476abdd8364a89212893743b09260dc3960322386de094a0fbfb93ad9b9e74"
     }
   }, {
+    "fullUrl": "Medication/7876887cc3b4c2a8f5db9b6bcf131578f1ab217f0157f241b9aa36672fa56339",
     "resource": {
       "resourceType": "Medication",
       "id": "7876887cc3b4c2a8f5db9b6bcf131578f1ab217f0157f241b9aa36672fa56339",
+      "meta": {
+        "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication" ]
+      },
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-wirkstoff-medication-id",
         "value": "carboplatin"
@@ -170,9 +182,13 @@
       "url": "Medication/7876887cc3b4c2a8f5db9b6bcf131578f1ab217f0157f241b9aa36672fa56339"
     }
   }, {
+    "fullUrl": "Medication/43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a",
     "resource": {
       "resourceType": "Medication",
       "id": "43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a",
+      "meta": {
+        "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication" ]
+      },
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-traegerloesung-medication-id",
         "value": "glucose-5"

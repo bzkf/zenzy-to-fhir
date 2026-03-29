@@ -17,10 +17,15 @@ fhir:
       therapie-medication-id: "${fhir.systems.identifiers.base-url}/therapie-medication-id"
       therapie-wirkstoff-medication-id: "${fhir.systems.identifiers.base-url}/therapie-wirkstoff-medication-id"
       therapie-traegerloesung-medication-id: "${fhir.systems.identifiers.base-url}/therapie-traegerloesung-medication-id"
-    profiles:
-      mii-medication: "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication"
-      mii-medication-request: "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/MedicationRequest"
     ucum: "http://unitsofmeasure.org"
+  profiles:
+    # MII
+    # @ignored
+    versions:
+      # renovate: datasource=npm depName=de.medizininformatikinitiative.kerndatensatz.medikation
+      mii-medikation: "|2026.0.1"
+    mii-medication: "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication${fhir.profiles.versions.mii-medikation}"
+    mii-medication-request: "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/MedicationRequest${fhir.profiles.versions.mii-medikation}"
 
 zenzy-to-fhir:
   mappings:

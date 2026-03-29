@@ -2,6 +2,8 @@ package io.github.bzkf.zenzytofhir.mappings;
 
 import io.github.bzkf.zenzytofhir.models.MedicationAndStrength;
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
+import io.github.dizuker.tofhir.IdUtils;
+import io.github.dizuker.tofhir.ReferenceUtils;
 import java.util.List;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Medication;
@@ -30,12 +32,14 @@ public class HergestellteMedicationMapper {
       @NonNull List<MedicationAndStrength> wirkstoffe,
       @Nullable Reference traegerLoesung) {
     var medication = new Medication();
+    medication.getMeta().addProfile(fhirProps.getProfiles().miiMedication());
+
     var identifier =
         new Identifier()
             .setSystem(fhirProps.getSystems().identifiers().therapieMedicationId())
             .setValue(therapie.nr().toString());
     medication.addIdentifier(identifier);
-    medication.setId(MappingUtils.computeResourceIdFromIdentifier(identifier));
+    medication.setId(IdUtils.fromIdentifier(identifier));
     medication.setStatus(MedicationStatus.ACTIVE);
 
     if (therapie.gesamtvolumenNumeric() != null && therapie.gesamtvolumenNumeric() > 0) {
@@ -74,11 +78,12 @@ public class HergestellteMedicationMapper {
       var strength = new Ratio().setNumerator(numerator).setDenominator(denominator);
       medication.addIngredient().setIsActive(false).setItem(traegerLoesung).setStrength(strength);
     } else {
-      LOG.error("Tragerloesung '{}' is set but the gesamtvolumen isn't", therapie.traegerloesung());
+      LOG.error(
+          "Traegerloesung '{}' is set but the gesamtvolumen isn't", therapie.traegerloesung());
     }
 
     for (var wirkstoff : wirkstoffe) {
-      var reference = MappingUtils.createReferenceToResource(wirkstoff.medication());
+      var reference = ReferenceUtils.createReferenceTo(wirkstoff.medication());
       reference.setDisplay(wirkstoff.medication().getCode().getText());
       medication
           .addIngredient()

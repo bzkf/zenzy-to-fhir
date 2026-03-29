@@ -10,9 +10,18 @@ public class FhirProperties {
   // TODO: need to figure out how to use a record for systems as well
   private FhirSystems systems;
   private Codings codings;
+  private FhirProfiles profiles;
 
   public FhirSystems getSystems() {
     return systems;
+  }
+
+  public FhirProfiles getProfiles() {
+    return profiles;
+  }
+
+  public void setProfiles(FhirProfiles profiles) {
+    this.profiles = profiles;
   }
 
   public void setSystems(FhirSystems systems) {
@@ -53,4 +62,6 @@ public class FhirProperties {
       String therapieMedicationId,
       String therapieWirkstoffMedicationId,
       String therapieTraegerloesungMedicationId) {}
+
+  public record FhirProfiles(String miiMedication, String miiMedicationRequest) {}
 }

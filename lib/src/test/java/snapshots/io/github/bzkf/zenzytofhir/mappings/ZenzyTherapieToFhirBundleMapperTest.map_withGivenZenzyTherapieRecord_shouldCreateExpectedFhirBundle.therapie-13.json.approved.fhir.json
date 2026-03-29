@@ -3,9 +3,13 @@
   "id": "9088a55059313dbfd72c7e218708e8a1b21254cadd241ba6ec976607eb9ee868",
   "type": "transaction",
   "entry": [ {
+    "fullUrl": "MedicationRequest/9088a55059313dbfd72c7e218708e8a1b21254cadd241ba6ec976607eb9ee868",
     "resource": {
       "resourceType": "MedicationRequest",
       "id": "9088a55059313dbfd72c7e218708e8a1b21254cadd241ba6ec976607eb9ee868",
+      "meta": {
+        "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/MedicationRequest" ]
+      },
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-request-id",
         "value": "13"
@@ -55,9 +59,13 @@
       "url": "MedicationRequest/9088a55059313dbfd72c7e218708e8a1b21254cadd241ba6ec976607eb9ee868"
     }
   }, {
+    "fullUrl": "Medication/3bb731180abbf2e3faa2cd64e2427dbe2c82b64dae1f956566a999feaee47d9f",
     "resource": {
       "resourceType": "Medication",
       "id": "3bb731180abbf2e3faa2cd64e2427dbe2c82b64dae1f956566a999feaee47d9f",
+      "meta": {
+        "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication" ]
+      },
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-id",
         "value": "13"
@@ -84,9 +92,13 @@
       "url": "Medication/3bb731180abbf2e3faa2cd64e2427dbe2c82b64dae1f956566a999feaee47d9f"
     }
   }, {
+    "fullUrl": "Medication/df7c66a899576afdfd57c61eb56f85fd0b7a995cc9fe256120bd7a0c521e3d14",
     "resource": {
       "resourceType": "Medication",
       "id": "df7c66a899576afdfd57c61eb56f85fd0b7a995cc9fe256120bd7a0c521e3d14",
+      "meta": {
+        "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication" ]
+      },
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-wirkstoff-medication-id",
         "value": "bortezomib"

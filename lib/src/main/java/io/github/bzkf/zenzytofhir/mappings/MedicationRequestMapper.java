@@ -1,6 +1,7 @@
 package io.github.bzkf.zenzytofhir.mappings;
 
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
+import io.github.dizuker.tofhir.IdUtils;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -45,6 +46,7 @@ public class MedicationRequestMapper {
       @NonNull Reference patient) {
     // Mapping logic to convert ZenzyTherapieRecord to FHIR Bundle goes here
     var medicationRequest = new MedicationRequest();
+    medicationRequest.getMeta().addProfile(fhirProps.getProfiles().miiMedicationRequest());
 
     // TODO: therapie.nr turned out to not be unqiue but for the one duplicate
     // row we found, all other columns had the same value. So it's fine for
@@ -54,7 +56,7 @@ public class MedicationRequestMapper {
             .setSystem(fhirProps.getSystems().identifiers().therapieMedicationRequestId())
             .setValue(therapie.nr().toString());
     medicationRequest.addIdentifier(identifier);
-    medicationRequest.setId(MappingUtils.computeResourceIdFromIdentifier(identifier));
+    medicationRequest.setId(IdUtils.fromIdentifier(identifier));
 
     if (!StringUtils.hasText(therapie.status())) {
       LOG.warn("Status is unset. Defaulting to 'active'");

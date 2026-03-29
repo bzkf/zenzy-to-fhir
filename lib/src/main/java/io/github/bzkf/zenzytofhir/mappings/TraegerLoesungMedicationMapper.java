@@ -1,6 +1,7 @@
 package io.github.bzkf.zenzytofhir.mappings;
 
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
+import io.github.dizuker.tofhir.IdUtils;
 import java.util.Optional;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Identifier;
@@ -32,12 +33,14 @@ public class TraegerLoesungMedicationMapper {
     }
 
     var medication = new Medication();
+    medication.getMeta().addProfile(fhirProps.getProfiles().miiMedication());
+
     var identifier =
         new Identifier()
             .setSystem(fhirProps.getSystems().identifiers().therapieTraegerloesungMedicationId())
             .setValue(MappingUtils.SLUGIFY.slugify(therapie.traegerloesung()));
     medication.addIdentifier(identifier);
-    medication.setId(MappingUtils.computeResourceIdFromIdentifier(identifier));
+    medication.setId(IdUtils.fromIdentifier(identifier));
     medication.setStatus(MedicationStatus.ACTIVE);
 
     var codeableConcept = new CodeableConcept();

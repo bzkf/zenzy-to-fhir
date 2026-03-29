@@ -3,6 +3,7 @@ package io.github.bzkf.zenzytofhir.mappings;
 import io.github.bzkf.zenzytofhir.models.MedicationAndStrength;
 import io.github.bzkf.zenzytofhir.models.WirkstoffDosis;
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
+import io.github.dizuker.tofhir.IdUtils;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -75,12 +76,14 @@ public class WirkstoffMedicationMapper {
 
     for (var wirkstoffDosis : zipped) {
       var medication = new Medication();
+      medication.getMeta().addProfile(fhirProperties.getProfiles().miiMedication());
+
       var identifier =
           new Identifier()
               .setSystem(fhirProperties.getSystems().identifiers().therapieWirkstoffMedicationId())
               .setValue(MappingUtils.SLUGIFY.slugify(wirkstoffDosis.wirkstoff()));
       medication.addIdentifier(identifier);
-      medication.setId(MappingUtils.computeResourceIdFromIdentifier(identifier));
+      medication.setId(IdUtils.fromIdentifier(identifier));
       medication.setStatus(MedicationStatus.ACTIVE);
 
       var codeableConcept = new CodeableConcept();
