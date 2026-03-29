@@ -18,6 +18,8 @@ fhir:
       therapie-wirkstoff-medication-id: "${fhir.systems.identifiers.base-url}/therapie-wirkstoff-medication-id"
       therapie-traegerloesung-medication-id: "${fhir.systems.identifiers.base-url}/therapie-traegerloesung-medication-id"
     ucum: "http://unitsofmeasure.org"
+  extensions:
+    data-absent-reason: "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
   profiles:
     # MII
     # @ignored
