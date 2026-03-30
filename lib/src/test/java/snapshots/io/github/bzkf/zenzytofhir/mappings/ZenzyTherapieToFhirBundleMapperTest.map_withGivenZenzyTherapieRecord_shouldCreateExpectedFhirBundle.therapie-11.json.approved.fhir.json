@@ -129,12 +129,12 @@
       "code": {
         "coding": [ {
           "system": "http://fhir.de/CodeSystem/bfarm/atc",
-          "version": "2025",
+          "version": "2026",
           "code": "J02AA01",
           "display": "Amphotericin B"
         }, {
           "system": "http://snomed.info/sct",
-          "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+          "version": "http://snomed.info/sct/900000000000207008/version/20260301",
           "code": "77703004",
           "display": "Amphotericin B (substance)"
         } ],
@@ -159,7 +159,7 @@
         "itemCodeableConcept": {
           "coding": [ {
             "system": "http://snomed.info/sct",
-            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260301",
             "_code": {
               "extension": [ {
                 "url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
@@ -189,12 +189,12 @@
       "code": {
         "coding": [ {
           "system": "http://snomed.info/sct",
-          "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+          "version": "http://snomed.info/sct/900000000000207008/version/20260301",
           "code": "1268457003",
           "display": "Product containing precisely glucose 50 milligram/1 milliliter conventional release solution for infusion and/or injection (clinical drug)"
         }, {
           "system": "http://fhir.de/CodeSystem/bfarm/atc",
-          "version": "2025",
+          "version": "2026",
           "code": "B05BA11",
           "display": "Glucose"
         } ],
@@ -219,7 +219,7 @@
         "itemCodeableConcept": {
           "coding": [ {
             "system": "http://snomed.info/sct",
-            "version": "http://snomed.info/sct/900000000000207008/version/20260101",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260301",
             "_code": {
               "extension": [ {
                 "url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",

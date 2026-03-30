@@ -1,24 +1,25 @@
 package io.github.bzkf.zenzytofhir.mappings;
 
-import org.hl7.fhir.r4.model.Coding;
+import io.github.dizuker.tofhir.config.ToFhirProperties;
+import io.github.dizuker.tofhir.config.ToFhirProperties.Fhir;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties(prefix = "fhir")
+@ConfigurationPropertiesScan
 public class FhirProperties {
-  // TODO: need to figure out how to use a record for systems as well
   private FhirSystems systems;
-  private Codings codings;
   private FhirProfiles profiles;
-  private FhirExtensions extensions;
+  private Fhir fhir;
 
-  public FhirExtensions getExtensions() {
-    return extensions;
+  public FhirProperties(ToFhirProperties toFhirProperties) {
+    this.fhir = toFhirProperties.fhir();
   }
 
-  public void setExtensions(FhirExtensions extensions) {
-    this.extensions = extensions;
+  public Fhir fhir() {
+    return fhir;
   }
 
   public FhirSystems getSystems() {
@@ -37,33 +38,7 @@ public class FhirProperties {
     this.systems = systems;
   }
 
-  public Codings getCodings() {
-    return codings;
-  }
-
-  public void setCodings(Codings codings) {
-    this.codings = codings;
-  }
-
-  public static record Codings(Coding loinc, Coding snomed, Coding ops, Coding atc) {
-    @Override
-    public Coding loinc() {
-      // return a fresh copy, otherwise the original instance will be modified
-      return loinc.copy();
-    }
-
-    @Override
-    public Coding snomed() {
-      return snomed.copy();
-    }
-
-    @Override
-    public Coding atc() {
-      return atc.copy();
-    }
-  }
-
-  public record FhirSystems(FhirIdentifiers identifiers, String ucum) {}
+  public record FhirSystems(FhirIdentifiers identifiers) {}
 
   public record FhirIdentifiers(
       String patientId,
@@ -73,6 +48,4 @@ public class FhirProperties {
       String therapieTraegerloesungMedicationId) {}
 
   public record FhirProfiles(String miiMedication, String miiMedicationRequest) {}
-
-  public record FhirExtensions(String dataAbsentReason) {}
 }

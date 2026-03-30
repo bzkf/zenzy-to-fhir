@@ -1,32 +1,32 @@
 {
   "resourceType": "Bundle",
-  "id": "9088a55059313dbfd72c7e218708e8a1b21254cadd241ba6ec976607eb9ee868",
+  "id": "0325291ceadd38a92099207c91f88d712c776e932f256645fadecc65fb296289",
   "type": "transaction",
   "entry": [ {
-    "fullUrl": "MedicationRequest/9088a55059313dbfd72c7e218708e8a1b21254cadd241ba6ec976607eb9ee868",
+    "fullUrl": "MedicationRequest/0325291ceadd38a92099207c91f88d712c776e932f256645fadecc65fb296289",
     "resource": {
       "resourceType": "MedicationRequest",
-      "id": "9088a55059313dbfd72c7e218708e8a1b21254cadd241ba6ec976607eb9ee868",
+      "id": "0325291ceadd38a92099207c91f88d712c776e932f256645fadecc65fb296289",
       "meta": {
         "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/MedicationRequest" ]
       },
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-request-id",
-        "value": "13"
+        "value": "3"
       } ],
-      "status": "cancelled",
+      "status": "active",
       "intent": "order",
       "reportedBoolean": false,
       "medicationReference": {
-        "reference": "Medication/3bb731180abbf2e3faa2cd64e2427dbe2c82b64dae1f956566a999feaee47d9f"
+        "reference": "Medication/ffacc881339c998e84cc9d024b9425356565d1a51d82ff2ad4122c4f574ae106"
       },
       "subject": {
-        "reference": "Patient/13"
+        "reference": "Patient/3"
       },
       "dosageInstruction": [ {
-        "text": "subcutan!",
+        "text": "subkutan",
         "timing": {
-          "event": [ "2021-01-05T18:00:00+01:00" ]
+          "event": [ "2010-10-11T00:00:00+02:00" ]
         },
         "route": {
           "coding": [ {
@@ -56,30 +56,30 @@
     },
     "request": {
       "method": "PUT",
-      "url": "MedicationRequest/9088a55059313dbfd72c7e218708e8a1b21254cadd241ba6ec976607eb9ee868"
+      "url": "MedicationRequest/0325291ceadd38a92099207c91f88d712c776e932f256645fadecc65fb296289"
     }
   }, {
-    "fullUrl": "Medication/3bb731180abbf2e3faa2cd64e2427dbe2c82b64dae1f956566a999feaee47d9f",
+    "fullUrl": "Medication/ffacc881339c998e84cc9d024b9425356565d1a51d82ff2ad4122c4f574ae106",
     "resource": {
       "resourceType": "Medication",
-      "id": "3bb731180abbf2e3faa2cd64e2427dbe2c82b64dae1f956566a999feaee47d9f",
+      "id": "ffacc881339c998e84cc9d024b9425356565d1a51d82ff2ad4122c4f574ae106",
       "meta": {
         "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication" ]
       },
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-id",
-        "value": "13"
+        "value": "3"
       } ],
       "status": "active",
       "ingredient": [ {
         "itemReference": {
-          "reference": "Medication/df7c66a899576afdfd57c61eb56f85fd0b7a995cc9fe256120bd7a0c521e3d14",
-          "display": "Bortezomib"
+          "reference": "Medication/4a91fd6b47e761ece36d1b67c8080e25c206b097de765f4e11baf9dc30d7cab8",
+          "display": "Azacitidine"
         },
         "isActive": false,
         "strength": {
           "numerator": {
-            "value": 2.2,
+            "value": 65.0,
             "unit": "{Stueck}",
             "system": "http://unitsofmeasure.org",
             "code": "1"
@@ -95,33 +95,33 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/3bb731180abbf2e3faa2cd64e2427dbe2c82b64dae1f956566a999feaee47d9f"
+      "url": "Medication/ffacc881339c998e84cc9d024b9425356565d1a51d82ff2ad4122c4f574ae106"
     }
   }, {
-    "fullUrl": "Medication/df7c66a899576afdfd57c61eb56f85fd0b7a995cc9fe256120bd7a0c521e3d14",
+    "fullUrl": "Medication/4a91fd6b47e761ece36d1b67c8080e25c206b097de765f4e11baf9dc30d7cab8",
     "resource": {
       "resourceType": "Medication",
-      "id": "df7c66a899576afdfd57c61eb56f85fd0b7a995cc9fe256120bd7a0c521e3d14",
+      "id": "4a91fd6b47e761ece36d1b67c8080e25c206b097de765f4e11baf9dc30d7cab8",
       "meta": {
         "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication" ]
       },
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-wirkstoff-medication-id",
-        "value": "bortezomib"
+        "value": "azacitidine"
       } ],
       "code": {
         "coding": [ {
           "system": "http://fhir.de/CodeSystem/bfarm/atc",
           "version": "2026",
-          "code": "L01XG01",
-          "display": "Bortezomib"
+          "code": "L01BC07",
+          "display": "Azacitidin"
         }, {
           "system": "http://snomed.info/sct",
           "version": "http://snomed.info/sct/900000000000207008/version/20260301",
-          "code": "407097007",
-          "display": "Bortezomib (substance)"
+          "code": "412328000",
+          "display": "Azacitidine (substance)"
         } ],
-        "text": "Bortezomib"
+        "text": "Azacitidine"
       },
       "status": "active",
       "amount": {
@@ -155,7 +155,58 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/df7c66a899576afdfd57c61eb56f85fd0b7a995cc9fe256120bd7a0c521e3d14"
+      "url": "Medication/4a91fd6b47e761ece36d1b67c8080e25c206b097de765f4e11baf9dc30d7cab8"
+    }
+  }, {
+    "fullUrl": "Provenance/38007a310bcc51dd7da249314c662c388a6b41e5ece7d8494ff488535232470a",
+    "resource": {
+      "resourceType": "Provenance",
+      "id": "38007a310bcc51dd7da249314c662c388a6b41e5ece7d8494ff488535232470a",
+      "target": [ {
+        "reference": "MedicationRequest/0325291ceadd38a92099207c91f88d712c776e932f256645fadecc65fb296289"
+      }, {
+        "reference": "Medication/ffacc881339c998e84cc9d024b9425356565d1a51d82ff2ad4122c4f574ae106"
+      }, {
+        "reference": "Medication/4a91fd6b47e761ece36d1b67c8080e25c206b097de765f4e11baf9dc30d7cab8"
+      } ],
+      "occurredDateTime": "2000-01-01T11:11:11Z",
+      "recorded": "2000-01-01T11:11:11Z",
+      "activity": {
+        "coding": [ {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-DataOperation",
+          "code": "CREATE",
+          "display": "create"
+        } ]
+      },
+      "agent": [ {
+        "type": {
+          "coding": [ {
+            "system": "http://terminology.hl7.org/CodeSystem/provenance-participant-type",
+            "code": "assembler",
+            "display": "Assembler"
+          } ]
+        },
+        "role": [ {
+          "coding": [ {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+            "code": "AUT",
+            "display": "author"
+          } ]
+        } ],
+        "who": {
+          "display": "zenzy-to-fhir v1.0.0-test"
+        }
+      } ],
+      "entity": [ {
+        "role": "source",
+        "what": {
+          "display": "Zenzy Therapie Nr 3"
+        }
+      } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Provenance/38007a310bcc51dd7da249314c662c388a6b41e5ece7d8494ff488535232470a"
     }
   } ]
 }

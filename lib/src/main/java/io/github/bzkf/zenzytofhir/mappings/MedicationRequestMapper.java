@@ -112,7 +112,8 @@ public class MedicationRequestMapper {
               new CodeableConcept()
                   .addCoding(
                       fhirProps
-                          .getCodings()
+                          .fhir()
+                          .codings()
                           .snomed()
                           .setCode(applikationsart.routeSnomedCode())
                           .setDisplay(applikationsart.routeSnomedDisplay()));
@@ -124,7 +125,8 @@ public class MedicationRequestMapper {
               new CodeableConcept()
                   .addCoding(
                       fhirProps
-                          .getCodings()
+                          .fhir()
+                          .codings()
                           .snomed()
                           .setCode(applikationsart.methodSnomedCode())
                           .setDisplay(applikationsart.methodSnomedDisplay()));
@@ -156,7 +158,7 @@ public class MedicationRequestMapper {
         new Quantity()
             .setCode("{Stueck}")
             .setUnit("1")
-            .setSystem(fhirProps.getSystems().ucum())
+            .setSystem(fhirProps.fhir().systems().ucum())
             .setValue(1);
     dosage.addDoseAndRate().setDose(quantity);
 
