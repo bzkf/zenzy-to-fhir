@@ -1,7 +1,5 @@
 package io.github.bzkf.zenzytofhir.mappings;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import ca.uhn.fhir.context.FhirContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
