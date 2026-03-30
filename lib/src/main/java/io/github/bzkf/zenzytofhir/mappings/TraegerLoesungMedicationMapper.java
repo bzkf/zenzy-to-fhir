@@ -56,13 +56,13 @@ public class TraegerLoesungMedicationMapper {
         return Optional.empty();
       }
 
-      var snomed = fhirProps.getCodings().snomed();
+      var snomed = fhirProps.fhir().codings().snomed();
       if (mapped.snomedCode() != null) {
         snomed.setCode(mapped.snomedCode()).setDisplay(mapped.snomedDisplay());
         codeableConcept.addCoding(snomed);
       }
 
-      var atc = fhirProps.getCodings().atc();
+      var atc = fhirProps.fhir().codings().atc();
       if (mapped.atcCode() != null) {
         atc.setCode(mapped.atcCode()).setDisplay(mapped.atcDisplay());
         codeableConcept.addCoding(atc);
@@ -78,25 +78,28 @@ public class TraegerLoesungMedicationMapper {
             .setValue(1)
             .setUnit("milliliter")
             .setCode("mL")
-            .setSystem(fhirProps.getSystems().ucum());
+            .setSystem(fhirProps.fhir().systems().ucum());
     var denominator =
         new Quantity()
             .setValue(1)
             .setUnit("1")
             .setCode("{Stueck}")
-            .setSystem(fhirProps.getSystems().ucum());
+            .setSystem(fhirProps.fhir().systems().ucum());
     var amount = new Ratio().setNumerator(quantity).setDenominator(denominator);
     medication.setAmount(amount);
 
     // MII Medications require ingredient to be set, even if it's the same as the medication
     // itself
-    var absentCodeableConcept = new CodeableConcept();
-    var absentCode = fhirProps.getCodings().snomed();
-    absentCode
+    var absentCoding = fhirProps.fhir().codings().snomed();
+    absentCoding
         .getCodeElement()
-        .addExtension(fhirProps.getExtensions().dataAbsentReason(), new CodeType("not-applicable"));
-    absentCodeableConcept.addCoding(absentCode);
-    medication.addIngredient().setItem(absentCodeableConcept);
+        .addExtension(
+            fhirProps
+                .fhir()
+                .extensions()
+                .dataAbsentReason()
+                .setValue(new CodeType("not-applicable")));
+    medication.addIngredient().setItem(new CodeableConcept().addCoding(absentCoding));
 
     return Optional.of(medication);
   }

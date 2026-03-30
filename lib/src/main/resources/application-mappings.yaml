@@ -1,14 +1,4 @@
 fhir:
-  codings:
-    loinc:
-      system: "http://loinc.org"
-      version: "2.81"
-    snomed:
-      system: "http://snomed.info/sct"
-      version: "http://snomed.info/sct/900000000000207008/version/20260101"
-    atc:
-      system: "http://fhir.de/CodeSystem/bfarm/atc"
-      version: "2025"
   systems:
     identifiers:
       base-url: "https://bzkf.github.io/zenzy-to-fhir/identifiers"
@@ -17,9 +7,6 @@ fhir:
       therapie-medication-id: "${fhir.systems.identifiers.base-url}/therapie-medication-id"
       therapie-wirkstoff-medication-id: "${fhir.systems.identifiers.base-url}/therapie-wirkstoff-medication-id"
       therapie-traegerloesung-medication-id: "${fhir.systems.identifiers.base-url}/therapie-traegerloesung-medication-id"
-    ucum: "http://unitsofmeasure.org"
-  extensions:
-    data-absent-reason: "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
   profiles:
     # MII
     # @ignored
@@ -30,6 +17,9 @@ fhir:
     mii-medication-request: "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/MedicationRequest${fhir.profiles.versions.mii-medikation}"
 
 zenzy-to-fhir:
+  version: "0.1.0" # x-release-please-version
   mappings:
     wirkstoff:
       extra-path: ""
+    provenance:
+      enabled: false

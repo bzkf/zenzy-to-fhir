@@ -37,6 +37,10 @@
         {
           "type": "generic",
           "path": "src/main/resources/application.yaml"
+        },
+        {
+          "type": "generic",
+          "path": "lib/src/main/resources/application-mappings.yaml"
         }
       ]
     }

@@ -35,7 +35,7 @@ dependencies {
     implementation 'net.logstash.logback:logstash-logback-encoder:9.0'
     implementation 'com.github.slugify:slugify:3.0.7'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv'
-    implementation 'io.github.diz-uker:to-fhir:0.1.5'
+    implementation 'io.github.diz-uker:to-fhir:0.1.8'
 
     api 'ca.uhn.hapi.fhir:hapi-fhir-structures-r4:8.8.1'
 

@@ -1,5 +1,6 @@
 package io.github.bzkf.zenzytofhir.mappings;
 
+import io.github.bzkf.zenzytofhir.mappings.config.ZenzyToFhirConfig;
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
 import io.github.dizuker.tofhir.ReferenceUtils;
 import io.github.dizuker.tofhir.TransactionBuilder;
@@ -16,23 +17,27 @@ import org.springframework.util.StringUtils;
 public class ZenzyTherapieToFhirBundleMapper {
 
   private static final Logger LOG = LoggerFactory.getLogger(ZenzyTherapieToFhirBundleMapper.class);
+
   private final HergestellteMedicationMapper medicationMapper;
   private final MedicationRequestMapper medicationRequestMapper;
   private final WirkstoffMedicationMapper wirkstoffMedicationMapper;
   private final TraegerLoesungMedicationMapper traegerLoesungMedicationMapper;
   private final Function<ZenzyTherapie, Reference> patientReferenceGenerator;
+  private final ZenzyToFhirConfig config;
 
   public ZenzyTherapieToFhirBundleMapper(
       HergestellteMedicationMapper medicationMapper,
       MedicationRequestMapper medicationRequestMapper,
       WirkstoffMedicationMapper wirkstoffMedicationMapper,
       TraegerLoesungMedicationMapper traegerLoesungMedicationMapper,
-      Function<ZenzyTherapie, Reference> patientReferenceGenerator) {
+      Function<ZenzyTherapie, Reference> patientReferenceGenerator,
+      ZenzyToFhirConfig config) {
     this.medicationMapper = medicationMapper;
     this.medicationRequestMapper = medicationRequestMapper;
     this.wirkstoffMedicationMapper = wirkstoffMedicationMapper;
     this.traegerLoesungMedicationMapper = traegerLoesungMedicationMapper;
     this.patientReferenceGenerator = patientReferenceGenerator;
+    this.config = config;
   }
 
   public Optional<Bundle> map(ZenzyTherapie therapie) {
@@ -74,6 +79,12 @@ public class ZenzyTherapieToFhirBundleMapper {
             .addEntry(medicationRequest)
             .addEntry(medication)
             .addEntries(wirkstoffe.stream().map(w -> w.medication()).toList());
+
+    if (config.mappings().provenance().enabled()) {
+      var who = new Reference().setDisplay("zenzy-to-fhir v" + config.version());
+      var what = new Reference().setDisplay("Zenzy Therapie Nr " + therapie.nr());
+      builder = builder.withProvenance(who, what);
+    }
 
     if (traegerLoesung.isPresent()) {
       builder.addEntry(traegerLoesung.get());

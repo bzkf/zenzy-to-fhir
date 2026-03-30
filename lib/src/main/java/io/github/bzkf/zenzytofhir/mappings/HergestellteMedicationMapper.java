@@ -48,13 +48,13 @@ public class HergestellteMedicationMapper {
               .setValue(therapie.gesamtvolumenNumeric())
               .setUnit("milliliter")
               .setCode("mL")
-              .setSystem(fhirProps.getSystems().ucum());
+              .setSystem(fhirProps.fhir().systems().ucum());
       var denominator =
           new Quantity()
               .setValue(1)
               .setUnit("1")
               .setCode("{Stueck}")
-              .setSystem(fhirProps.getSystems().ucum());
+              .setSystem(fhirProps.fhir().systems().ucum());
 
       var amount = new Ratio().setNumerator(quantity).setDenominator(denominator);
       medication.setAmount(amount);
@@ -68,13 +68,13 @@ public class HergestellteMedicationMapper {
               .setValue(therapie.gesamtvolumenNumeric())
               .setUnit("1")
               .setCode("{Stueck}")
-              .setSystem(fhirProps.getSystems().ucum());
+              .setSystem(fhirProps.fhir().systems().ucum());
       var denominator =
           new Quantity()
               .setValue(therapie.gesamtvolumenNumeric())
               .setUnit("milliliter")
               .setCode("mL")
-              .setSystem(fhirProps.getSystems().ucum());
+              .setSystem(fhirProps.fhir().systems().ucum());
       var strength = new Ratio().setNumerator(numerator).setDenominator(denominator);
       medication.addIngredient().setIsActive(false).setItem(traegerLoesung).setStrength(strength);
     } else {

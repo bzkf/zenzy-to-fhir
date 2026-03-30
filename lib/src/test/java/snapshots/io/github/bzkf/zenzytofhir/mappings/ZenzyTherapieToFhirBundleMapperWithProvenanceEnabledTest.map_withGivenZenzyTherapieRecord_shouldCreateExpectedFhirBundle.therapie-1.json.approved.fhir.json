@@ -1,31 +1,52 @@
 {
   "resourceType": "Bundle",
-  "id": "667c989137209b35b15792c614a61030c3522c497b4b8df86f85d09c2f03776b",
+  "id": "8ce8958fc6b03f56b28f0acdaf6ce835088030ec8d68e96698b14bf8485f4bca",
   "type": "transaction",
   "entry": [ {
-    "fullUrl": "MedicationRequest/667c989137209b35b15792c614a61030c3522c497b4b8df86f85d09c2f03776b",
+    "fullUrl": "MedicationRequest/8ce8958fc6b03f56b28f0acdaf6ce835088030ec8d68e96698b14bf8485f4bca",
     "resource": {
       "resourceType": "MedicationRequest",
-      "id": "667c989137209b35b15792c614a61030c3522c497b4b8df86f85d09c2f03776b",
+      "id": "8ce8958fc6b03f56b28f0acdaf6ce835088030ec8d68e96698b14bf8485f4bca",
       "meta": {
         "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/MedicationRequest" ]
       },
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-request-id",
-        "value": "12"
+        "value": "1"
       } ],
       "status": "active",
       "intent": "order",
       "reportedBoolean": false,
       "medicationReference": {
-        "reference": "Medication/df8add0bfb681b8711b123b3e37c414be96b82cae5fa57151382fb20030aaf1c"
+        "reference": "Medication/a68889464122675222d3d6a24c13d219c8fb3cc91c930a0f219ba6d69824d29b"
       },
       "subject": {
-        "reference": "Patient/12"
+        "reference": "Patient/1"
       },
       "dosageInstruction": [ {
+        "text": "Kurzinfusion über 30 min",
         "timing": {
-          "event": [ "2024-06-26T00:00:00+02:00" ]
+          "event": [ "1999-10-26T09:30:00+02:00" ],
+          "repeat": {
+            "duration": 30.0,
+            "durationUnit": "min"
+          }
+        },
+        "route": {
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260301",
+            "code": "47625008",
+            "display": "Intravenous route"
+          } ]
+        },
+        "method": {
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260301",
+            "code": "36576007",
+            "display": "Infusion (procedure)"
+          } ]
         },
         "doseAndRate": [ {
           "doseQuantity": {
@@ -39,24 +60,24 @@
     },
     "request": {
       "method": "PUT",
-      "url": "MedicationRequest/667c989137209b35b15792c614a61030c3522c497b4b8df86f85d09c2f03776b"
+      "url": "MedicationRequest/8ce8958fc6b03f56b28f0acdaf6ce835088030ec8d68e96698b14bf8485f4bca"
     }
   }, {
-    "fullUrl": "Medication/df8add0bfb681b8711b123b3e37c414be96b82cae5fa57151382fb20030aaf1c",
+    "fullUrl": "Medication/a68889464122675222d3d6a24c13d219c8fb3cc91c930a0f219ba6d69824d29b",
     "resource": {
       "resourceType": "Medication",
-      "id": "df8add0bfb681b8711b123b3e37c414be96b82cae5fa57151382fb20030aaf1c",
+      "id": "a68889464122675222d3d6a24c13d219c8fb3cc91c930a0f219ba6d69824d29b",
       "meta": {
         "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication" ]
       },
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-id",
-        "value": "12"
+        "value": "1"
       } ],
       "status": "active",
       "amount": {
         "numerator": {
-          "value": 2.0,
+          "value": 500.0,
           "unit": "milliliter",
           "system": "http://unitsofmeasure.org",
           "code": "mL"
@@ -70,19 +91,19 @@
       },
       "ingredient": [ {
         "itemReference": {
-          "reference": "Medication/410c64c9959c8ef6947befce25112f6d21e66f8f9a8a56fcea4e246f3a45ca40",
-          "display": "NaCl 0.9%"
+          "reference": "Medication/43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a",
+          "display": "Glucose 5%"
         },
         "isActive": false,
         "strength": {
           "numerator": {
-            "value": 2.0,
+            "value": 500.0,
             "unit": "1",
             "system": "http://unitsofmeasure.org",
             "code": "{Stueck}"
           },
           "denominator": {
-            "value": 2.0,
+            "value": 500.0,
             "unit": "milliliter",
             "system": "http://unitsofmeasure.org",
             "code": "mL"
@@ -90,19 +111,19 @@
         }
       }, {
         "itemReference": {
-          "reference": "Medication/5d29fcf0b6c100f8a9cce321c4947f73d6d6eff16fd221258b81c386bc8112d4",
-          "display": "Methotrexat"
+          "reference": "Medication/0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed",
+          "display": "Fluorouracil"
         },
         "isActive": false,
         "strength": {
           "numerator": {
-            "value": 75.0,
+            "value": 900.0,
             "unit": "{Stueck}",
             "system": "http://unitsofmeasure.org",
             "code": "1"
           },
           "denominator": {
-            "value": 2.0,
+            "value": 500.0,
             "unit": "milliliter",
             "system": "http://unitsofmeasure.org",
             "code": "mL"
@@ -112,33 +133,33 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/df8add0bfb681b8711b123b3e37c414be96b82cae5fa57151382fb20030aaf1c"
+      "url": "Medication/a68889464122675222d3d6a24c13d219c8fb3cc91c930a0f219ba6d69824d29b"
     }
   }, {
-    "fullUrl": "Medication/5d29fcf0b6c100f8a9cce321c4947f73d6d6eff16fd221258b81c386bc8112d4",
+    "fullUrl": "Medication/0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed",
     "resource": {
       "resourceType": "Medication",
-      "id": "5d29fcf0b6c100f8a9cce321c4947f73d6d6eff16fd221258b81c386bc8112d4",
+      "id": "0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed",
       "meta": {
         "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication" ]
       },
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-wirkstoff-medication-id",
-        "value": "methotrexat"
+        "value": "fluorouracil"
       } ],
       "code": {
         "coding": [ {
           "system": "http://fhir.de/CodeSystem/bfarm/atc",
           "version": "2026",
-          "code": "L04AX03",
-          "display": "Methotrexat"
+          "code": "L01BC02",
+          "display": "Fluorouracil"
         }, {
           "system": "http://snomed.info/sct",
           "version": "http://snomed.info/sct/900000000000207008/version/20260301",
-          "code": "387381009",
-          "display": "Methotrexate (substance)"
+          "code": "387172005",
+          "display": "Fluorouracil (substance)"
         } ],
-        "text": "Methotrexat"
+        "text": "Fluorouracil"
       },
       "status": "active",
       "amount": {
@@ -172,33 +193,33 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/5d29fcf0b6c100f8a9cce321c4947f73d6d6eff16fd221258b81c386bc8112d4"
+      "url": "Medication/0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed"
     }
   }, {
-    "fullUrl": "Medication/410c64c9959c8ef6947befce25112f6d21e66f8f9a8a56fcea4e246f3a45ca40",
+    "fullUrl": "Medication/43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a",
     "resource": {
       "resourceType": "Medication",
-      "id": "410c64c9959c8ef6947befce25112f6d21e66f8f9a8a56fcea4e246f3a45ca40",
+      "id": "43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a",
       "meta": {
         "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication" ]
       },
       "identifier": [ {
         "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-traegerloesung-medication-id",
-        "value": "nacl-0-9"
+        "value": "glucose-5"
       } ],
       "code": {
         "coding": [ {
           "system": "http://snomed.info/sct",
           "version": "http://snomed.info/sct/900000000000207008/version/20260301",
-          "code": "1263924005",
-          "display": "Product containing precisely sodium chloride 9 milligram/1 milliliter conventional release solution for infusion and/or injection (clinical drug)"
+          "code": "1268457003",
+          "display": "Product containing precisely glucose 50 milligram/1 milliliter conventional release solution for infusion and/or injection (clinical drug)"
         }, {
           "system": "http://fhir.de/CodeSystem/bfarm/atc",
           "version": "2026",
-          "code": "V07AB02",
-          "display": "Physiologische Kochsalzlösung"
+          "code": "B05BA11",
+          "display": "Glucose"
         } ],
-        "text": "NaCl 0.9%"
+        "text": "Glucose 5%"
       },
       "status": "active",
       "amount": {
@@ -232,7 +253,60 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Medication/410c64c9959c8ef6947befce25112f6d21e66f8f9a8a56fcea4e246f3a45ca40"
+      "url": "Medication/43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a"
+    }
+  }, {
+    "fullUrl": "Provenance/a12102a1b816c3fc55d586d141149a26a8f2414ef3d91e6a32175cc9acd04a77",
+    "resource": {
+      "resourceType": "Provenance",
+      "id": "a12102a1b816c3fc55d586d141149a26a8f2414ef3d91e6a32175cc9acd04a77",
+      "target": [ {
+        "reference": "MedicationRequest/8ce8958fc6b03f56b28f0acdaf6ce835088030ec8d68e96698b14bf8485f4bca"
+      }, {
+        "reference": "Medication/a68889464122675222d3d6a24c13d219c8fb3cc91c930a0f219ba6d69824d29b"
+      }, {
+        "reference": "Medication/0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed"
+      }, {
+        "reference": "Medication/43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a"
+      } ],
+      "occurredDateTime": "2000-01-01T11:11:11Z",
+      "recorded": "2000-01-01T11:11:11Z",
+      "activity": {
+        "coding": [ {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-DataOperation",
+          "code": "CREATE",
+          "display": "create"
+        } ]
+      },
+      "agent": [ {
+        "type": {
+          "coding": [ {
+            "system": "http://terminology.hl7.org/CodeSystem/provenance-participant-type",
+            "code": "assembler",
+            "display": "Assembler"
+          } ]
+        },
+        "role": [ {
+          "coding": [ {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+            "code": "AUT",
+            "display": "author"
+          } ]
+        } ],
+        "who": {
+          "display": "zenzy-to-fhir v1.0.0-test"
+        }
+      } ],
+      "entity": [ {
+        "role": "source",
+        "what": {
+          "display": "Zenzy Therapie Nr 1"
+        }
+      } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Provenance/a12102a1b816c3fc55d586d141149a26a8f2414ef3d91e6a32175cc9acd04a77"
     }
   } ]
 }

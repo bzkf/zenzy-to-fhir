@@ -1,6 +1,6 @@
 package io.github.bzkf.zenzytofhir.mappings;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ca.uhn.fhir.context.FhirContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -12,6 +12,9 @@ import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
 import io.github.dizuker.tofhir.config.ToFhirAutoConfiguration;
 import java.io.IOException;
 import org.approvaltests.Approvals;
+import org.approvaltests.core.Scrubber;
+import org.approvaltests.scrubbers.RegExScrubber;
+import org.approvaltests.scrubbers.Scrubbers;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +35,16 @@ import org.springframework.boot.test.context.SpringBootTest;
     },
     properties = {
       "zenzy-to-fhir.version=1.0.0-test",
-      "zenzy-to-fhir.mappings.provenance.enabled=false"
+      "zenzy-to-fhir.mappings.provenance.enabled=true"
     })
 @EnableConfigurationProperties(ZenzyToFhirConfig.class)
-class ZenzyTherapieToFhirBundleMapperTest {
+class ZenzyTherapieToFhirBundleMapperWithProvenanceEnabledTest {
   private static final FhirContext fhirContext = FhirContext.forR4();
+  public static final Scrubber FHIR_DATE_TIME_SCRUBBER =
+      Scrubbers.scrubAll(
+          new RegExScrubber(
+              "\"occurredDateTime\": \"(.*)\"", "\"occurredDateTime\": \"2000-01-01T11:11:11Z\""),
+          new RegExScrubber("\"recorded\": \"(.*)\"", "\"recorded\": \"2000-01-01T11:11:11Z\""));
 
   @Autowired private ZenzyTherapieToFhirBundleMapper sut;
 
@@ -45,13 +53,6 @@ class ZenzyTherapieToFhirBundleMapperTest {
     "therapie-1.json",
     "therapie-2.json",
     "therapie-3.json",
-    "therapie-4.json",
-    "therapie-5.json",
-    "therapie-6.json",
-    "therapie-10.json",
-    "therapie-11.json",
-    "therapie-12.json",
-    "therapie-13.json",
   })
   void map_withGivenZenzyTherapieRecord_shouldCreateExpectedFhirBundle(String sourceFile)
       throws IOException {
@@ -62,29 +63,21 @@ class ZenzyTherapieToFhirBundleMapperTest {
             .disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
     final var record = mapper.readValue(recordStream.openStream(), ZenzyTherapie.class);
 
+    String version =
+        ZenzyTherapieToFhirBundleMapperWithProvenanceEnabledTest.class
+            .getPackage()
+            .getImplementationVersion();
+
     var mapped = sut.map(record);
 
     var fhirParser = fhirContext.newJsonParser().setPrettyPrint(true);
     var fhirJson = fhirParser.encodeResourceToString(mapped.get());
     Approvals.verify(
-        fhirJson, Approvals.NAMES.withParameters(sourceFile).forFile().withExtension(".fhir.json"));
-  }
-
-  @ParameterizedTest
-  @CsvSource({
-    "therapie-9.json",
-  })
-  void map_withUnmappableZenzyTherapieRecord_shouldNotCreateBundle(String sourceFile)
-      throws IOException {
-    final var recordStream = this.getClass().getClassLoader().getResource("fixtures/" + sourceFile);
-    var mapper =
-        new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
-    final var record = mapper.readValue(recordStream.openStream(), ZenzyTherapie.class);
-
-    var mapped = sut.map(record);
-
-    assertTrue(mapped.isEmpty());
+        fhirJson,
+        Approvals.NAMES
+            .withParameters(sourceFile)
+            .withScrubber(FHIR_DATE_TIME_SCRUBBER)
+            .forFile()
+            .withExtension(".fhir.json"));
   }
 }

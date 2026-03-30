@@ -27,23 +27,25 @@ import org.springframework.util.StringUtils;
 public class WirkstoffMedicationMapper {
   private static final Logger LOG = LoggerFactory.getLogger(WirkstoffMedicationMapper.class);
 
-  private final FhirProperties fhirProperties;
+  private static final String MULTI_ELEMENT_DELIMITER = "\\\\n";
+
+  private final FhirProperties fhirProps;
   private final ToCodingMapper toCodingMapper;
 
   public WirkstoffMedicationMapper(FhirProperties fhirProperties, ToCodingMapper toCodingMapper) {
-    this.fhirProperties = fhirProperties;
+    this.fhirProps = fhirProperties;
     this.toCodingMapper = toCodingMapper;
   }
 
   public List<MedicationAndStrength> map(ZenzyTherapie therapie) {
     var result = new ArrayList<MedicationAndStrength>();
 
-    var wirkstoffe = therapie.wirkstoff().split("\\\\n");
-    var dosen = therapie.dosis().split("\\\\n");
+    var wirkstoffe = therapie.wirkstoff().split(MULTI_ELEMENT_DELIMITER);
+    var dosen = therapie.dosis().split(MULTI_ELEMENT_DELIMITER);
 
     final var dosisEinheit =
         StringUtils.hasText(therapie.dosisEinheit())
-            ? therapie.dosisEinheit().split("\\\\n")
+            ? therapie.dosisEinheit().split(MULTI_ELEMENT_DELIMITER)
             : new String[wirkstoffe.length];
 
     if (!StringUtils.hasText(therapie.dosisEinheit())) {
@@ -77,11 +79,11 @@ public class WirkstoffMedicationMapper {
 
     for (var wirkstoffDosis : zipped) {
       var medication = new Medication();
-      medication.getMeta().addProfile(fhirProperties.getProfiles().miiMedication());
+      medication.getMeta().addProfile(fhirProps.getProfiles().miiMedication());
 
       var identifier =
           new Identifier()
-              .setSystem(fhirProperties.getSystems().identifiers().therapieWirkstoffMedicationId())
+              .setSystem(fhirProps.getSystems().identifiers().therapieWirkstoffMedicationId())
               .setValue(MappingUtils.SLUGIFY.slugify(wirkstoffDosis.wirkstoff()));
       medication.addIdentifier(identifier);
       medication.setId(IdUtils.fromIdentifier(identifier));
@@ -94,14 +96,24 @@ public class WirkstoffMedicationMapper {
       if (maybeMapped.isPresent()) {
         var mapped = maybeMapped.get();
         if (mapped.atcCode() != null) {
-          var atc = fhirProperties.getCodings().atc();
-          atc.setCode(mapped.atcCode()).setDisplay(mapped.atcDisplay());
+          var atc =
+              fhirProps
+                  .fhir()
+                  .codings()
+                  .atc()
+                  .setCode(mapped.atcCode())
+                  .setDisplay(mapped.atcDisplay());
           codeableConcept.addCoding(atc);
         }
 
         if (mapped.snomedCode() != null) {
-          var snomed = fhirProperties.getCodings().snomed();
-          snomed.setCode(mapped.snomedCode()).setDisplay(mapped.snomedDisplay());
+          var snomed =
+              fhirProps
+                  .fhir()
+                  .codings()
+                  .snomed()
+                  .setCode(mapped.snomedCode())
+                  .setDisplay(mapped.snomedDisplay());
           codeableConcept.addCoding(snomed);
         }
       } else {
@@ -117,13 +129,13 @@ public class WirkstoffMedicationMapper {
           .getNumerator()
           .setCode(wirkstoffDosis.dosisEinheit())
           .setUnit(wirkstoffDosis.dosisEinheit())
-          .setSystem(fhirProperties.getSystems().ucum())
+          .setSystem(fhirProps.fhir().systems().ucum())
           .setValue(1);
       amount
           .getDenominator()
           .setCode("1")
           .setUnit("{Stueck}")
-          .setSystem(fhirProperties.getSystems().ucum())
+          .setSystem(fhirProps.fhir().systems().ucum())
           .setValue(1);
 
       medication.setAmount(amount);
@@ -133,7 +145,7 @@ public class WirkstoffMedicationMapper {
           .setValue(wirkstoffDosis.dosis().doubleValue())
           .setCode("1")
           .setUnit("{Stueck}")
-          .setSystem(fhirProperties.getSystems().ucum());
+          .setSystem(fhirProps.fhir().systems().ucum());
       var strength = new Ratio();
       strength.setNumerator(numerator);
 
@@ -143,28 +155,30 @@ public class WirkstoffMedicationMapper {
             .setValue(therapie.gesamtvolumenNumeric())
             .setUnit("milliliter")
             .setCode("mL")
-            .setSystem(fhirProperties.getSystems().ucum());
+            .setSystem(fhirProps.fhir().systems().ucum());
       } else {
         LOG.debug("gesamtvolumen is unset, assuming undiluted medication");
         denominator
             .setValue(1)
             .setCode("1")
             .setUnit("{Stueck}")
-            .setSystem(fhirProperties.getSystems().ucum());
+            .setSystem(fhirProps.fhir().systems().ucum());
       }
 
       strength.setDenominator(denominator);
 
       // MII Medications require ingredient to be set, even if it's the same as the medication
       // itself
-      var absentCodeableConcept = new CodeableConcept();
-      var absentCode = fhirProperties.getCodings().snomed();
-      absentCode
+      var absentCoding = fhirProps.fhir().codings().snomed();
+      absentCoding
           .getCodeElement()
           .addExtension(
-              fhirProperties.getExtensions().dataAbsentReason(), new CodeType("not-applicable"));
-      absentCodeableConcept.addCoding(absentCode);
-      medication.addIngredient().setItem(absentCodeableConcept);
+              fhirProps
+                  .fhir()
+                  .extensions()
+                  .dataAbsentReason()
+                  .setValue(new CodeType("not-applicable")));
+      medication.addIngredient().setItem(new CodeableConcept().addCoding(absentCoding));
 
       result.add(new MedicationAndStrength(medication, strength));
     }
