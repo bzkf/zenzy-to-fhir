@@ -63,11 +63,6 @@ class ZenzyTherapieToFhirBundleMapperWithProvenanceEnabledTest {
             .disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
     final var record = mapper.readValue(recordStream.openStream(), ZenzyTherapie.class);
 
-    String version =
-        ZenzyTherapieToFhirBundleMapperWithProvenanceEnabledTest.class
-            .getPackage()
-            .getImplementationVersion();
-
     var mapped = sut.map(record);
 
     var fhirParser = fhirContext.newJsonParser().setPrettyPrint(true);
