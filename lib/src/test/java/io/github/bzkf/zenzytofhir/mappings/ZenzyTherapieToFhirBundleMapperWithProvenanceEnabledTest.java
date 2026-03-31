@@ -18,24 +18,19 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootTest(
     classes = {
       ToFhirAutoConfiguration.class,
       FhirProperties.class,
-      HergestellteMedicationMapper.class,
-      TraegerLoesungMedicationMapper.class,
-      MedicationRequestMapper.class,
       ProfileTestConfig.class,
-      ToCodingMapper.class,
-      WirkstoffMedicationMapper.class,
-      ZenzyTherapieToFhirBundleMapper.class,
-      DeviceMapper.class,
     },
     properties = {
       "zenzy-to-fhir.version=1.0.0-test",
       "zenzy-to-fhir.mappings.provenance.enabled=true"
     })
+@ComponentScan(basePackages = "io.github.bzkf.zenzytofhir.mappings")
 @EnableConfigurationProperties(ZenzyToFhirConfig.class)
 class ZenzyTherapieToFhirBundleMapperWithProvenanceEnabledTest {
   private static final FhirContext fhirContext = FhirContext.forR4();
