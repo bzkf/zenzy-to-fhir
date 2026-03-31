@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.9](https://github.com/bzkf/zenzy-to-fhir/compare/v0.1.8...v0.1.9) (2026-03-31)
+
+
+### Bug Fixes
+
+* snomed as ingredient ([#33](https://github.com/bzkf/zenzy-to-fhir/issues/33)) ([3243f15](https://github.com/bzkf/zenzy-to-fhir/commit/3243f15511dad9f22814075b8750e09970508e59))
+
 ## [0.1.8](https://github.com/bzkf/zenzy-to-fhir/compare/v0.1.7...v0.1.8) (2026-03-31)
 
 
