@@ -7,6 +7,7 @@ fhir:
       therapie-medication-id: "${fhir.systems.identifiers.base-url}/therapie-medication-id"
       therapie-wirkstoff-medication-id: "${fhir.systems.identifiers.base-url}/therapie-wirkstoff-medication-id"
       therapie-traegerloesung-medication-id: "${fhir.systems.identifiers.base-url}/therapie-traegerloesung-medication-id"
+      device-id: "${fhir.systems.identifiers.base-url}/device-id"
   profiles:
     # MII
     # @ignored

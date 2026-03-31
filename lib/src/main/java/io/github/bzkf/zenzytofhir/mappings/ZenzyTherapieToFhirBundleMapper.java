@@ -24,18 +24,21 @@ public class ZenzyTherapieToFhirBundleMapper {
   private final TraegerLoesungMedicationMapper traegerLoesungMedicationMapper;
   private final Function<ZenzyTherapie, Reference> patientReferenceGenerator;
   private final ZenzyToFhirConfig config;
+  private final DeviceMapper deviceMapper;
 
   public ZenzyTherapieToFhirBundleMapper(
       HergestellteMedicationMapper medicationMapper,
       MedicationRequestMapper medicationRequestMapper,
       WirkstoffMedicationMapper wirkstoffMedicationMapper,
       TraegerLoesungMedicationMapper traegerLoesungMedicationMapper,
+      DeviceMapper deviceMapper,
       Function<ZenzyTherapie, Reference> patientReferenceGenerator,
       ZenzyToFhirConfig config) {
     this.medicationMapper = medicationMapper;
     this.medicationRequestMapper = medicationRequestMapper;
     this.wirkstoffMedicationMapper = wirkstoffMedicationMapper;
     this.traegerLoesungMedicationMapper = traegerLoesungMedicationMapper;
+    this.deviceMapper = deviceMapper;
     this.patientReferenceGenerator = patientReferenceGenerator;
     this.config = config;
   }
@@ -80,14 +83,15 @@ public class ZenzyTherapieToFhirBundleMapper {
             .addEntry(medication)
             .addEntries(wirkstoffe.stream().map(w -> w.medication()).toList());
 
-    if (config.mappings().provenance().enabled()) {
-      var who = new Reference().setDisplay("zenzy-to-fhir v" + config.version());
-      var what = new Reference().setDisplay("Zenzy Therapie Nr " + therapie.nr());
-      builder = builder.withProvenance(who, what);
-    }
-
     if (traegerLoesung.isPresent()) {
       builder.addEntry(traegerLoesung.get());
+    }
+
+    if (config.mappings().provenance().enabled()) {
+      var device = deviceMapper.map();
+      var who = ReferenceUtils.createReferenceTo(device);
+      var what = new Reference().setDisplay("Zenzy Therapie Nr " + therapie.nr());
+      builder = builder.addEntry(device).withProvenance(who, what);
     }
 
     return Optional.of(builder.build());
