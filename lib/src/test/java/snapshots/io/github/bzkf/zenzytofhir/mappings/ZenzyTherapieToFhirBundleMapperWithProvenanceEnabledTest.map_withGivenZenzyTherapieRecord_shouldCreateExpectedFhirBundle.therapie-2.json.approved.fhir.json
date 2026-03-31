@@ -257,10 +257,45 @@
       "url": "Medication/43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a"
     }
   }, {
-    "fullUrl": "Provenance/30c04d1e2dddda3094390ee2a2f7d56394f5cda64c58aaac751035093449fb10",
+    "fullUrl": "Device/8c02ffd7f40e67f01a56218d06b2e9649c90d909cc9db1403474d66c3dd27485",
+    "resource": {
+      "resourceType": "Device",
+      "id": "8c02ffd7f40e67f01a56218d06b2e9649c90d909cc9db1403474d66c3dd27485",
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/device-id",
+        "value": "zenzy-to-fhir-v1.0.0-test"
+      } ],
+      "status": "active",
+      "manufacturer": "https://github.com/bzkf/",
+      "deviceName": [ {
+        "name": "Zenzy-to-FHIR®",
+        "type": "user-friendly-name"
+      } ],
+      "type": {
+        "coding": [ {
+          "system": "http://snomed.info/sct",
+          "version": "http://snomed.info/sct/900000000000207008/version/20260301",
+          "code": "706689003",
+          "display": "Application program software (physical object)"
+        } ]
+      },
+      "version": [ {
+        "value": "1.0.0-test"
+      } ],
+      "contact": [ {
+        "system": "url",
+        "value": "https://github.com/bzkf/zenzy-to-fhir/issues"
+      } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Device/8c02ffd7f40e67f01a56218d06b2e9649c90d909cc9db1403474d66c3dd27485"
+    }
+  }, {
+    "fullUrl": "Provenance/53b92be1435b34a4f45866f0e02f7daa0dbab1929e8c2c55b909082464fb10a1",
     "resource": {
       "resourceType": "Provenance",
-      "id": "30c04d1e2dddda3094390ee2a2f7d56394f5cda64c58aaac751035093449fb10",
+      "id": "53b92be1435b34a4f45866f0e02f7daa0dbab1929e8c2c55b909082464fb10a1",
       "target": [ {
         "reference": "MedicationRequest/a21e96ccce99eb4cb9c9046adb434116633050325c7c5a2454c1c984ef2a5f32"
       }, {
@@ -269,6 +304,8 @@
         "reference": "Medication/0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed"
       }, {
         "reference": "Medication/43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a"
+      }, {
+        "reference": "Device/8c02ffd7f40e67f01a56218d06b2e9649c90d909cc9db1403474d66c3dd27485"
       } ],
       "occurredDateTime": "2000-01-01T11:11:11Z",
       "recorded": "2000-01-01T11:11:11Z",
@@ -295,7 +332,7 @@
           } ]
         } ],
         "who": {
-          "display": "zenzy-to-fhir v1.0.0-test"
+          "reference": "Device/8c02ffd7f40e67f01a56218d06b2e9649c90d909cc9db1403474d66c3dd27485"
         }
       } ],
       "entity": [ {
@@ -307,7 +344,7 @@
     },
     "request": {
       "method": "PUT",
-      "url": "Provenance/30c04d1e2dddda3094390ee2a2f7d56394f5cda64c58aaac751035093449fb10"
+      "url": "Provenance/53b92be1435b34a4f45866f0e02f7daa0dbab1929e8c2c55b909082464fb10a1"
     }
   } ]
 }

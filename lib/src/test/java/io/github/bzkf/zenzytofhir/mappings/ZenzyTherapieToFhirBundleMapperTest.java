@@ -28,7 +28,8 @@ import org.springframework.boot.test.context.SpringBootTest;
       ProfileTestConfig.class,
       ToCodingMapper.class,
       WirkstoffMedicationMapper.class,
-      ZenzyTherapieToFhirBundleMapper.class
+      ZenzyTherapieToFhirBundleMapper.class,
+      DeviceMapper.class,
     },
     properties = {
       "zenzy-to-fhir.version=1.0.0-test",

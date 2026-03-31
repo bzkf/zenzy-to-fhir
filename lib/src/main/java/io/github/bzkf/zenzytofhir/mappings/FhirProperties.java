@@ -45,7 +45,8 @@ public class FhirProperties {
       String therapieMedicationRequestId,
       String therapieMedicationId,
       String therapieWirkstoffMedicationId,
-      String therapieTraegerloesungMedicationId) {}
+      String therapieTraegerloesungMedicationId,
+      String deviceId) {}
 
   public record FhirProfiles(String miiMedication, String miiMedicationRequest) {}
 }
