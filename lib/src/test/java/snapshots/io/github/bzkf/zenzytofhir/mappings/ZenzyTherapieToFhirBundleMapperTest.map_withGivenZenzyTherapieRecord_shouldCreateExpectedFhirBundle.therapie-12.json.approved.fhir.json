@@ -93,7 +93,7 @@
           "reference": "Medication/5d29fcf0b6c100f8a9cce321c4947f73d6d6eff16fd221258b81c386bc8112d4",
           "display": "Methotrexat"
         },
-        "isActive": false,
+        "isActive": true,
         "strength": {
           "numerator": {
             "value": 75.0,

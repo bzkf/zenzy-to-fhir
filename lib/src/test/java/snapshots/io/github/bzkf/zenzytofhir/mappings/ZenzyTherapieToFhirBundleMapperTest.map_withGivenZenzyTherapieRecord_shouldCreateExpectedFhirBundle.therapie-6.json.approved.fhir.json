@@ -114,7 +114,7 @@
           "reference": "Medication/7876887cc3b4c2a8f5db9b6bcf131578f1ab217f0157f241b9aa36672fa56339",
           "display": "Carboplatin"
         },
-        "isActive": false,
+        "isActive": true,
         "strength": {
           "numerator": {
             "value": 540.0,

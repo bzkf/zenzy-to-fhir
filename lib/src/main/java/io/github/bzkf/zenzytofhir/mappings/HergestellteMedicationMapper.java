@@ -87,7 +87,7 @@ public class HergestellteMedicationMapper {
       reference.setDisplay(wirkstoff.medication().getCode().getText());
       medication
           .addIngredient()
-          .setIsActive(false)
+          .setIsActive(true)
           .setItem(reference)
           .setStrength(wirkstoff.strength());
     }

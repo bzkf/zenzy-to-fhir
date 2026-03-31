@@ -76,7 +76,7 @@
           "reference": "Medication/df7c66a899576afdfd57c61eb56f85fd0b7a995cc9fe256120bd7a0c521e3d14",
           "display": "Bortezomib"
         },
-        "isActive": false,
+        "isActive": true,
         "strength": {
           "numerator": {
             "value": 2.2,

@@ -76,7 +76,7 @@
           "reference": "Medication/4a91fd6b47e761ece36d1b67c8080e25c206b097de765f4e11baf9dc30d7cab8",
           "display": "Azacitidine"
         },
-        "isActive": false,
+        "isActive": true,
         "strength": {
           "numerator": {
             "value": 65.0,
