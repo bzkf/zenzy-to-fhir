@@ -115,11 +115,6 @@
           "version": "2026",
           "code": "L01XG01",
           "display": "Bortezomib"
-        }, {
-          "system": "http://snomed.info/sct",
-          "version": "http://snomed.info/sct/900000000000207008/version/20260301",
-          "code": "407097007",
-          "display": "Bortezomib (substance)"
         } ],
         "text": "Bortezomib"
       },
@@ -143,12 +138,8 @@
           "coding": [ {
             "system": "http://snomed.info/sct",
             "version": "http://snomed.info/sct/900000000000207008/version/20260301",
-            "_code": {
-              "extension": [ {
-                "url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
-                "valueCode": "not-applicable"
-              } ]
-            }
+            "code": "407097007",
+            "display": "Bortezomib (substance)"
           } ]
         }
       } ]

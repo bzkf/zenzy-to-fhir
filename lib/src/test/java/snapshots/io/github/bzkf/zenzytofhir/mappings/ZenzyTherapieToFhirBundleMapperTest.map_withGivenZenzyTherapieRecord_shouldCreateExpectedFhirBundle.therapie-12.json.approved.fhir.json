@@ -132,11 +132,6 @@
           "version": "2026",
           "code": "L04AX03",
           "display": "Methotrexat"
-        }, {
-          "system": "http://snomed.info/sct",
-          "version": "http://snomed.info/sct/900000000000207008/version/20260301",
-          "code": "387381009",
-          "display": "Methotrexate (substance)"
         } ],
         "text": "Methotrexat"
       },
@@ -160,12 +155,8 @@
           "coding": [ {
             "system": "http://snomed.info/sct",
             "version": "http://snomed.info/sct/900000000000207008/version/20260301",
-            "_code": {
-              "extension": [ {
-                "url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
-                "valueCode": "not-applicable"
-              } ]
-            }
+            "code": "387381009",
+            "display": "Methotrexate (substance)"
           } ]
         }
       } ]
