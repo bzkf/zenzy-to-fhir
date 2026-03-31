@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.8](https://github.com/bzkf/zenzy-to-fhir/compare/v0.1.7...v0.1.8) (2026-03-31)
+
+
+### Features
+
+* added device for provenance who ([#32](https://github.com/bzkf/zenzy-to-fhir/issues/32)) ([83c8649](https://github.com/bzkf/zenzy-to-fhir/commit/83c8649863c412d205c6b7fb7ce7413a6802e0fb))
+
+
+### Bug Fixes
+
+* set medication ingredient active status to true ([#30](https://github.com/bzkf/zenzy-to-fhir/issues/30)) ([e247290](https://github.com/bzkf/zenzy-to-fhir/commit/e24729060a21edea12993fd06d4221db376ab137))
+
 ## [0.1.7](https://github.com/bzkf/zenzy-to-fhir/compare/v0.1.6...v0.1.7) (2026-03-30)
 
 
