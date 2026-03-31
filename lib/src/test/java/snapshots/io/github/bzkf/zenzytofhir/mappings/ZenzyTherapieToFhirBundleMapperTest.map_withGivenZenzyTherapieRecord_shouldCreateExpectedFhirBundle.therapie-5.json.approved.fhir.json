@@ -110,7 +110,7 @@
           "reference": "Medication/77b1715eac0ecc83e9917809ea5aa41c0795ec81dc8ce57806248e8dd523d767",
           "display": "Amphotericin lipos."
         },
-        "isActive": false,
+        "isActive": true,
         "strength": {
           "numerator": {
             "value": 5.0,

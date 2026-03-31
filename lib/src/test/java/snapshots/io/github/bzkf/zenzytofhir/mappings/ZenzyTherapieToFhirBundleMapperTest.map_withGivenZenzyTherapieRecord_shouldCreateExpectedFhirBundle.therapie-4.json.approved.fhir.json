@@ -114,7 +114,7 @@
           "reference": "Medication/0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed",
           "display": "Fluorouracil"
         },
-        "isActive": false,
+        "isActive": true,
         "strength": {
           "numerator": {
             "value": 3300.0,
@@ -134,7 +134,7 @@
           "reference": "Medication/45d2dc95af808c4138fd216b474debdf0c98ae3ad30fbe5a08e0ab41a081591d",
           "display": "Natriumfolinat"
         },
-        "isActive": false,
+        "isActive": true,
         "strength": {
           "numerator": {
             "value": 800.0,

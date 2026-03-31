@@ -114,7 +114,7 @@
           "reference": "Medication/0f0afcc1be19f786831dd70d69bc15fee112fdde59b2fb92d986f89abc3dc3ed",
           "display": "Fluorouracil"
         },
-        "isActive": false,
+        "isActive": true,
         "strength": {
           "numerator": {
             "value": 900.0,
