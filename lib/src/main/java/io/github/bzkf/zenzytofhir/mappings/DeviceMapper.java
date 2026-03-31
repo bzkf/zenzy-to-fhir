@@ -8,7 +8,9 @@ import org.hl7.fhir.r4.model.Device;
 import org.hl7.fhir.r4.model.Device.DeviceNameType;
 import org.hl7.fhir.r4.model.Device.FHIRDeviceStatus;
 import org.hl7.fhir.r4.model.Identifier;
+import org.springframework.stereotype.Service;
 
+@Service
 public class DeviceMapper {
   private final FhirProperties fhirProps;
   private final ZenzyToFhirConfig config;
