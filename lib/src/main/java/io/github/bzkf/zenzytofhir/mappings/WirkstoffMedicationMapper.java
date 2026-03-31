@@ -95,30 +95,46 @@ public class WirkstoffMedicationMapper {
       var maybeMapped = toCodingMapper.mapWirkstoff(wirkstoffDosis.wirkstoff());
       if (maybeMapped.isPresent()) {
         var mapped = maybeMapped.get();
+        var atc = fhirProps.fhir().codings().atc();
         if (mapped.atcCode() != null) {
-          var atc =
-              fhirProps
-                  .fhir()
-                  .codings()
-                  .atc()
-                  .setCode(mapped.atcCode())
-                  .setDisplay(mapped.atcDisplay());
-          codeableConcept.addCoding(atc);
+          atc.setCode(mapped.atcCode()).setDisplay(mapped.atcDisplay());
+        } else {
+          // MII Medications require code to be set
+          atc.getCodeElement()
+              .addExtension(
+                  fhirProps
+                      .fhir()
+                      .extensions()
+                      .dataAbsentReason()
+                      .setValue(new CodeType("unknown")));
         }
 
+        codeableConcept.addCoding(atc);
+
+        var ingredient = fhirProps.fhir().codings().snomed();
         if (mapped.snomedCode() != null) {
-          var snomed =
-              fhirProps
-                  .fhir()
-                  .codings()
-                  .snomed()
-                  .setCode(mapped.snomedCode())
-                  .setDisplay(mapped.snomedDisplay());
-          codeableConcept.addCoding(snomed);
+          ingredient.setCode(mapped.snomedCode()).setDisplay(mapped.snomedDisplay());
+        } else {
+          // MII Medications require ingredient to be set
+          ingredient
+              .getCodeElement()
+              .addExtension(
+                  fhirProps
+                      .fhir()
+                      .extensions()
+                      .dataAbsentReason()
+                      .setValue(new CodeType("not-applicable")));
         }
+
+        medication.addIngredient().setItem(new CodeableConcept().addCoding(ingredient));
       } else {
-        // TODO: data absent extension
         LOG.warn("Couldn't map wirkstoff {}", wirkstoffDosis.wirkstoff());
+        var absentAtc = fhirProps.fhir().codings().atc();
+        absentAtc
+            .getCodeElement()
+            .addExtension(
+                fhirProps.fhir().extensions().dataAbsentReason().setValue(new CodeType("unknown")));
+        codeableConcept.addCoding(absentAtc);
       }
 
       medication.setCode(codeableConcept);
@@ -166,19 +182,6 @@ public class WirkstoffMedicationMapper {
       }
 
       strength.setDenominator(denominator);
-
-      // MII Medications require ingredient to be set, even if it's the same as the medication
-      // itself
-      var absentCoding = fhirProps.fhir().codings().snomed();
-      absentCoding
-          .getCodeElement()
-          .addExtension(
-              fhirProps
-                  .fhir()
-                  .extensions()
-                  .dataAbsentReason()
-                  .setValue(new CodeType("not-applicable")));
-      medication.addIngredient().setItem(new CodeableConcept().addCoding(absentCoding));
 
       result.add(new MedicationAndStrength(medication, strength));
     }
