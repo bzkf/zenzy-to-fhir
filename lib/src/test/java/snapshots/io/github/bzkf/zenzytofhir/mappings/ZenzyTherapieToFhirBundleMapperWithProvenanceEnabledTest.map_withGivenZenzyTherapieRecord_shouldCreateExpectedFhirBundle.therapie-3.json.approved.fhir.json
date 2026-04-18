@@ -161,7 +161,7 @@
       "status": "active",
       "manufacturer": "https://github.com/bzkf/",
       "deviceName": [ {
-        "name": "Zenzy-to-FHIR®",
+        "name": "Zenzy-to-FHIR",
         "type": "user-friendly-name"
       } ],
       "type": {

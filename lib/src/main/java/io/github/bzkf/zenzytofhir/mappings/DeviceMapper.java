@@ -30,7 +30,7 @@ public class DeviceMapper {
     device.setId(IdUtils.fromIdentifier(identifier));
     device.setStatus(FHIRDeviceStatus.ACTIVE);
     device.setManufacturer("https://github.com/bzkf/");
-    device.addDeviceName().setName("Zenzy-to-FHIR®").setType(DeviceNameType.USERFRIENDLYNAME);
+    device.addDeviceName().setName("Zenzy-to-FHIR").setType(DeviceNameType.USERFRIENDLYNAME);
     device.setType(
         new CodeableConcept(
             fhirProps
