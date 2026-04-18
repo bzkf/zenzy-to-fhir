@@ -48,9 +48,6 @@ public class MedicationRequestMapper {
     var medicationRequest = new MedicationRequest();
     medicationRequest.getMeta().addProfile(fhirProps.getProfiles().miiMedicationRequest());
 
-    // TODO: therapie.nr turned out to not be unqiue but for the one duplicate
-    // row we found, all other columns had the same value. So it's fine for
-    // it to override the resources
     var identifier =
         new Identifier()
             .setSystem(fhirProps.getSystems().identifiers().therapieMedicationRequestId())
@@ -62,7 +59,7 @@ public class MedicationRequestMapper {
       LOG.warn("Status is unset. Defaulting to 'active'");
       medicationRequest.setStatus(MedicationRequestStatus.ACTIVE);
     } else {
-      // Retoure if the third status flag is '1'
+      // Retoure/Cancelled if the third status flag is '1'
       if (therapie.status().charAt(2) == '1') {
         medicationRequest.setStatus(MedicationRequestStatus.CANCELLED);
       } else if (therapie.status().charAt(10) == '1') {
@@ -77,15 +74,9 @@ public class MedicationRequestMapper {
 
     medicationRequest.setIntent(MedicationRequestIntent.ORDER);
 
-    // TODO: we probably can't set the category (?).
-    // or maybe set it to chemotherapy?
-    // medicationRequest.setCategory(null)
-
     medicationRequest.setReported(new BooleanType(false));
 
     medicationRequest.setSubject(patient);
-
-    // TODO: authoredOn ?
 
     var localDate = therapie.applikationsDatum().atZone(DEFAULT_ZONE_ID).toLocalDate();
     var zdt = ZonedDateTime.of(localDate, therapie.applikationsZeit(), DEFAULT_ZONE_ID);

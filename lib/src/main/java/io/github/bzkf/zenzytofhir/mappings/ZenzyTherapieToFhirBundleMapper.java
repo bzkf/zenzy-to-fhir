@@ -6,6 +6,7 @@ import io.github.dizuker.tofhir.ReferenceUtils;
 import io.github.dizuker.tofhir.TransactionBuilder;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Reference;
 import org.slf4j.Logger;
@@ -70,8 +71,15 @@ public class ZenzyTherapieToFhirBundleMapper {
       LOG.debug("No Tragerloesung specified");
     }
 
+    var wirkstoffeDisplay =
+        wirkstoffe.stream().map(Object::toString).collect(Collectors.joining(", "));
+    if (therapie.traegerloesung() != null) {
+      wirkstoffeDisplay += " in " + therapie.traegerloesung();
+    }
+
     var medication = medicationMapper.map(therapie, wirkstoffe, traegerLoesungReference);
     var medicationReference = ReferenceUtils.createReferenceTo(medication);
+    medicationReference.setDisplay(wirkstoffeDisplay);
 
     var medicationRequest =
         medicationRequestMapper.map(therapie, medicationReference, patientReference);

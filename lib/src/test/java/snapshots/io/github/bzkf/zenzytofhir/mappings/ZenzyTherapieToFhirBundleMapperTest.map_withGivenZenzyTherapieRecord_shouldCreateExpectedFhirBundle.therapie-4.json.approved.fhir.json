@@ -18,7 +18,8 @@
       "intent": "order",
       "reportedBoolean": false,
       "medicationReference": {
-        "reference": "Medication/329a64b62174c1d06b65721a1824dee9e7ddd36f948fc8cedd3cdc98dabc42f9"
+        "reference": "Medication/329a64b62174c1d06b65721a1824dee9e7ddd36f948fc8cedd3cdc98dabc42f9",
+        "display": "Fluorouracil, Natriumfolinat in NaCl 0.9%"
       },
       "subject": {
         "reference": "Patient/4"

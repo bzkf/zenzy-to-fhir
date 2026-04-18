@@ -18,7 +18,8 @@
       "intent": "order",
       "reportedBoolean": false,
       "medicationReference": {
-        "reference": "Medication/c97024e8d795b72ae6e7b44961a92f33edd35cd6a394188cd557e97a22d07ea1"
+        "reference": "Medication/c97024e8d795b72ae6e7b44961a92f33edd35cd6a394188cd557e97a22d07ea1",
+        "display": "Fluorouracil in Glucose 5%"
       },
       "subject": {
         "reference": "Patient/2"
@@ -259,7 +260,7 @@
       "status": "active",
       "manufacturer": "https://github.com/bzkf/",
       "deviceName": [ {
-        "name": "Zenzy-to-FHIR®",
+        "name": "Zenzy-to-FHIR",
         "type": "user-friendly-name"
       } ],
       "type": {

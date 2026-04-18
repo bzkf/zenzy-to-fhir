@@ -18,7 +18,8 @@
       "intent": "order",
       "reportedBoolean": false,
       "medicationReference": {
-        "reference": "Medication/b6476abdd8364a89212893743b09260dc3960322386de094a0fbfb93ad9b9e74"
+        "reference": "Medication/b6476abdd8364a89212893743b09260dc3960322386de094a0fbfb93ad9b9e74",
+        "display": "Carboplatin in Glucose 5%"
       },
       "subject": {
         "reference": "Patient/123"

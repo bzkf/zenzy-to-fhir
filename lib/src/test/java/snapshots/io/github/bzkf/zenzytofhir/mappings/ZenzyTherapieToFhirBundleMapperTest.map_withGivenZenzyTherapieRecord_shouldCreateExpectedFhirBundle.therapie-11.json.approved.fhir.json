@@ -18,7 +18,8 @@
       "intent": "order",
       "reportedBoolean": false,
       "medicationReference": {
-        "reference": "Medication/254fb4fa51c5e65343f4901cadc3d29be136fa6f8c1fa7ff8ca56784c3396e27"
+        "reference": "Medication/254fb4fa51c5e65343f4901cadc3d29be136fa6f8c1fa7ff8ca56784c3396e27",
+        "display": "Amphotericin lipos. in Glucose 5%"
       },
       "subject": {
         "reference": "Patient/11"

@@ -18,7 +18,8 @@
       "intent": "order",
       "reportedBoolean": false,
       "medicationReference": {
-        "reference": "Medication/df8add0bfb681b8711b123b3e37c414be96b82cae5fa57151382fb20030aaf1c"
+        "reference": "Medication/df8add0bfb681b8711b123b3e37c414be96b82cae5fa57151382fb20030aaf1c",
+        "display": "Methotrexat in NaCl 0.9%"
       },
       "subject": {
         "reference": "Patient/12"
