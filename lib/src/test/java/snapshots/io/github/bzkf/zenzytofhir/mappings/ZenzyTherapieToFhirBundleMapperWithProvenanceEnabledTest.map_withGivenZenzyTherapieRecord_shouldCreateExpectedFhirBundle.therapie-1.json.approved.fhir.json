@@ -18,7 +18,8 @@
       "intent": "order",
       "reportedBoolean": false,
       "medicationReference": {
-        "reference": "Medication/a68889464122675222d3d6a24c13d219c8fb3cc91c930a0f219ba6d69824d29b"
+        "reference": "Medication/a68889464122675222d3d6a24c13d219c8fb3cc91c930a0f219ba6d69824d29b",
+        "display": "Fluorouracil in Glucose 5%"
       },
       "subject": {
         "reference": "Patient/1"

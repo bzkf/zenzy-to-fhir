@@ -18,7 +18,8 @@
       "intent": "order",
       "reportedBoolean": false,
       "medicationReference": {
-        "reference": "Medication/ffacc881339c998e84cc9d024b9425356565d1a51d82ff2ad4122c4f574ae106"
+        "reference": "Medication/ffacc881339c998e84cc9d024b9425356565d1a51d82ff2ad4122c4f574ae106",
+        "display": "Azacitidine in unverdünnt"
       },
       "subject": {
         "reference": "Patient/3"

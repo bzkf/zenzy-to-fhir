@@ -18,7 +18,8 @@
       "intent": "order",
       "reportedBoolean": false,
       "medicationReference": {
-        "reference": "Medication/3bb731180abbf2e3faa2cd64e2427dbe2c82b64dae1f956566a999feaee47d9f"
+        "reference": "Medication/3bb731180abbf2e3faa2cd64e2427dbe2c82b64dae1f956566a999feaee47d9f",
+        "display": "Bortezomib in unverdünnt"
       },
       "subject": {
         "reference": "Patient/13"
