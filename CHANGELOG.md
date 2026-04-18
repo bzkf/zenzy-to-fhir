@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.10](https://github.com/bzkf/zenzy-to-fhir/compare/v0.1.9...v0.1.10) (2026-04-18)
+
+
+### Features
+
+* add Spring Boot Actuator with Prometheus metrics support ([#37](https://github.com/bzkf/zenzy-to-fhir/issues/37)) ([e0d6ce7](https://github.com/bzkf/zenzy-to-fhir/commit/e0d6ce7820113723c14fcf03e75d398d35810609))
+* added display value for referenced medication ([#35](https://github.com/bzkf/zenzy-to-fhir/issues/35)) ([48246b3](https://github.com/bzkf/zenzy-to-fhir/commit/48246b3f7aafa65bae1c63a3a120c4db5a62458b))
+
 ## [0.1.9](https://github.com/bzkf/zenzy-to-fhir/compare/v0.1.8...v0.1.9) (2026-03-31)
 
 
