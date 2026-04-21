@@ -89,8 +89,8 @@ public class WirkstoffMedicationMapper {
       medication.setId(IdUtils.fromIdentifier(identifier));
       medication.setStatus(MedicationStatus.ACTIVE);
 
-      var codeableConcept = new CodeableConcept();
-      codeableConcept.setText(wirkstoffDosis.wirkstoff());
+      var medicationCode = new CodeableConcept();
+      medicationCode.setText(wirkstoffDosis.wirkstoff());
 
       var maybeMapped = toCodingMapper.mapWirkstoff(wirkstoffDosis.wirkstoff());
       if (maybeMapped.isPresent()) {
@@ -98,7 +98,7 @@ public class WirkstoffMedicationMapper {
         var atc = fhirProps.fhir().codings().atc();
         if (mapped.atcCode() != null) {
           atc.setCode(mapped.atcCode()).setDisplay(mapped.atcDisplay());
-          codeableConcept.addCoding(atc);
+          medicationCode.addCoding(atc);
         } else {
           // MII Medications require code to be set
           var absent =
@@ -108,12 +108,18 @@ public class WirkstoffMedicationMapper {
                   .dataAbsentReason()
                   .setValue(new CodeType("asked-unknown"));
 
-          codeableConcept.addExtension(absent);
+          medicationCode.addExtension(absent);
         }
 
-        var ingredient = fhirProps.fhir().codings().snomed();
         if (mapped.snomedCode() != null) {
-          ingredient.setCode(mapped.snomedCode()).setDisplay(mapped.snomedDisplay());
+          var ingredient =
+              fhirProps
+                  .fhir()
+                  .codings()
+                  .snomed()
+                  .setCode(mapped.snomedCode())
+                  .setDisplay(mapped.snomedDisplay());
+          medication.addIngredient().setItem(new CodeableConcept().addCoding(ingredient));
         } else {
           // MII Medications require ingredient to be set
           var absent = new CodeableConcept();
@@ -126,7 +132,6 @@ public class WirkstoffMedicationMapper {
           medication.addIngredient().setItem(absent);
         }
 
-        medication.addIngredient().setItem(new CodeableConcept().addCoding(ingredient));
       } else {
         LOG.warn("Couldn't map wirkstoff {}", wirkstoffDosis.wirkstoff());
         var absent =
@@ -135,10 +140,11 @@ public class WirkstoffMedicationMapper {
                 .extensions()
                 .dataAbsentReason()
                 .setValue(new CodeType("asked-unknown"));
-        medication.addIngredient().setItem(absent);
+
+        medicationCode.addExtension(absent);
       }
 
-      medication.setCode(codeableConcept);
+      medication.setCode(medicationCode);
 
       // TODO: check if dosis einheit is actually mg/ucum
       var amount = new Ratio();
