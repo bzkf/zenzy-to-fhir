@@ -98,43 +98,44 @@ public class WirkstoffMedicationMapper {
         var atc = fhirProps.fhir().codings().atc();
         if (mapped.atcCode() != null) {
           atc.setCode(mapped.atcCode()).setDisplay(mapped.atcDisplay());
+          codeableConcept.addCoding(atc);
         } else {
           // MII Medications require code to be set
-          atc.getCodeElement()
-              .addExtension(
-                  fhirProps
-                      .fhir()
-                      .extensions()
-                      .dataAbsentReason()
-                      .setValue(new CodeType("unknown")));
-        }
+          var absent =
+              fhirProps
+                  .fhir()
+                  .extensions()
+                  .dataAbsentReason()
+                  .setValue(new CodeType("asked-unknown"));
 
-        codeableConcept.addCoding(atc);
+          codeableConcept.addExtension(absent);
+        }
 
         var ingredient = fhirProps.fhir().codings().snomed();
         if (mapped.snomedCode() != null) {
           ingredient.setCode(mapped.snomedCode()).setDisplay(mapped.snomedDisplay());
         } else {
           // MII Medications require ingredient to be set
-          ingredient
-              .getCodeElement()
-              .addExtension(
-                  fhirProps
-                      .fhir()
-                      .extensions()
-                      .dataAbsentReason()
-                      .setValue(new CodeType("not-applicable")));
+          var absent = new CodeableConcept();
+          absent.addExtension(
+              fhirProps
+                  .fhir()
+                  .extensions()
+                  .dataAbsentReason()
+                  .setValue(new CodeType("not-applicable")));
+          medication.addIngredient().setItem(absent);
         }
 
         medication.addIngredient().setItem(new CodeableConcept().addCoding(ingredient));
       } else {
         LOG.warn("Couldn't map wirkstoff {}", wirkstoffDosis.wirkstoff());
-        var absentAtc = fhirProps.fhir().codings().atc();
-        absentAtc
-            .getCodeElement()
-            .addExtension(
-                fhirProps.fhir().extensions().dataAbsentReason().setValue(new CodeType("unknown")));
-        codeableConcept.addCoding(absentAtc);
+        var absent =
+            fhirProps
+                .fhir()
+                .extensions()
+                .dataAbsentReason()
+                .setValue(new CodeType("asked-unknown"));
+        medication.addIngredient().setItem(absent);
       }
 
       medication.setCode(codeableConcept);

@@ -88,18 +88,11 @@ public class TraegerLoesungMedicationMapper {
     var amount = new Ratio().setNumerator(quantity).setDenominator(denominator);
     medication.setAmount(amount);
 
-    // MII Medications require ingredient to be set, even if it's the same as the medication
-    // itself
-    var absentCoding = fhirProps.fhir().codings().snomed();
-    absentCoding
-        .getCodeElement()
-        .addExtension(
-            fhirProps
-                .fhir()
-                .extensions()
-                .dataAbsentReason()
-                .setValue(new CodeType("not-applicable")));
-    medication.addIngredient().setItem(new CodeableConcept().addCoding(absentCoding));
+    // MII Medications require ingredient to be set
+    var absent = new CodeableConcept();
+    absent.addExtension(
+        fhirProps.fhir().extensions().dataAbsentReason().setValue(new CodeType("not-applicable")));
+    medication.addIngredient().setItem(absent);
 
     return Optional.of(medication);
   }
