@@ -16,15 +16,15 @@ jobs:
   validate-fhir-resource:
     name: validate fhir resources
     runs-on: ubuntu-24.04
-    container: ghcr.io/miracum/ig-build-tools:v2.2.41@sha256:60bfe761c45852cf505b68c5176df0171cdbf818c4cc9e4279b9c64aba527c70
+    container: ghcr.io/miracum/ig-build-tools:v2.3.0@sha256:c849d2e22b6088ef191202763170553de88cafd4907a6f9d0e11e5b0ff7e83ef
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
         with:
           egress-policy: audit # change to 'egress-policy: block' after couple of runs
 
       - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           persist-credentials: false
 
@@ -35,7 +35,7 @@ jobs:
 
       - name: Cache FHIR packages
         id: fhir-package-cache
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
         with:
           path: |
             /github/home/.fhir/packages
