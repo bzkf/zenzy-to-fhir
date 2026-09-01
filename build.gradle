@@ -1,9 +1,9 @@
 // groovylint-disable NestedBlockDepth
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '4.0.5'
+    id 'org.springframework.boot' version '4.1.0'
     id 'io.spring.dependency-management' version '1.1.7'
-    id 'com.diffplug.spotless' version '8.4.0'
+    id 'com.diffplug.spotless' version '8.10.0'
 }
 
 group = 'io.github.bzkf'
@@ -21,8 +21,8 @@ repositories {
 }
 
 ext {
-    set('springCloudVersion', '2025.1.1')
-    set('hapiVersion', '8.8.1')
+    set('springCloudVersion', '2025.1.2')
+    set('hapiVersion', '8.10.1')
 }
 
 dependencies {
