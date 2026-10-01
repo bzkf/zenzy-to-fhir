@@ -42,7 +42,7 @@ jobs:
 
   add-test-coverage:
     name: add test coverage to PR
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs:
       - build
     permissions:
