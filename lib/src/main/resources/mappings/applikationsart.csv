@@ -40,7 +40,6 @@ applikationsart;route_snomed_code;route_snomed_display;method_snomed_code;method
 "Infusion über Infusomat";47625008;"Intravenous route";36576007;"Infusion (procedure)";;;;
 "Kurzinfusion über 2-5 min";47625008;"Intravenous route";36576007;"Infusion (procedure)";2;5;min;
 "Injektomat-Spritze über 30 min";47625008;"Intravenous route";36576007;"Infusion (procedure)";30;;min;
-"Injektomat-Spritze über 30 min";47625008;"Intravenous route";36576007;"Infusion (procedure)";30;;min;
 "Infusion über 22 Stunden";47625008;"Intravenous route";36576007;"Infusion (procedure)";22;;h;
 "Infusion über 90 min";47625008;"Intravenous route";36576007;"Infusion (procedure)";90;;min;
 "Infusion über 2 -3 Stunden";47625008;"Intravenous route";36576007;"Infusion (procedure)";2;3;h;

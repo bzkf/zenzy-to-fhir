@@ -27,7 +27,8 @@ import org.springframework.context.annotation.ComponentScan;
     },
     properties = {
       "zenzy-to-fhir.version=1.0.0-test",
-      "zenzy-to-fhir.mappings.provenance.enabled=false"
+      "zenzy-to-fhir.mappings.provenance.enabled=false",
+      "zenzy-to-fhir.mappings.wirkstoff.extra-path=src/test/resources/fixtures/wirkstoffe-extra.csv"
     })
 @ComponentScan(basePackages = "io.github.bzkf.zenzytofhir.mappings")
 @EnableConfigurationProperties(ZenzyToFhirConfig.class)
@@ -48,6 +49,7 @@ class ZenzyTherapieToFhirBundleMapperTest {
     "therapie-11.json",
     "therapie-12.json",
     "therapie-13.json",
+    "therapie-14.json",
   })
   void map_withGivenZenzyTherapieRecord_shouldCreateExpectedFhirBundle(String sourceFile)
       throws IOException {

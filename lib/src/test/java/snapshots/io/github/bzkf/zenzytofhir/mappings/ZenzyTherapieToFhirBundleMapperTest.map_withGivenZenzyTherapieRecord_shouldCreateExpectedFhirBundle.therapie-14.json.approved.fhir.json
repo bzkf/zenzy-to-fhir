@@ -1,0 +1,385 @@
+{
+  "resourceType": "Bundle",
+  "id": "8ce8958fc6b03f56b28f0acdaf6ce835088030ec8d68e96698b14bf8485f4bca",
+  "type": "transaction",
+  "entry": [ {
+    "fullUrl": "MedicationRequest/8ce8958fc6b03f56b28f0acdaf6ce835088030ec8d68e96698b14bf8485f4bca",
+    "resource": {
+      "resourceType": "MedicationRequest",
+      "id": "8ce8958fc6b03f56b28f0acdaf6ce835088030ec8d68e96698b14bf8485f4bca",
+      "meta": {
+        "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/MedicationRequest" ]
+      },
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-request-id",
+        "value": "1"
+      } ],
+      "status": "active",
+      "intent": "order",
+      "reportedBoolean": false,
+      "medicationReference": {
+        "reference": "Medication/a68889464122675222d3d6a24c13d219c8fb3cc91c930a0f219ba6d69824d29b",
+        "display": "Testwirkstoff unbekannt, Testwirkstoff ohne ATC, Testwirkstoff ohne SNOMED in Glucose 5%"
+      },
+      "subject": {
+        "reference": "Patient/14"
+      },
+      "dosageInstruction": [ {
+        "text": "Kurzinfusion über 30 min",
+        "timing": {
+          "event": [ "1999-10-26T09:30:00+02:00" ],
+          "repeat": {
+            "duration": 30.0,
+            "durationUnit": "min"
+          }
+        },
+        "route": {
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260301",
+            "code": "47625008",
+            "display": "Intravenous route"
+          } ]
+        },
+        "method": {
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260301",
+            "code": "36576007",
+            "display": "Infusion (procedure)"
+          } ]
+        },
+        "doseAndRate": [ {
+          "doseQuantity": {
+            "value": 1,
+            "unit": "1",
+            "system": "http://unitsofmeasure.org",
+            "code": "{Stueck}"
+          }
+        } ]
+      } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "MedicationRequest/8ce8958fc6b03f56b28f0acdaf6ce835088030ec8d68e96698b14bf8485f4bca"
+    }
+  }, {
+    "fullUrl": "Medication/a68889464122675222d3d6a24c13d219c8fb3cc91c930a0f219ba6d69824d29b",
+    "resource": {
+      "resourceType": "Medication",
+      "id": "a68889464122675222d3d6a24c13d219c8fb3cc91c930a0f219ba6d69824d29b",
+      "meta": {
+        "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication" ]
+      },
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-medication-id",
+        "value": "1"
+      } ],
+      "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 500.0,
+          "unit": "milliliter",
+          "system": "http://unitsofmeasure.org",
+          "code": "mL"
+        },
+        "denominator": {
+          "value": 1,
+          "unit": "1",
+          "system": "http://unitsofmeasure.org",
+          "code": "{Stueck}"
+        }
+      },
+      "ingredient": [ {
+        "itemReference": {
+          "reference": "Medication/43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a",
+          "display": "Glucose 5%"
+        },
+        "isActive": false,
+        "strength": {
+          "numerator": {
+            "value": 500.0,
+            "unit": "1",
+            "system": "http://unitsofmeasure.org",
+            "code": "{Stueck}"
+          },
+          "denominator": {
+            "value": 500.0,
+            "unit": "milliliter",
+            "system": "http://unitsofmeasure.org",
+            "code": "mL"
+          }
+        }
+      }, {
+        "itemReference": {
+          "reference": "Medication/7d4f4ef18cbb69c9d3a7fe7ea8c1efebafc75db61a1cc3cbe7dc919477268305",
+          "display": "Testwirkstoff unbekannt"
+        },
+        "isActive": true,
+        "strength": {
+          "numerator": {
+            "value": 100.0,
+            "unit": "{Stueck}",
+            "system": "http://unitsofmeasure.org",
+            "code": "1"
+          },
+          "denominator": {
+            "value": 500.0,
+            "unit": "milliliter",
+            "system": "http://unitsofmeasure.org",
+            "code": "mL"
+          }
+        }
+      }, {
+        "itemReference": {
+          "reference": "Medication/2798524ddc01061346cb3105fca3e1cf29c33cdf5eddffffe6c37ca802872bbe",
+          "display": "Testwirkstoff ohne ATC"
+        },
+        "isActive": true,
+        "strength": {
+          "numerator": {
+            "value": 200.0,
+            "unit": "{Stueck}",
+            "system": "http://unitsofmeasure.org",
+            "code": "1"
+          },
+          "denominator": {
+            "value": 500.0,
+            "unit": "milliliter",
+            "system": "http://unitsofmeasure.org",
+            "code": "mL"
+          }
+        }
+      }, {
+        "itemReference": {
+          "reference": "Medication/dab41835f2fa6a666e6c5afade65b5bb858b49b5f608a08fb4caaf542a30dee1",
+          "display": "Testwirkstoff ohne SNOMED"
+        },
+        "isActive": true,
+        "strength": {
+          "numerator": {
+            "value": 300.0,
+            "unit": "{Stueck}",
+            "system": "http://unitsofmeasure.org",
+            "code": "1"
+          },
+          "denominator": {
+            "value": 500.0,
+            "unit": "milliliter",
+            "system": "http://unitsofmeasure.org",
+            "code": "mL"
+          }
+        }
+      } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/a68889464122675222d3d6a24c13d219c8fb3cc91c930a0f219ba6d69824d29b"
+    }
+  }, {
+    "fullUrl": "Medication/7d4f4ef18cbb69c9d3a7fe7ea8c1efebafc75db61a1cc3cbe7dc919477268305",
+    "resource": {
+      "resourceType": "Medication",
+      "id": "7d4f4ef18cbb69c9d3a7fe7ea8c1efebafc75db61a1cc3cbe7dc919477268305",
+      "meta": {
+        "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication" ]
+      },
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-wirkstoff-medication-id",
+        "value": "testwirkstoff-unbekannt"
+      } ],
+      "code": {
+        "coding": [ {
+          "system": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+          "code": "unknown",
+          "display": "Unknown"
+        } ],
+        "text": "Testwirkstoff unbekannt"
+      },
+      "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 1,
+          "unit": "mg",
+          "system": "http://unitsofmeasure.org",
+          "code": "mg"
+        },
+        "denominator": {
+          "value": 1,
+          "unit": "{Stueck}",
+          "system": "http://unitsofmeasure.org",
+          "code": "1"
+        }
+      },
+      "ingredient": [ {
+        "itemCodeableConcept": {
+          "coding": [ {
+            "system": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+            "code": "unknown",
+            "display": "Unknown"
+          } ],
+          "text": "Testwirkstoff unbekannt"
+        }
+      } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/7d4f4ef18cbb69c9d3a7fe7ea8c1efebafc75db61a1cc3cbe7dc919477268305"
+    }
+  }, {
+    "fullUrl": "Medication/2798524ddc01061346cb3105fca3e1cf29c33cdf5eddffffe6c37ca802872bbe",
+    "resource": {
+      "resourceType": "Medication",
+      "id": "2798524ddc01061346cb3105fca3e1cf29c33cdf5eddffffe6c37ca802872bbe",
+      "meta": {
+        "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication" ]
+      },
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-wirkstoff-medication-id",
+        "value": "testwirkstoff-ohne-atc"
+      } ],
+      "code": {
+        "coding": [ {
+          "system": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+          "code": "unknown",
+          "display": "Unknown"
+        } ],
+        "text": "Testwirkstoff ohne ATC"
+      },
+      "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 1,
+          "unit": "mg",
+          "system": "http://unitsofmeasure.org",
+          "code": "mg"
+        },
+        "denominator": {
+          "value": 1,
+          "unit": "{Stueck}",
+          "system": "http://unitsofmeasure.org",
+          "code": "1"
+        }
+      },
+      "ingredient": [ {
+        "itemCodeableConcept": {
+          "coding": [ {
+            "system": "http://snomed.info/sct",
+            "version": "http://snomed.info/sct/900000000000207008/version/20260301",
+            "code": "387172005",
+            "display": "Fluorouracil (substance)"
+          } ]
+        }
+      } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/2798524ddc01061346cb3105fca3e1cf29c33cdf5eddffffe6c37ca802872bbe"
+    }
+  }, {
+    "fullUrl": "Medication/dab41835f2fa6a666e6c5afade65b5bb858b49b5f608a08fb4caaf542a30dee1",
+    "resource": {
+      "resourceType": "Medication",
+      "id": "dab41835f2fa6a666e6c5afade65b5bb858b49b5f608a08fb4caaf542a30dee1",
+      "meta": {
+        "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication" ]
+      },
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-wirkstoff-medication-id",
+        "value": "testwirkstoff-ohne-snomed"
+      } ],
+      "code": {
+        "coding": [ {
+          "system": "http://fhir.de/CodeSystem/bfarm/atc",
+          "version": "2026",
+          "code": "L01BC02",
+          "display": "Fluorouracil"
+        } ],
+        "text": "Testwirkstoff ohne SNOMED"
+      },
+      "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 1,
+          "unit": "mg",
+          "system": "http://unitsofmeasure.org",
+          "code": "mg"
+        },
+        "denominator": {
+          "value": 1,
+          "unit": "{Stueck}",
+          "system": "http://unitsofmeasure.org",
+          "code": "1"
+        }
+      },
+      "ingredient": [ {
+        "itemCodeableConcept": {
+          "coding": [ {
+            "system": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+            "code": "not-applicable",
+            "display": "Not Applicable"
+          } ]
+        }
+      } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/dab41835f2fa6a666e6c5afade65b5bb858b49b5f608a08fb4caaf542a30dee1"
+    }
+  }, {
+    "fullUrl": "Medication/43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a",
+    "resource": {
+      "resourceType": "Medication",
+      "id": "43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a",
+      "meta": {
+        "profile": [ "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication" ]
+      },
+      "identifier": [ {
+        "system": "https://bzkf.github.io/zenzy-to-fhir/identifiers/therapie-traegerloesung-medication-id",
+        "value": "glucose-5"
+      } ],
+      "code": {
+        "coding": [ {
+          "system": "http://snomed.info/sct",
+          "version": "http://snomed.info/sct/900000000000207008/version/20260301",
+          "code": "1268457003",
+          "display": "Product containing precisely glucose 50 milligram/1 milliliter conventional release solution for infusion and/or injection (clinical drug)"
+        }, {
+          "system": "http://fhir.de/CodeSystem/bfarm/atc",
+          "version": "2026",
+          "code": "B05BA11",
+          "display": "Glucose"
+        } ],
+        "text": "Glucose 5%"
+      },
+      "status": "active",
+      "amount": {
+        "numerator": {
+          "value": 1,
+          "unit": "milliliter",
+          "system": "http://unitsofmeasure.org",
+          "code": "mL"
+        },
+        "denominator": {
+          "value": 1,
+          "unit": "1",
+          "system": "http://unitsofmeasure.org",
+          "code": "{Stueck}"
+        }
+      },
+      "ingredient": [ {
+        "itemCodeableConcept": {
+          "coding": [ {
+            "system": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+            "code": "not-applicable",
+            "display": "Not Applicable"
+          } ]
+        }
+      } ]
+    },
+    "request": {
+      "method": "PUT",
+      "url": "Medication/43fb1bc7fb5e5d04e957db423e5cfb31e96ccb8d9e3f2eb8a2414c3e91afcd4a"
+    }
+  } ]
+}

@@ -1,4 +1,13 @@
 fhir:
+  # setting a coding replaces the to-fhir default entirely, so the system has to be set as well
+  codings:
+    # the MII Medication profile requires Medication.code.coding:atcClassDe.version
+    atc:
+      system: "http://fhir.de/CodeSystem/bfarm/atc"
+      version: "2026"
+    snomed:
+      system: "http://snomed.info/sct"
+      version: "http://snomed.info/sct/900000000000207008/version/20260301"
   systems:
     identifiers:
       base-url: "https://bzkf.github.io/zenzy-to-fhir/identifiers"
