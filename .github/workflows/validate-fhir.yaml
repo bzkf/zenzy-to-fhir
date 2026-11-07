@@ -16,7 +16,7 @@ jobs:
   validate-fhir-resource:
     name: validate fhir resources
     runs-on: ubuntu-24.04
-    container: ghcr.io/miracum/ig-build-tools:v2.2.41@sha256:60bfe761c45852cf505b68c5176df0171cdbf818c4cc9e4279b9c64aba527c70
+    container: ghcr.io/miracum/ig-build-tools:v2.6.1@sha256:77825ffad88656e5c07df8e6b62866f0473cacfed61a25f953d431c5ec47de72
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
@@ -31,7 +31,6 @@ jobs:
       - name: Configure fhir cli
         run: |
           fhir config inflate All
-          fhir config validator Advanced
 
       - name: Cache FHIR packages
         id: fhir-package-cache
@@ -46,16 +45,19 @@ jobs:
 
       - name: Restore FHIR package dependencies
         if: ${{ steps.fhir-package-cache.outputs.cache-hit != 'true' }}
+        # Firely Terminal 4 exits non-zero on the dependency cycle between hl7.terminology.r4 and
+        # hl7.fhir.uv.extensions.r4, even though the packages get installed. Validating the bundles
+        # below fails if a required package is actually missing.
+        continue-on-error: true
         run: |
           fhir cache location --path
           fhir cache list
           fhir restore
 
       - name: Validate bundles
-        continue-on-error: true
         run: |
           fhir cache location --path
           fhir cache list
           find lib/src/test/java/snapshots/ -type f \
             -name "*.fhir.json" -print0 | \
-            xargs -0 -I {} sh -c 'echo "\n\n\nValidating: {}" && fhir validate --verbose --fail "{}"'
+            xargs -0 -I {} sh -c 'echo "\n\n\nValidating: {}" && fhir validate --verbose "{}" --failOn error'
