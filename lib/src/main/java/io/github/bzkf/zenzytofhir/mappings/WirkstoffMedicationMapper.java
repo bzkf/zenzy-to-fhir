@@ -3,6 +3,7 @@ package io.github.bzkf.zenzytofhir.mappings;
 import io.github.bzkf.zenzytofhir.models.MedicationAndStrength;
 import io.github.bzkf.zenzytofhir.models.WirkstoffDosis;
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
+import io.github.dizuker.tofhir.FhirExtensions.DataAbsentReason;
 import io.github.dizuker.tofhir.IdUtils;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -11,8 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.IntStream;
-import org.hl7.fhir.r4.model.CodeType;
 import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Enumerations;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Medication;
 import org.hl7.fhir.r4.model.Medication.MedicationStatus;
@@ -89,55 +90,54 @@ public class WirkstoffMedicationMapper {
       medication.setId(IdUtils.fromIdentifier(identifier));
       medication.setStatus(MedicationStatus.ACTIVE);
 
-      var codeableConcept = new CodeableConcept();
-      codeableConcept.setText(wirkstoffDosis.wirkstoff());
+      var medicationCode = new CodeableConcept();
+      medicationCode.setText(wirkstoffDosis.wirkstoff());
 
       var maybeMapped = toCodingMapper.mapWirkstoff(wirkstoffDosis.wirkstoff());
       if (maybeMapped.isPresent()) {
         var mapped = maybeMapped.get();
         var atc = fhirProps.fhir().codings().atc();
-        if (mapped.atcCode() != null) {
+        if (StringUtils.hasText(mapped.atcCode())) {
           atc.setCode(mapped.atcCode()).setDisplay(mapped.atcDisplay());
+          medicationCode.addCoding(atc);
         } else {
           // MII Medications require code to be set
-          atc.getCodeElement()
-              .addExtension(
-                  fhirProps
-                      .fhir()
-                      .extensions()
-                      .dataAbsentReason()
-                      .setValue(new CodeType("unknown")));
+          medicationCode.addCoding(
+              DataAbsentReason.codeableConcept(Enumerations.DataAbsentReason.UNKNOWN)
+                  .getCodingFirstRep());
         }
 
-        codeableConcept.addCoding(atc);
-
-        var ingredient = fhirProps.fhir().codings().snomed();
-        if (mapped.snomedCode() != null) {
-          ingredient.setCode(mapped.snomedCode()).setDisplay(mapped.snomedDisplay());
+        if (StringUtils.hasText(mapped.snomedCode())) {
+          var ingredient =
+              fhirProps
+                  .fhir()
+                  .codings()
+                  .snomed()
+                  .setCode(mapped.snomedCode())
+                  .setDisplay(mapped.snomedDisplay());
+          medication.addIngredient().setItem(new CodeableConcept().addCoding(ingredient));
         } else {
-          // MII Medications require ingredient to be set
-          ingredient
-              .getCodeElement()
-              .addExtension(
-                  fhirProps
-                      .fhir()
-                      .extensions()
-                      .dataAbsentReason()
-                      .setValue(new CodeType("not-applicable")));
+          // MII Medications require ingredient to be set, including at least one coding
+          medication
+              .addIngredient()
+              .setItem(
+                  DataAbsentReason.codeableConcept(Enumerations.DataAbsentReason.NOTAPPLICABLE));
         }
 
-        medication.addIngredient().setItem(new CodeableConcept().addCoding(ingredient));
       } else {
         LOG.warn("Couldn't map wirkstoff {}", wirkstoffDosis.wirkstoff());
-        var absentAtc = fhirProps.fhir().codings().atc();
-        absentAtc
-            .getCodeElement()
-            .addExtension(
-                fhirProps.fhir().extensions().dataAbsentReason().setValue(new CodeType("unknown")));
-        codeableConcept.addCoding(absentAtc);
+        medicationCode.addCoding(
+            DataAbsentReason.codeableConcept(Enumerations.DataAbsentReason.UNKNOWN)
+                .getCodingFirstRep());
+        // MII Medications require ingredient to be set, including at least one coding
+        medication
+            .addIngredient()
+            .setItem(
+                DataAbsentReason.codeableConcept(Enumerations.DataAbsentReason.UNKNOWN)
+                    .setText(wirkstoffDosis.wirkstoff()));
       }
 
-      medication.setCode(codeableConcept);
+      medication.setCode(medicationCode);
 
       // TODO: check if dosis einheit is actually mg/ucum
       var amount = new Ratio();

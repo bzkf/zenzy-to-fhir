@@ -1,4 +1,10 @@
 fhir:
+  codings:
+    # the MII Medication profile requires Medication.code.coding:atcClassDe.version
+    atc:
+      version: "2026"
+    snomed:
+      version: "http://snomed.info/sct/900000000000207008/version/20260301"
   systems:
     identifiers:
       base-url: "https://bzkf.github.io/zenzy-to-fhir/identifiers"

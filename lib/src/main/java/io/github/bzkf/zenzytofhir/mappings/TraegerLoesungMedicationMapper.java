@@ -1,10 +1,11 @@
 package io.github.bzkf.zenzytofhir.mappings;
 
 import io.github.bzkf.zenzytofhir.models.ZenzyTherapie;
+import io.github.dizuker.tofhir.FhirExtensions.DataAbsentReason;
 import io.github.dizuker.tofhir.IdUtils;
 import java.util.Optional;
-import org.hl7.fhir.r4.model.CodeType;
 import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Enumerations;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Medication;
 import org.hl7.fhir.r4.model.Medication.MedicationStatus;
@@ -57,13 +58,13 @@ public class TraegerLoesungMedicationMapper {
       }
 
       var snomed = fhirProps.fhir().codings().snomed();
-      if (mapped.snomedCode() != null) {
+      if (StringUtils.hasText(mapped.snomedCode())) {
         snomed.setCode(mapped.snomedCode()).setDisplay(mapped.snomedDisplay());
         codeableConcept.addCoding(snomed);
       }
 
       var atc = fhirProps.fhir().codings().atc();
-      if (mapped.atcCode() != null) {
+      if (StringUtils.hasText(mapped.atcCode())) {
         atc.setCode(mapped.atcCode()).setDisplay(mapped.atcDisplay());
         codeableConcept.addCoding(atc);
       }
@@ -88,18 +89,10 @@ public class TraegerLoesungMedicationMapper {
     var amount = new Ratio().setNumerator(quantity).setDenominator(denominator);
     medication.setAmount(amount);
 
-    // MII Medications require ingredient to be set, even if it's the same as the medication
-    // itself
-    var absentCoding = fhirProps.fhir().codings().snomed();
-    absentCoding
-        .getCodeElement()
-        .addExtension(
-            fhirProps
-                .fhir()
-                .extensions()
-                .dataAbsentReason()
-                .setValue(new CodeType("not-applicable")));
-    medication.addIngredient().setItem(new CodeableConcept().addCoding(absentCoding));
+    // MII Medications require ingredient to be set, including at least one coding
+    medication
+        .addIngredient()
+        .setItem(DataAbsentReason.codeableConcept(Enumerations.DataAbsentReason.NOTAPPLICABLE));
 
     return Optional.of(medication);
   }

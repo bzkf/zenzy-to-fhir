@@ -232,14 +232,9 @@
       "ingredient": [ {
         "itemCodeableConcept": {
           "coding": [ {
-            "system": "http://snomed.info/sct",
-            "version": "http://snomed.info/sct/900000000000207008/version/20260301",
-            "_code": {
-              "extension": [ {
-                "url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
-                "valueCode": "not-applicable"
-              } ]
-            }
+            "system": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+            "code": "not-applicable",
+            "display": "Not Applicable"
           } ]
         }
       } ]
@@ -320,7 +315,7 @@
           "coding": [ {
             "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
             "code": "AUT",
-            "display": "author"
+            "display": "author (originator)"
           } ]
         } ],
         "who": {
