@@ -6,8 +6,14 @@
 
 Reads every CSV in data/ and takes the first column of each. Combinations
 separated by a literal "\\n" are split and each component is treated as a
-value of its own. The only normalization applied is trimming surrounding
-whitespace and case-insensitive comparison. No fuzzy matching, no stemming.
+value of its own.
+
+Every raw name is then normalized with the explicit NORMALIZATION_RULES
+(currently: remove trailing "*" and "^" markers). The raw -> normalized names
+are written to output/<yyyy-mm-dd>-normalized-names.csv, and only the
+normalized names go through the lookups below. Apart from that, matching only
+trims surrounding whitespace and compares case-insensitively. No fuzzy
+matching, no stemming.
 
 ATC (WIdO index GKV-AI): a value matches an entry whose ATC meaning
 ("ATC-Bedeutung") equals it. A substance usually has several ATC codes (one
@@ -35,9 +41,10 @@ EMA's ATC code is used as a fallback if it still exists in the WIdO index.
 Brands with several substances (combinations, different salts) are flagged.
 
 All input CSVs are combined into a single output file
-(output/<yyyy-mm-dd>-atc-snomed-mapping.csv) with one row per distinct value. Values
-occurring in several inputs are written once; the "sources" column lists the
-input files ("|"-separated).
+(output/<yyyy-mm-dd>-atc-snomed-mapping.csv) with one row per distinct
+normalized value. Values occurring in several inputs are written once; the
+"raw_values" column lists the raw names it was normalized from and the
+"sources" column the input files (both "|"-separated).
 
 Usage:
     docker compose up -d   # Snowstorm Lite, only needed for SNOMED CT
@@ -65,9 +72,15 @@ ATC_FILE = DATA_DIR / "atc" / "ATC GKV-AI 2026.xlsx"
 ATC_SHEET = "WIdO-Index 2026 ATC-Sortiert"
 OUTPUT_DIR = HERE / "output"
 OUTPUT_FILE = OUTPUT_DIR / f"{date.today().isoformat()}-atc-snomed-mapping.csv"
+NAMES_OUTPUT_FILE = OUTPUT_DIR / f"{date.today().isoformat()}-normalized-names.csv"
 
 # combinations are stored with the literal text "\\n" between the components
 COMPONENT_SEPARATOR = "\\\\n"
+
+# applied in order to every raw name; (description, pattern, replacement)
+NORMALIZATION_RULES = [
+    ("remove trailing * and ^", re.compile(r"[*^]+$"), ""),
+]
 PARENTERAL_ROUTE = "P"
 
 DEFAULT_SNOWSTORM_URL = "http://localhost:8080/fhir"
@@ -137,6 +150,17 @@ def normalize(value: str) -> str:
 
 def split_components(value: str) -> list[str]:
     return [c.strip() for c in value.split(COMPONENT_SEPARATOR) if c.strip()]
+
+
+def clean_name(raw: str) -> tuple[str, list[str]]:
+    """Apply NORMALIZATION_RULES; return the cleaned name and the rules that changed it."""
+    name, applied = raw, []
+    for description, pattern, replacement in NORMALIZATION_RULES:
+        cleaned = pattern.sub(replacement, name).strip()
+        if cleaned != name:
+            name = cleaned
+            applied.append(description)
+    return name, applied
 
 
 def clean_cell(value: object) -> str:
@@ -378,15 +402,34 @@ def main() -> None:
     def lookup_snomed(term: str) -> Result | None:
         return select_snomed(term, snomed.search_substances(term)) if snomed else None
 
-    # component -> input files it appears in; keeps first-seen order across files
-    sources: dict[str, list[str]] = defaultdict(list)
+    # raw component -> input files it appears in; keeps first-seen order across files
+    raw_sources: dict[str, list[str]] = defaultdict(list)
     for path in sorted(DATA_DIR.glob("*.csv")):
         for raw in read_first_column(path):
-            for value in split_components(raw):
-                if path.name not in sources[value]:
-                    sources[value].append(path.name)
+            for component in split_components(raw):
+                if path.name not in raw_sources[component]:
+                    raw_sources[component].append(path.name)
 
+    # normalized name -> raw names and input files; the normalized names are mapped
+    raw_values: dict[str, list[str]] = defaultdict(list)
+    sources: dict[str, list[str]] = defaultdict(list)
     OUTPUT_DIR.mkdir(exist_ok=True)
+    with NAMES_OUTPUT_FILE.open("w", encoding="utf-8", newline="") as f:
+        writer = csv.writer(f, lineterminator="\n")
+        writer.writerow(["raw_value", "value", "applied_rules", "sources"])
+        for raw, files in raw_sources.items():
+            value, applied = clean_name(raw)
+            if not value:
+                continue
+            writer.writerow([raw, value, "|".join(applied), "|".join(files)])
+            raw_values[value].append(raw)
+            sources[value].extend(f for f in files if f not in sources[value])
+    changed = sum(1 for value, raws in raw_values.items() if raws != [value])
+    print(
+        f"{len(raw_sources)} raw names -> {len(sources)} normalized names "
+        f"({changed} changed) -> {NAMES_OUTPUT_FILE}"
+    )
+
     atc_stats: Counter[str] = Counter()
     snomed_stats: Counter[str] = Counter()
     brand_stats: Counter[str] = Counter()
@@ -395,6 +438,7 @@ def main() -> None:
         writer.writerow(
             [
                 "value",
+                "raw_values",
                 "substance",
                 "substance_source",
                 "substance_candidates",
@@ -446,6 +490,7 @@ def main() -> None:
             atc_stats[atc.reason or "selected"] += 1
             row = [
                 value,
+                "|".join(raw_values[value]),
                 substance,
                 substance_source,
                 substance_candidates,

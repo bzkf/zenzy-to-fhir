@@ -21,7 +21,16 @@ Add .csv files to the ./data/ folder to get them mapped to ATC codes.
    uv run map_to_atc.py      # or: uv run map_to_atc.py --skip-snomed
    ```
 
-The result is written to `output/<yyyy-mm-dd>-atc-snomed-mapping.csv`. How codes are
+Two files are written to `output/`:
+
+- `<yyyy-mm-dd>-normalized-names.csv`: every raw input name, the normalized
+  name it was cleaned to (e.g. `Avastin*` → `Avastin`) and the rules applied.
+  The rules are listed in `NORMALIZATION_RULES` in
+  [map_to_atc.py](map_to_atc.py).
+- `<yyyy-mm-dd>-atc-snomed-mapping.csv`: the ATC and SNOMED CT mapping of the
+  normalized names, with the raw names in `raw_values`.
+
+How codes are
 selected and when a value is flagged for review is described at the top of
 [map_to_atc.py](map_to_atc.py).
 
