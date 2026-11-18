@@ -39,6 +39,36 @@ How codes are
 selected and when a value is flagged for review is described at the top of
 [map_to_atc.py](map_to_atc.py).
 
+## Updating the Java mapper
+
+The Java mapper (`ToCodingMapper`) first looks up the raw Zenzy wirkstoff name
+in `wirkstoff-normalisierung.csv` to get its normalized name (names without an
+entry are used as they are), then looks up the normalized name in
+`wirkstoff-codes.csv` for its ATC and SNOMED CT codes. Both files are in
+[lib/src/main/resources/mappings/](../lib/src/main/resources/mappings/) and are
+generated, so don't edit them by hand. After reviewing a mapping run, update
+them with:
+
+```sh
+uv run map_to_atc.py --export-java
+```
+
+- `wirkstoff-normalisierung.csv` (`raw_value;value`): all raw names whose
+  normalized name differs, except raw names that split into several substances
+  (`A + B`, one Medication code can't represent them) and placebo-blinded study
+  medication (the patient may not have received the substance).
+- `wirkstoff-codes.csv` (`wirkstoff;atc_code;atc_display;snomed_code;snomed_display`):
+  every normalized name with at least one selected code, plus
+  [overrides.csv](overrides.csv).
+
+[overrides.csv](overrides.csv) holds hand-maintained codes by normalized name,
+in the same format as `wirkstoff-codes.csv`. An override replaces the automatic
+codes of that name completely. Use it for names the pipeline can't map or maps
+ambiguously, e.g. `Methotrexat`, which has several parenteral ATC codes.
+Site-specific additions can still be configured with
+`zenzy-to-fhir.mappings.wirkstoff.extra-path`; those are looked up by
+normalized name as well.
+
 ## Input files
 
 `data/*.csv`: drug and ingredient names exported from Zenzy, one per row. Only

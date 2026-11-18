@@ -53,7 +53,13 @@ normalized value. Values occurring in several inputs are written once; the
 
 Usage:
     docker compose up -d   # Snowstorm Lite, only needed for SNOMED CT
-    uv run map_to_atc.py [--skip-snomed] [--snowstorm-url URL]
+    uv run map_to_atc.py [--skip-snomed] [--snowstorm-url URL] [--export-java]
+
+With --export-java, the lookup files read by the Java mapper are written too:
+lib/src/main/resources/mappings/wirkstoff-normalisierung.csv (raw ->
+normalized name, without combinations and placebo-blinded study medication)
+and wirkstoff-codes.csv (normalized name -> selected ATC and SNOMED CT codes,
+merged with the hand-maintained overrides.csv, which take precedence).
 """
 
 import argparse
@@ -78,6 +84,13 @@ ATC_SHEET = "WIdO-Index 2026 ATC-Sortiert"
 OUTPUT_DIR = HERE / "output"
 OUTPUT_FILE = OUTPUT_DIR / f"{date.today().isoformat()}-atc-snomed-mapping.csv"
 NAMES_OUTPUT_FILE = OUTPUT_DIR / f"{date.today().isoformat()}-normalized-names.csv"
+
+# hand-maintained codes that take precedence over the automatic ones (by normalized name)
+OVERRIDES_FILE = HERE / "overrides.csv"
+# lookup files read by the Java mapper (ToCodingMapper), written with --export-java
+JAVA_RESOURCES_DIR = HERE.parent / "lib" / "src" / "main" / "resources" / "mappings"
+JAVA_NORMALIZATION_FILE = JAVA_RESOURCES_DIR / "wirkstoff-normalisierung.csv"
+JAVA_CODES_FILE = JAVA_RESOURCES_DIR / "wirkstoff-codes.csv"
 
 # combinations are stored with the literal text "\\n" between the components
 COMPONENT_SEPARATOR = "\\\\n"
@@ -469,6 +482,11 @@ def main() -> None:
         action="store_true",
         help="only map ATC; leaves the SNOMED CT columns empty",
     )
+    parser.add_argument(
+        "--export-java",
+        action="store_true",
+        help=f"also write the lookup files for the Java mapper to {JAVA_RESOURCES_DIR}",
+    )
     args = parser.parse_args()
 
     snomed = None
@@ -503,6 +521,7 @@ def main() -> None:
     # normalized name -> raw names and input files; the normalized names are mapped
     raw_values: dict[str, list[str]] = defaultdict(list)
     sources: dict[str, list[str]] = defaultdict(list)
+    cleaned: dict[str, list[CleanName]] = {}
     names_stats: Counter[str] = Counter()
     OUTPUT_DIR.mkdir(exist_ok=True)
     with NAMES_OUTPUT_FILE.open("w", encoding="utf-8", newline="") as f:
@@ -521,7 +540,8 @@ def main() -> None:
             ]
         )
         for raw, files in raw_sources.items():
-            for name in clean_name(raw):
+            cleaned[raw] = clean_name(raw)
+            for name in cleaned[raw]:
                 writer.writerow(
                     [
                         raw,
@@ -545,6 +565,8 @@ def main() -> None:
     atc_stats: Counter[str] = Counter()
     snomed_stats: Counter[str] = Counter()
     brand_stats: Counter[str] = Counter()
+    # normalized name -> [atc_code, atc_display, snomed_code, snomed_display]
+    codes: dict[str, list[str]] = {}
     with OUTPUT_FILE.open("w", encoding="utf-8", newline="") as f:
         writer = csv.writer(f, lineterminator="\n")
         writer.writerow(
@@ -633,12 +655,57 @@ def main() -> None:
 
             writer.writerow([*row, "|".join(files)])
 
+            if atc.selected or (sct and sct.selected):
+                codes[value] = [
+                    atc.selected.code if atc.selected else "",
+                    atc.selected.meaning if atc.selected else "",
+                    sct.selected.code if sct and sct.selected else "",
+                    sct.selected.fsn if sct and sct.selected else "",
+                ]
+
     print(f"{len(sources)} values")
     print_stats("brand names", brand_stats)
     print_stats("ATC", atc_stats)
     if snomed:
         print_stats("SNOMED CT", snomed_stats)
     print(f"-> {OUTPUT_FILE}")
+
+    if args.export_java:
+        if not snomed:
+            sys.exit("--export-java needs the SNOMED CT lookup, don't combine it with --skip-snomed")
+        export_java(cleaned, codes)
+
+
+def export_java(cleaned: dict[str, list[CleanName]], codes: dict[str, list[str]]) -> None:
+    """Write the normalization and code lookup files read by the Java mapper."""
+    with JAVA_NORMALIZATION_FILE.open("w", encoding="utf-8", newline="") as f:
+        writer = csv.writer(f, delimiter=";", lineterminator="\n")
+        writer.writerow(["raw_value", "value"])
+        exported = 0
+        for raw, names in cleaned.items():
+            # one Medication code per raw name: combinations can't be represented,
+            # and placebo-blinded study medication may not contain the substance
+            if len(names) != 1 or names[0].review_reason == REASON_STUDY_PLACEBO:
+                continue
+            if names[0].value != raw:
+                writer.writerow([raw, names[0].value])
+                exported += 1
+    print(f"{exported} raw -> normalized names -> {JAVA_NORMALIZATION_FILE}")
+
+    with OVERRIDES_FILE.open(encoding="utf-8", newline="") as f:
+        overrides = {row["wirkstoff"]: row for row in csv.DictReader(f, delimiter=";")}
+    header = ["wirkstoff", "atc_code", "atc_display", "snomed_code", "snomed_display"]
+    merged = dict(codes)
+    for name, row in overrides.items():
+        merged[name] = [row[column] for column in header[1:]]
+    with JAVA_CODES_FILE.open("w", encoding="utf-8", newline="") as f:
+        writer = csv.writer(f, delimiter=";", lineterminator="\n")
+        writer.writerow(header)
+        for name in sorted(merged, key=str.casefold):
+            writer.writerow([name, *merged[name]])
+    print(
+        f"{len(merged)} codes ({len(overrides)} from {OVERRIDES_FILE.name}) -> {JAVA_CODES_FILE}"
+    )
 
 
 if __name__ == "__main__":
