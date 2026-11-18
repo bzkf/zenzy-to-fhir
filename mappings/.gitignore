@@ -1,2 +1,5 @@
 data/*.csv
 output/
+
+# SNOMED CT release files are licensed and must not be committed
+data/snomed/

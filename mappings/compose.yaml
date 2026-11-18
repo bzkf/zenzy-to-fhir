@@ -1,0 +1,76 @@
+#checkov:skip=CKV_SECRET_6: all dev setup
+# Local SNOMED CT terminology server (Snowstorm Lite) for building the mappings.
+#
+# Usage:
+#   1. put exactly one SNOMED CT RF2 release zip into ./data/snomed/, e.g.
+#      data/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260301T120000Z.zip
+#   2. docker compose up -d
+#   3. FHIR API: http://localhost:8080/fhir
+#
+# On first start (empty index volume) the zip is imported, which takes a few
+# minutes; follow it with `docker compose logs -f snowstorm-lite`. Later starts
+# reuse the index. To load a different release, replace the zip and run
+# `docker compose down -v && docker compose up -d`.
+#
+# The version URI is derived from the zip's file name (..._<yyyymmdd>T...zip)
+# and SNOMED_MODULE_ID (default: International Edition).
+services:
+  # snowstorm-lite runs as uid 1000, but a fresh named volume is root-owned
+  init-volume:
+    image: docker.io/library/busybox:1.37.0@sha256:a7dbc319b1438115a207e11930dc4bb3e643dcb3ec0bdd694bb36cd8fad289ec
+    command: ["chown", "-R", "1000:1000", "/app/lucene-index"]
+    volumes:
+      - snowstorm-lite-index:/app/lucene-index
+
+  snowstorm-lite:
+    image: docker.io/snomedinternational/snowstorm-lite:3.0.0@sha256:85a0238ce3b3915fb3e24b2ea842cddddb2e68111317e4574e620c0552e27ba3
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    privileged: false
+    ipc: none
+    security_opt:
+      - "no-new-privileges:true"
+    depends_on:
+      init-volume:
+        condition: service_completed_successfully
+    environment:
+      SNOWSTORM_ADMIN_PASSWORD: "${SNOWSTORM_ADMIN_PASSWORD:-snowstormLITE}"
+      SNOMED_MODULE_ID: "${SNOMED_MODULE_ID:-900000000000207008}"
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        set -euo pipefail
+        index=/app/lucene-index/data
+        args=(--index.path="$$index" --admin.password="$$SNOWSTORM_ADMIN_PASSWORD")
+
+        if [ -z "$$(ls -A "$$index" 2>/dev/null)" ]; then
+          shopt -s nullglob
+          zips=(/snomed/*.zip)
+          if [ "$${#zips[@]}" -ne 1 ]; then
+            echo "expected exactly one SNOMED CT release zip in ./data/snomed/, found $${#zips[@]}" >&2
+            exit 1
+          fi
+          zip="$${zips[0]}"
+          version="$$(basename "$$zip" | sed -n 's/.*_\([0-9]\{8\}\)T.*/\1/p')"
+          if [ -z "$$version" ]; then
+            echo "could not read the release date (_yyyymmddT) from $$(basename "$$zip")" >&2
+            exit 1
+          fi
+          version_uri="http://snomed.info/sct/$$SNOMED_MODULE_ID/version/$$version"
+          echo "empty index, importing $$zip as $$version_uri"
+          args+=(--load="$$zip" --version-uri="$$version_uri")
+        fi
+
+        exec java --enable-native-access=ALL-UNNAMED -Xms1g -Xmx4g \
+          -Djava.security.egd=file:/dev/./urandom \
+          -cp @/app/jib-classpath-file org.snomed.snowstormlite.SnowstormLiteApplication \
+          "$${args[@]}"
+    volumes:
+      - snowstorm-lite-index:/app/lucene-index
+      - ./data/snomed:/snomed:ro
+    ports:
+      - "127.0.0.1:8080:8080"
+
+volumes:
+  snowstorm-lite-index:
