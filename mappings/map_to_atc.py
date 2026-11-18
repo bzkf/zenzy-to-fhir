@@ -2,33 +2,47 @@
 # requires-python = ">=3.11"
 # dependencies = ["openpyxl>=3.1"]
 # ///
-"""Map drug/ingredient names to ATC codes by exact name match.
+"""Map drug/ingredient names to ATC and SNOMED CT codes by exact name match.
 
-Reads the WIdO ATC index (GKV-AI) and every CSV in data/, takes the first
-column of each CSV and looks up names whose ATC meaning ("ATC-Bedeutung") is
-equal to the value. Combinations separated by a literal "\\n" are split and
-each component is treated as a value of its own. The only other normalization applied
-is trimming surrounding whitespace and case-insensitive comparison. No fuzzy
-matching, no stemming.
+Reads every CSV in data/ and takes the first column of each. Combinations
+separated by a literal "\\n" are split and each component is treated as a
+value of its own. The only normalization applied is trimming surrounding
+whitespace and case-insensitive comparison. No fuzzy matching, no stemming.
 
-A substance usually has several ATC codes (one per therapeutic use / route).
-Since Zenzy produces parenteral preparations, a code is selected as follows:
+ATC (WIdO index GKV-AI): a value matches an entry whose ATC meaning
+("ATC-Bedeutung") equals it. A substance usually has several ATC codes (one
+per therapeutic use / route). Since Zenzy produces parenteral preparations, a
+code is selected as follows:
 
 1. collect all codes whose meaning equals the value (= candidates)
 2. if any candidate has the route "P" (parenteral) in its DDD-Info, keep
    only those
 3. if exactly one code is left, select it; otherwise flag it for review
 
-All input CSVs are combined into a single output file (output/<yyyy-mm-dd>-atc-mapping.csv)
-with one row per distinct value. Values occurring in several inputs are
-written once; the "sources" column lists the input files ("|"-separated).
+SNOMED CT (local Snowstorm Lite, see compose.yaml): the value is searched
+among substances (< 105590001 |Substance|). The server's search is a word
+prefix search, so its results are only candidates: a code is selected only if
+exactly one concept has a synonym equal to the value. Otherwise the value is
+flagged for review and the search results are listed as candidates.
+
+All input CSVs are combined into a single output file
+(output/<yyyy-mm-dd>-atc-mapping.csv) with one row per distinct value. Values
+occurring in several inputs are written once; the "sources" column lists the
+input files ("|"-separated).
 
 Usage:
-    uv run map_to_atc.py
+    docker compose up -d   # Snowstorm Lite, only needed for SNOMED CT
+    uv run map_to_atc.py [--skip-snomed] [--snowstorm-url URL]
 """
 
+import argparse
 import csv
+import json
 import re
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from datetime import date
@@ -47,9 +61,21 @@ OUTPUT_FILE = OUTPUT_DIR / f"{date.today().isoformat()}-atc-mapping.csv"
 COMPONENT_SEPARATOR = "\\\\n"
 PARENTERAL_ROUTE = "P"
 
+DEFAULT_SNOWSTORM_URL = "http://localhost:8080/fhir"
+SNOMED_SYSTEM = "http://snomed.info/sct"
+SNOMED_SUBSTANCES_ECL = "< 105590001"
+SNOMED_FSN = "900000000000003001"
+SNOMED_SYNONYM = "900000000000013009"
+# upper bound of search results per value; exact matches beyond it are missed
+SNOMED_SEARCH_LIMIT = 200
+# how many search results are listed as candidates for review
+SNOMED_CANDIDATE_LIMIT = 10
+
 REASON_NO_MATCH = "no match"
 REASON_NO_PARENTERAL = "multiple codes, none parenteral"
 REASON_MULTIPLE_PARENTERAL = "multiple parenteral codes"
+REASON_NO_EXACT_MATCH = "no exact match"
+REASON_MULTIPLE_EXACT = "multiple exact matches"
 
 
 @dataclass(frozen=True)
@@ -64,6 +90,22 @@ class AtcEntry:
         # routes are standalone upper-case tokens, so match "P" as a whole token
         tokens = re.split(r"[^A-Za-z]+", self.ddd_info)
         return PARENTERAL_ROUTE in tokens
+
+
+@dataclass(frozen=True)
+class SnomedConcept:
+    code: str
+    fsn: str
+    synonyms: frozenset[str]
+
+
+@dataclass(frozen=True)
+class Result:
+    """Outcome of one lookup: the selected code (if any) and a review reason."""
+
+    selected: object | None
+    reason: str
+    candidates: list
 
 
 def normalize(value: str) -> str:
@@ -97,17 +139,69 @@ def load_atc_index(path: Path) -> dict[str, list[AtcEntry]]:
     return index
 
 
-def select_code(candidates: list[AtcEntry]) -> tuple[AtcEntry | None, str]:
-    """Return the selected entry (or None) and a review reason ("" if none)."""
+def select_atc(candidates: list[AtcEntry]) -> Result:
     if not candidates:
-        return None, REASON_NO_MATCH
+        return Result(None, REASON_NO_MATCH, candidates)
     parenteral = [c for c in candidates if c.is_parenteral]
     remaining = parenteral or candidates
     if len(remaining) == 1:
-        return remaining[0], ""
+        return Result(remaining[0], "", candidates)
     if parenteral:
-        return None, REASON_MULTIPLE_PARENTERAL
-    return None, REASON_NO_PARENTERAL
+        return Result(None, REASON_MULTIPLE_PARENTERAL, candidates)
+    return Result(None, REASON_NO_PARENTERAL, candidates)
+
+
+class SnomedClient:
+    def __init__(self, base_url: str) -> None:
+        self.base_url = base_url.rstrip("/")
+
+    def _get(self, path: str, params: dict[str, str]) -> dict:
+        url = f"{self.base_url}/{path}?{urllib.parse.urlencode(params)}"
+        with urllib.request.urlopen(url, timeout=30) as response:
+            return json.load(response)
+
+    def check(self) -> str:
+        """Return the loaded SNOMED CT version; raises if the server is unusable."""
+        bundle = self._get("CodeSystem", {"url": SNOMED_SYSTEM})
+        versions = [e["resource"].get("version") for e in bundle.get("entry", [])]
+        if not versions:
+            raise RuntimeError("no SNOMED CT code system loaded")
+        return ", ".join(v for v in versions if v)
+
+    def search_substances(self, term: str) -> list[SnomedConcept]:
+        expansion = self._get(
+            "ValueSet/$expand",
+            {
+                "url": f"{SNOMED_SYSTEM}?fhir_vs=ecl/{SNOMED_SUBSTANCES_ECL}",
+                "filter": term,
+                "count": str(SNOMED_SEARCH_LIMIT),
+                "includeDesignations": "true",
+            },
+        ).get("expansion", {})
+        concepts = []
+        for item in expansion.get("contains", []):
+            designations = item.get("designation", [])
+            fsn = next(
+                (d["value"] for d in designations if d["use"]["code"] == SNOMED_FSN),
+                item["display"],
+            )
+            synonyms = {item["display"]} | {
+                d["value"] for d in designations if d["use"]["code"] == SNOMED_SYNONYM
+            }
+            concepts.append(SnomedConcept(item["code"], fsn, frozenset(synonyms)))
+        return concepts
+
+
+def select_snomed(value: str, concepts: list[SnomedConcept]) -> Result:
+    key = normalize(value)
+    exact = [c for c in concepts if any(normalize(s) == key for s in c.synonyms)]
+    if len(exact) == 1:
+        return Result(exact[0], "", concepts)
+    if exact:
+        return Result(None, REASON_MULTIPLE_EXACT, exact)
+    if concepts:
+        return Result(None, REASON_NO_EXACT_MATCH, concepts)
+    return Result(None, REASON_NO_MATCH, concepts)
 
 
 def read_first_column(path: Path) -> list[str]:
@@ -119,7 +213,41 @@ def read_first_column(path: Path) -> list[str]:
     return list(dict.fromkeys(values))
 
 
+def review_columns(result: Result) -> list[str]:
+    return ["true" if result.reason else "false", result.reason]
+
+
+def print_stats(name: str, stats: Counter[str]) -> None:
+    print(f"{name}:")
+    for key, count in stats.most_common():
+        print(f"  {key}: {count}")
+
+
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument(
+        "--snowstorm-url",
+        default=DEFAULT_SNOWSTORM_URL,
+        help=f"FHIR base URL of the terminology server (default: {DEFAULT_SNOWSTORM_URL})",
+    )
+    parser.add_argument(
+        "--skip-snomed",
+        action="store_true",
+        help="only map ATC; leaves the SNOMED CT columns empty",
+    )
+    args = parser.parse_args()
+
+    snomed = None
+    if not args.skip_snomed:
+        snomed = SnomedClient(args.snowstorm_url)
+        try:
+            print(f"SNOMED CT: {snomed.check()}")
+        except (urllib.error.URLError, OSError, RuntimeError) as e:
+            sys.exit(
+                f"terminology server at {args.snowstorm_url} is not usable ({e}).\n"
+                "start it with `docker compose up -d` or pass --skip-snomed"
+            )
+
     index = load_atc_index(ATC_FILE)
 
     # component -> input files it appears in; keeps first-seen order across files
@@ -131,7 +259,8 @@ def main() -> None:
                     sources[value].append(path.name)
 
     OUTPUT_DIR.mkdir(exist_ok=True)
-    stats: Counter[str] = Counter()
+    atc_stats: Counter[str] = Counter()
+    snomed_stats: Counter[str] = Counter()
     with OUTPUT_FILE.open("w", encoding="utf-8", newline="") as f:
         writer = csv.writer(f, lineterminator="\n")
         writer.writerow(
@@ -140,32 +269,53 @@ def main() -> None:
                 "atc_code",
                 "atc_meaning",
                 "atc_ddd_info",
-                "needs_review",
-                "review_reason",
-                "candidates",
+                "atc_needs_review",
+                "atc_review_reason",
+                "atc_candidates",
+                "snomed_code",
+                "snomed_display",
+                "snomed_needs_review",
+                "snomed_review_reason",
+                "snomed_candidates",
                 "sources",
             ]
         )
         for value, files in sources.items():
-            candidates = index.get(normalize(value), [])
-            selected, reason = select_code(candidates)
-            stats[reason or "selected"] += 1
-            writer.writerow(
-                [
-                    value,
-                    selected.code if selected else "",
-                    selected.meaning if selected else "",
-                    selected.ddd_info if selected else "",
-                    "true" if reason else "false",
-                    reason,
-                    "|".join(c.code for c in candidates),
-                    "|".join(files),
-                ]
-            )
+            atc = select_atc(index.get(normalize(value), []))
+            atc_stats[atc.reason or "selected"] += 1
+            row = [
+                value,
+                atc.selected.code if atc.selected else "",
+                atc.selected.meaning if atc.selected else "",
+                atc.selected.ddd_info if atc.selected else "",
+                *review_columns(atc),
+                "|".join(c.code for c in atc.candidates),
+            ]
 
-    print(f"{len(sources)} values:")
-    for key, count in stats.most_common():
-        print(f"  {key}: {count}")
+            if snomed:
+                sct = select_snomed(value, snomed.search_substances(value))
+                snomed_stats[sct.reason or "selected"] += 1
+                row += [
+                    sct.selected.code if sct.selected else "",
+                    sct.selected.fsn if sct.selected else "",
+                    *review_columns(sct),
+                    # the selected concept needs no candidate list
+                    ""
+                    if sct.selected
+                    else "|".join(
+                        f"{c.code} {c.fsn}"
+                        for c in sct.candidates[:SNOMED_CANDIDATE_LIMIT]
+                    ),
+                ]
+            else:
+                row += ["", "", "", "", ""]
+
+            writer.writerow([*row, "|".join(files)])
+
+    print(f"{len(sources)} values")
+    print_stats("ATC", atc_stats)
+    if snomed:
+        print_stats("SNOMED CT", snomed_stats)
     print(f"-> {OUTPUT_FILE}")
 
 
