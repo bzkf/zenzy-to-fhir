@@ -1,5 +1,8 @@
 data/*.csv
 output/
 
-# SNOMED CT release files are licensed and must not be committed
+# lookup files are licensed or change regularly and are downloaded instead,
+# see README.md
+data/atc/
+data/ema/
 data/snomed/

@@ -26,8 +26,16 @@ prefix search, so its results are only candidates: a code is selected only if
 exactly one concept has a synonym equal to the value. Otherwise the value is
 flagged for review and the search results are listed as candidates.
 
+Brand names (EMA data in data/ema/): values without any direct ATC or SNOMED
+CT match are looked up by exact name, first in the EMA table of centrally
+authorised medicines, then in the Article 57 product data (products authorised
+in Germany only, intravenous products preferred). If the brand has exactly one
+substance, ATC and SNOMED CT are looked up for that substance instead; the
+EMA's ATC code is used as a fallback if it still exists in the WIdO index.
+Brands with several substances (combinations, different salts) are flagged.
+
 All input CSVs are combined into a single output file
-(output/<yyyy-mm-dd>-atc-mapping.csv) with one row per distinct value. Values
+(output/<yyyy-mm-dd>-atc-snomed-mapping.csv) with one row per distinct value. Values
 occurring in several inputs are written once; the "sources" column lists the
 input files ("|"-separated).
 
@@ -56,7 +64,7 @@ DATA_DIR = HERE / "data"
 ATC_FILE = DATA_DIR / "atc" / "ATC GKV-AI 2026.xlsx"
 ATC_SHEET = "WIdO-Index 2026 ATC-Sortiert"
 OUTPUT_DIR = HERE / "output"
-OUTPUT_FILE = OUTPUT_DIR / f"{date.today().isoformat()}-atc-mapping.csv"
+OUTPUT_FILE = OUTPUT_DIR / f"{date.today().isoformat()}-atc-snomed-mapping.csv"
 
 # combinations are stored with the literal text "\\n" between the components
 COMPONENT_SEPARATOR = "\\\\n"
@@ -74,7 +82,19 @@ SNOMED_SEARCH_LIMIT = 200
 # how many search results are listed as candidates for review
 SNOMED_CANDIDATE_LIMIT = 10
 
+EMA_DIR = DATA_DIR / "ema"
+EMA_MEDICINES_FILE = EMA_DIR / "medicines-output-medicines-report_en.xlsx"
+EMA_ARTICLE57_FILE = EMA_DIR / "article-57-product-data_en.xlsx"
+SOURCE_EMA_MEDICINES = "EMA medicines"
+SOURCE_EMA_ARTICLE57 = "EMA Article 57"
+SOURCE_WIDO = "WIdO"
+ARTICLE57_COUNTRY = "Germany"
+ARTICLE57_IV_ROUTE = "Intravenous Use"
+# the EMA medicines table separates the substances of combinations with ";"
+COMBINATION_SEPARATOR = ";"
+
 REASON_NO_MATCH = "no match"
+REASON_BRAND_MULTIPLE_SUBSTANCES = "brand with multiple substances"
 REASON_NO_PARENTERAL = "multiple codes, none parenteral"
 REASON_MULTIPLE_PARENTERAL = "multiple parenteral codes"
 REASON_NO_EXACT_MATCH = "no exact match"
@@ -209,6 +229,101 @@ def select_snomed(value: str, concepts: list[SnomedConcept]) -> Result:
     return Result(None, REASON_NO_MATCH, concepts)
 
 
+@dataclass(frozen=True)
+class BrandEntry:
+    substance: str
+    atc_code: str = ""
+    route: str = ""
+
+
+@dataclass(frozen=True)
+class Brand:
+    """A brand name resolved to its substance (or to several candidates)."""
+
+    source: str
+    substance: str | None
+    candidates: list[str]
+    atc_code: str = ""
+
+
+def load_sheet(path: Path, first_header: str) -> list[dict[str, str]]:
+    """Rows of the first sheet below the header row starting with first_header.
+
+    Header cells are matched by prefix (see column()) since some contain long
+    explanations after the column name.
+    """
+    wb = openpyxl.load_workbook(path, read_only=True)
+    header: list[str] | None = None
+    rows = []
+    for row in wb.active.iter_rows(values_only=True):
+        cells = [clean_cell(c) for c in row]
+        if header is None:
+            if cells and cells[0].startswith(first_header):
+                header = cells
+            continue
+        rows.append(dict(zip(header, cells)))
+    wb.close()
+    if header is None:
+        raise ValueError(f"no header row starting with {first_header!r} in {path}")
+    return rows
+
+
+def column(row: dict[str, str], prefix: str) -> str:
+    return next(v for k, v in row.items() if k.startswith(prefix))
+
+
+def load_ema_medicines(path: Path) -> dict[str, list[BrandEntry]]:
+    """Centrally authorised human medicines: brand -> substance and ATC code."""
+    brands: dict[str, list[BrandEntry]] = defaultdict(list)
+    for row in load_sheet(path, "Category"):
+        if column(row, "Category") != "Human":
+            continue
+        substance = column(row, "Active substance") or column(
+            row, "International non-proprietary name"
+        )
+        name = column(row, "Name of medicine")
+        if name and substance:
+            entry = BrandEntry(substance, atc_code=column(row, "ATC code (human)"))
+            brands[normalize(name)].append(entry)
+    return brands
+
+
+def load_ema_article57(path: Path) -> dict[str, list[BrandEntry]]:
+    """Medicines authorised in ARTICLE57_COUNTRY: brand -> substance and route."""
+    brands: dict[str, list[BrandEntry]] = defaultdict(list)
+    for row in load_sheet(path, "Product name"):
+        if column(row, "Product authorisation country") != ARTICLE57_COUNTRY:
+            continue
+        name = column(row, "Product name")
+        route = column(row, "Route of administration")
+        # "|" separates different pharmaceutical products of the same medicine
+        for substance in column(row, "Active substance").split("|"):
+            if name and substance.strip():
+                entry = BrandEntry(substance.strip(), route=route)
+                brands[normalize(name)].append(entry)
+    return brands
+
+
+def resolve_brand(
+    value: str, sources: list[tuple[str, dict[str, list[BrandEntry]]]]
+) -> Brand | None:
+    """Look the value up as a brand name, in order of the given sources."""
+    for source, brands in sources:
+        entries = brands.get(normalize(value))
+        if not entries:
+            continue
+        # Zenzy produces parenteral preparations, prefer intravenous products
+        intravenous = [e for e in entries if ARTICLE57_IV_ROUTE in e.route]
+        entries = intravenous or entries
+        substances = list(dict.fromkeys(e.substance.casefold() for e in entries))
+        if len(substances) == 1 and COMBINATION_SEPARATOR not in substances[0]:
+            atc_codes = {e.atc_code for e in entries}
+            atc_code = atc_codes.pop() if len(atc_codes) == 1 else ""
+            return Brand(source, entries[0].substance, [], atc_code)
+        return Brand(source, None, list(dict.fromkeys(e.substance for e in entries)))
+    return None
+
+
 def read_first_column(path: Path) -> list[str]:
     with path.open(encoding="utf-8-sig", newline="") as f:
         reader = csv.reader(f)
@@ -254,6 +369,14 @@ def main() -> None:
             )
 
     index = load_atc_index(ATC_FILE)
+    atc_by_code = {e.code: e for entries in index.values() for e in entries}
+    brand_sources = [
+        (SOURCE_EMA_MEDICINES, load_ema_medicines(EMA_MEDICINES_FILE)),
+        (SOURCE_EMA_ARTICLE57, load_ema_article57(EMA_ARTICLE57_FILE)),
+    ]
+
+    def lookup_snomed(term: str) -> Result | None:
+        return select_snomed(term, snomed.search_substances(term)) if snomed else None
 
     # component -> input files it appears in; keeps first-seen order across files
     sources: dict[str, list[str]] = defaultdict(list)
@@ -266,14 +389,19 @@ def main() -> None:
     OUTPUT_DIR.mkdir(exist_ok=True)
     atc_stats: Counter[str] = Counter()
     snomed_stats: Counter[str] = Counter()
+    brand_stats: Counter[str] = Counter()
     with OUTPUT_FILE.open("w", encoding="utf-8", newline="") as f:
         writer = csv.writer(f, lineterminator="\n")
         writer.writerow(
             [
                 "value",
+                "substance",
+                "substance_source",
+                "substance_candidates",
                 "atc_code",
                 "atc_meaning",
                 "atc_ddd_info",
+                "atc_source",
                 "atc_needs_review",
                 "atc_review_reason",
                 "atc_candidates",
@@ -286,19 +414,50 @@ def main() -> None:
             ]
         )
         for value, files in sources.items():
+            substance, substance_source, substance_candidates = value, "", ""
             atc = select_atc(index.get(normalize(value), []))
+            atc_source = SOURCE_WIDO if atc.selected else ""
+            sct = lookup_snomed(value)
+
+            # only values without any direct match are looked up as brand names
+            no_direct_match = atc.reason == REASON_NO_MATCH and (
+                sct is None or sct.reason == REASON_NO_MATCH
+            )
+            brand = resolve_brand(value, brand_sources) if no_direct_match else None
+            if brand:
+                substance_source = brand.source
+                brand_stats[f"{brand.source}: {'resolved' if brand.substance else 'ambiguous'}"] += 1
+            if brand and brand.substance:
+                substance = brand.substance
+                atc = select_atc(index.get(normalize(substance), []))
+                atc_source = SOURCE_WIDO if atc.selected else ""
+                # the EMA's ATC code is used only if it still exists in the WIdO index
+                if atc.reason == REASON_NO_MATCH and brand.atc_code in atc_by_code:
+                    entry = atc_by_code[brand.atc_code]
+                    atc, atc_source = Result(entry, "", [entry]), brand.source
+                sct = lookup_snomed(substance)
+            elif brand:
+                substance = ""
+                substance_candidates = "|".join(brand.candidates)
+                atc = Result(None, REASON_BRAND_MULTIPLE_SUBSTANCES, [])
+                if sct:
+                    sct = Result(None, REASON_BRAND_MULTIPLE_SUBSTANCES, [])
+
             atc_stats[atc.reason or "selected"] += 1
             row = [
                 value,
+                substance,
+                substance_source,
+                substance_candidates,
                 atc.selected.code if atc.selected else "",
                 atc.selected.meaning if atc.selected else "",
                 atc.selected.ddd_info if atc.selected else "",
+                atc_source,
                 *review_columns(atc),
                 "|".join(c.code for c in atc.candidates),
             ]
 
-            if snomed:
-                sct = select_snomed(value, snomed.search_substances(value))
+            if sct:
                 snomed_stats[sct.reason or "selected"] += 1
                 row += [
                     sct.selected.code if sct.selected else "",
@@ -318,6 +477,7 @@ def main() -> None:
             writer.writerow([*row, "|".join(files)])
 
     print(f"{len(sources)} values")
+    print_stats("brand names", brand_stats)
     print_stats("ATC", atc_stats)
     if snomed:
         print_stats("SNOMED CT", snomed_stats)
