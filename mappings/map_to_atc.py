@@ -19,7 +19,7 @@ Since Zenzy produces parenteral preparations, a code is selected as follows:
    only those
 3. if exactly one code is left, select it; otherwise flag it for review
 
-All input CSVs are combined into a single output file (output/atc-mapping.csv)
+All input CSVs are combined into a single output file (output/<yyyy-mm-dd>-atc-mapping.csv)
 with one row per distinct value. Values occurring in several inputs are
 written once; the "sources" column lists the input files ("|"-separated).
 
@@ -31,6 +31,7 @@ import csv
 import re
 from collections import Counter, defaultdict
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 
 import openpyxl
@@ -40,7 +41,7 @@ DATA_DIR = HERE / "data"
 ATC_FILE = DATA_DIR / "atc" / "ATC GKV-AI 2026.xlsx"
 ATC_SHEET = "WIdO-Index 2026 ATC-Sortiert"
 OUTPUT_DIR = HERE / "output"
-OUTPUT_FILE = OUTPUT_DIR / "atc-mapping.csv"
+OUTPUT_FILE = OUTPUT_DIR / f"{date.today().isoformat()}-atc-mapping.csv"
 
 # combinations are stored with the literal text "\\n" between the components
 COMPONENT_SEPARATOR = "\\\\n"
