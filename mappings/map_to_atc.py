@@ -20,7 +20,8 @@ code is selected as follows:
 3. if exactly one code is left, select it; otherwise flag it for review
 
 SNOMED CT (local Snowstorm Lite, see compose.yaml): the value is searched
-among substances (< 105590001 |Substance|). The server's search is a word
+among substances (< 105590001 |Substance|), in German and English terms when
+the German Edition is loaded. The server's search is a word
 prefix search, so its results are only candidates: a code is selected only if
 exactly one concept has a synonym equal to the value. Otherwise the value is
 flagged for review and the search results are listed as candidates.
@@ -66,6 +67,8 @@ SNOMED_SYSTEM = "http://snomed.info/sct"
 SNOMED_SUBSTANCES_ECL = "< 105590001"
 SNOMED_FSN = "900000000000003001"
 SNOMED_SYNONYM = "900000000000013009"
+# search German (German Edition) as well as English terms
+SNOMED_SEARCH_LANGUAGE = "de"
 # upper bound of search results per value; exact matches beyond it are missed
 SNOMED_SEARCH_LIMIT = 200
 # how many search results are listed as candidates for review
@@ -176,6 +179,8 @@ class SnomedClient:
                 "filter": term,
                 "count": str(SNOMED_SEARCH_LIMIT),
                 "includeDesignations": "true",
+                # without it, the German Edition's terms are not searched
+                "displayLanguage": SNOMED_SEARCH_LANGUAGE,
             },
         ).get("expansion", {})
         concepts = []

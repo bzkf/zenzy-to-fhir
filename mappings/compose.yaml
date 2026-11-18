@@ -3,7 +3,8 @@
 #
 # Usage:
 #   1. put exactly one SNOMED CT RF2 release zip into ./data/snomed/, e.g.
-#      data/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260301T120000Z.zip
+#      data/snomed/SnomedCT_Germany-EditionRelease_PRODUCTION_20260815T120000Z.zip
+#      (the German Edition already contains the International Edition)
 #   2. docker compose up -d
 #   3. FHIR API: http://localhost:8080/fhir
 #
@@ -12,8 +13,10 @@
 # reuse the index. To load a different release, replace the zip and run
 # `docker compose down -v && docker compose up -d`.
 #
-# The version URI is derived from the zip's file name (..._<yyyymmdd>T...zip)
-# and SNOMED_MODULE_ID (default: International Edition).
+# The version URI is derived from the zip's file name: the release date
+# (..._<yyyymmdd>T...zip) and the edition's module ID, which is known for the
+# International (900000000000207008) and German (11000274103) Editions. For any
+# other edition, set SNOMED_MODULE_ID.
 services:
   # snowstorm-lite runs as uid 1000, but a fresh named volume is root-owned
   init-volume:
@@ -36,7 +39,7 @@ services:
         condition: service_completed_successfully
     environment:
       SNOWSTORM_ADMIN_PASSWORD: "${SNOWSTORM_ADMIN_PASSWORD:-snowstormLITE}"
-      SNOMED_MODULE_ID: "${SNOMED_MODULE_ID:-900000000000207008}"
+      SNOMED_MODULE_ID: "${SNOMED_MODULE_ID:-}"
     entrypoint: ["/bin/bash", "-c"]
     command:
       - |
@@ -57,7 +60,18 @@ services:
             echo "could not read the release date (_yyyymmddT) from $$(basename "$$zip")" >&2
             exit 1
           fi
-          version_uri="http://snomed.info/sct/$$SNOMED_MODULE_ID/version/$$version"
+          module="$${SNOMED_MODULE_ID:-}"
+          if [ -z "$$module" ]; then
+            case "$$(basename "$$zip")" in
+              SnomedCT_InternationalRF2_*) module=900000000000207008 ;;
+              SnomedCT_Germany-EditionRelease_*) module=11000274103 ;;
+              *)
+                echo "unknown edition $$(basename "$$zip"), set SNOMED_MODULE_ID" >&2
+                exit 1
+                ;;
+            esac
+          fi
+          version_uri="http://snomed.info/sct/$$module/version/$$version"
           echo "empty index, importing $$zip as $$version_uri"
           args+=(--load="$$zip" --version-uri="$$version_uri")
         fi
