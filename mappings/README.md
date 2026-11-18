@@ -24,7 +24,12 @@ Add .csv files to the ./data/ folder to get them mapped to ATC codes.
 Two files are written to `output/`:
 
 - `<yyyy-mm-dd>-normalized-names.csv`: every raw input name, the normalized
-  name it was cleaned to (e.g. `Avastin*` → `Avastin`) and the rules applied.
+  name(s) it was cleaned to and the rules applied, e.g. `Avastin*` → `Avastin`,
+  `Trastuzumab subcutan` → `Trastuzumab` (route `subcutan`),
+  `Atezolizumab/Placebo/GBG96` → `Atezolizumab` (study label `Placebo/GBG96`),
+  `Nivolumab + Relatlimab` → `Nivolumab` and `Relatlimab`. Names with a study
+  label are flagged in `needs_review`: they are study medication, and for
+  placebo-controlled studies the patient may not have received the substance.
   The rules are listed in `NORMALIZATION_RULES` in
   [map_to_atc.py](map_to_atc.py).
 - `<yyyy-mm-dd>-atc-snomed-mapping.csv`: the ATC and SNOMED CT mapping of the
@@ -107,3 +112,17 @@ curl -fL -o data/ema/medicines-output-medicines-report_en.xlsx \
 curl -fL -o data/ema/article-57-product-data_en.xlsx \
   https://www.ema.europa.eu/en/documents/other/article-57-product-data_en.xlsx
 ```
+
+## TODO
+
+- [ ] **Combinations written with `/`:** the study-label rule treats everything
+  after the first `/` as a study label, so real combinations lose their second
+  substance, e.g. `Fosnetupitant/Palonosetron` → `Fosnetupitant` with study
+  label `Palonosetron` (flagged for review). Check the flagged names in
+  `<yyyy-mm-dd>-normalized-names.csv` and add the real combinations to a list of
+  exact names that are split into their substances instead.
+- [ ] **Abbreviations:** in-house short names are not normalized and therefore
+  not mapped, e.g. `Doxo lipos./ GEPAR 6` → `Doxo lipos.`, `Dauno liposomal`,
+  `MTX`, `nabPaclitaxel`. Map them with a hand-maintained list of names
+  (abbreviation → substance); the liposomal forms are separate substances in
+  SNOMED CT.

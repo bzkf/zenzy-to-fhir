@@ -8,10 +8,15 @@ Reads every CSV in data/ and takes the first column of each. Combinations
 separated by a literal "\\n" are split and each component is treated as a
 value of its own.
 
-Every raw name is then normalized with the explicit NORMALIZATION_RULES
-(currently: remove trailing "*" and "^" markers). The raw -> normalized names
-are written to output/<yyyy-mm-dd>-normalized-names.csv, and only the
-normalized names go through the lookups below. Apart from that, matching only
+Every raw name is then split on "+" (combinations) and normalized with the
+explicit NORMALIZATION_RULES, which only ever remove text from the end of a
+name: trailing "*", "^" and "!" markers, and a strength ("20%", "(40mg/ml)"),
+route ("subcutan", "s.c.", "i.v.", ...) or study label ("/Placebo",
+"/GEPAR 6", "-Studie"). Strength, route and study label are kept in their own
+columns. Names with a study label are flagged for review, as study medication
+(and, for "Placebo" labels, possibly not the substance at all). The raw ->
+normalized names are written to output/<yyyy-mm-dd>-normalized-names.csv, and
+only the normalized names go through the lookups below. Apart from that, matching only
 trims surrounding whitespace and compares case-insensitively. No fuzzy
 matching, no stemming.
 
@@ -77,10 +82,53 @@ NAMES_OUTPUT_FILE = OUTPUT_DIR / f"{date.today().isoformat()}-normalized-names.c
 # combinations are stored with the literal text "\\n" between the components
 COMPONENT_SEPARATOR = "\\\\n"
 
-# applied in order to every raw name; (description, pattern, replacement)
+# combinations written as "A + B" are split into one name per substance
+COMBINATION_SPLIT = ("split combination on '+'", re.compile(r"\s*\+\s*"))
+
+
+@dataclass(frozen=True)
+class NormalizationRule:
+    """Removes the match of `pattern` from the end of a name.
+
+    If `field` is set, the named group of the same name is kept as extracted
+    information (e.g. the study label) instead of being discarded.
+    """
+
+    description: str
+    pattern: re.Pattern[str]
+    field: str = ""
+
+
+ROUTE_WORDS = r"subcutan|s\.c\.|i\.v\.|intravitreal|intraventr\."
+# applied in order, repeatedly, until no rule changes the name any more
 NORMALIZATION_RULES = [
-    ("remove trailing * and ^", re.compile(r"[*^]+$"), ""),
+    NormalizationRule("remove trailing * and ^", re.compile(r"[*^]+$")),
+    NormalizationRule("remove trailing !", re.compile(r"\s*!+$")),
+    # before the study rule, so the "/" in "mg/ml" is not taken as a study label
+    NormalizationRule(
+        "move strength",
+        re.compile(
+            r"\s*\(?\s*(?P<strength>\d+(?:[.,]\d+)?\s*(?:%|mg/ml|mg))\s*\)?$",
+            re.IGNORECASE,
+        ),
+        "strength",
+    ),
+    NormalizationRule(
+        "move route",
+        re.compile(rf"\s+(?P<route>{ROUTE_WORDS})$", re.IGNORECASE),
+        "route",
+    ),
+    NormalizationRule(
+        "move 'Studie' suffix",
+        re.compile(r"[-\s]+(?P<study>studie\b.*)$", re.IGNORECASE),
+        "study",
+    ),
+    NormalizationRule(
+        "move study label after '/'", re.compile(r"\s*/\s*(?P<study>.*)$"), "study"
+    ),
 ]
+REASON_STUDY = "study medication"
+REASON_STUDY_PLACEBO = "blinded study medication (placebo)"
 PARENTERAL_ROUTE = "P"
 
 DEFAULT_SNOWSTORM_URL = "http://localhost:8080/fhir"
@@ -152,15 +200,57 @@ def split_components(value: str) -> list[str]:
     return [c.strip() for c in value.split(COMPONENT_SEPARATOR) if c.strip()]
 
 
-def clean_name(raw: str) -> tuple[str, list[str]]:
-    """Apply NORMALIZATION_RULES; return the cleaned name and the rules that changed it."""
-    name, applied = raw, []
-    for description, pattern, replacement in NORMALIZATION_RULES:
-        cleaned = pattern.sub(replacement, name).strip()
-        if cleaned != name:
-            name = cleaned
-            applied.append(description)
-    return name, applied
+@dataclass
+class CleanName:
+    value: str
+    applied: list[str]
+    # NormalizationRule.field -> text moved out of the name
+    extracted: dict[str, str]
+
+    @property
+    def review_reason(self) -> str:
+        study = self.extracted.get("study")
+        if not study:
+            return ""
+        return REASON_STUDY_PLACEBO if "plac" in study.casefold() else REASON_STUDY
+
+
+def clean_name(raw: str) -> list[CleanName]:
+    """Split a raw name on '+' and apply NORMALIZATION_RULES to every part."""
+    description, separator = COMBINATION_SPLIT
+    parts = [p for p in separator.split(raw) if p.strip()]
+    split = [description] if len(parts) > 1 else []
+
+    names = []
+    for part in parts:
+        name, applied, extracted = part.strip(), list(split), {}
+        changed = True
+        while changed:
+            changed = False
+            for rule in NORMALIZATION_RULES:
+                match = rule.pattern.search(name)
+                # never remove the whole name
+                if not match or match.start() == 0:
+                    continue
+                if rule.field and match.group(rule.field):
+                    text = match.group(rule.field).strip()
+                    old = extracted.get(rule.field)
+                    # rules work from the end, so earlier text comes later
+                    extracted[rule.field] = f"{text} {old}" if old else text
+                name = name[: match.start()].strip()
+                if rule.description not in applied:
+                    applied.append(rule.description)
+                changed = True
+                break
+        if name:
+            names.append(CleanName(name, applied, extracted))
+
+    # a study label at the end of "A+B/STUDY" belongs to all parts
+    study = next((n.extracted["study"] for n in names if "study" in n.extracted), None)
+    for name in names:
+        if study and "study" not in name.extracted:
+            name.extracted["study"] = study
+    return names
 
 
 def clean_cell(value: object) -> str:
@@ -413,22 +503,44 @@ def main() -> None:
     # normalized name -> raw names and input files; the normalized names are mapped
     raw_values: dict[str, list[str]] = defaultdict(list)
     sources: dict[str, list[str]] = defaultdict(list)
+    names_stats: Counter[str] = Counter()
     OUTPUT_DIR.mkdir(exist_ok=True)
     with NAMES_OUTPUT_FILE.open("w", encoding="utf-8", newline="") as f:
         writer = csv.writer(f, lineterminator="\n")
-        writer.writerow(["raw_value", "value", "applied_rules", "sources"])
+        writer.writerow(
+            [
+                "raw_value",
+                "value",
+                "applied_rules",
+                "study_label",
+                "route",
+                "strength",
+                "needs_review",
+                "review_reason",
+                "sources",
+            ]
+        )
         for raw, files in raw_sources.items():
-            value, applied = clean_name(raw)
-            if not value:
-                continue
-            writer.writerow([raw, value, "|".join(applied), "|".join(files)])
-            raw_values[value].append(raw)
-            sources[value].extend(f for f in files if f not in sources[value])
-    changed = sum(1 for value, raws in raw_values.items() if raws != [value])
-    print(
-        f"{len(raw_sources)} raw names -> {len(sources)} normalized names "
-        f"({changed} changed) -> {NAMES_OUTPUT_FILE}"
-    )
+            for name in clean_name(raw):
+                writer.writerow(
+                    [
+                        raw,
+                        name.value,
+                        "|".join(name.applied),
+                        name.extracted.get("study", ""),
+                        name.extracted.get("route", ""),
+                        name.extracted.get("strength", ""),
+                        "true" if name.review_reason else "false",
+                        name.review_reason,
+                        "|".join(files),
+                    ]
+                )
+                names_stats[name.review_reason or ("changed" if name.applied else "unchanged")] += 1
+                if raw not in raw_values[name.value]:
+                    raw_values[name.value].append(raw)
+                sources[name.value].extend(f for f in files if f not in sources[name.value])
+    print(f"{len(raw_sources)} raw names -> {len(sources)} normalized names -> {NAMES_OUTPUT_FILE}")
+    print_stats("normalized names", names_stats)
 
     atc_stats: Counter[str] = Counter()
     snomed_stats: Counter[str] = Counter()
