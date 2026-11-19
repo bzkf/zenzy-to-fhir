@@ -1,0 +1,8 @@
+value,raw_values,substance,substance_source,substance_candidates,atc_code,atc_meaning,atc_ddd_info,atc_source,atc_needs_review,atc_review_reason,atc_candidates,snomed_code,snomed_display,snomed_version,snomed_needs_review,snomed_review_reason,snomed_candidates,sources
+Avastin,Avastin*,bevacizumab,EMA medicines,,L01FG01,Bevacizumab,,WIdO,false,,L01FG01,409406007,Bevacizumab (substance),http://snomed.info/sct/11000274103/version/20260815,false,,,zenzy.csv
+Trastuzumab,Trastuzumab subcutan,Trastuzumab,,,L01FD01,Trastuzumab,,WIdO,false,,L01FD01,387003001,Trastuzumab (substance),http://snomed.info/sct/11000274103/version/20260815,false,,,zenzy.csv
+Durvalumab,Durvalumab/CheckRad,Durvalumab,,,L01FF03,Durvalumab,,WIdO,false,,L01FF03,735230005,Durvalumab (substance),http://snomed.info/sct/11000274103/version/20260815,false,,,zenzy.csv
+Atezolizumab,Atezolizumab/Placebo,Atezolizumab,,,L01FF05,Atezolizumab,,WIdO,false,,L01FF05,719371003,Atezolizumab (substance),http://snomed.info/sct/11000274103/version/20260815,false,,,zenzy.csv
+Nivolumab,Nivolumab + Relatlimab,Nivolumab,,,L01FF01,Nivolumab,,WIdO,false,,L01FF01,704191007,Nivolumab (substance),http://snomed.info/sct/11000274103/version/20260815,false,,,zenzy.csv
+Relatlimab,"Nivolumab + Relatlimab|Relatlimab, ungeprüft",Relatlimab,,,,,,,true,no match,,,,,true,no match,,zenzy.csv
+Fluorouracil,Fluorouracil,Fluorouracil,,,L01BC02,Fluorouracil,,WIdO,false,,L01BC02,387172005,Fluorouracil (substance),http://snomed.info/sct/11000274103/version/20260815,false,,,zenzy.csv

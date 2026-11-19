@@ -11,6 +11,7 @@ import io.github.bzkf.zenzytofhir.models.NormalizedName;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.jspecify.annotations.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -26,9 +29,8 @@ import org.springframework.util.StringUtils;
 
 @Service
 public class ToCodingMapper {
-  // copies of the output files of mappings/map_to_atc.py, see mappings/README.md
-  static final String NORMALIZED_NAMES_FILE = "mappings/normalized-names.csv";
-  static final String ATC_SNOMED_MAPPING_FILE = "mappings/atc-snomed-mapping.csv";
+  private static final Logger LOG = LoggerFactory.getLogger(ToCodingMapper.class);
+
   // REASON_STUDY_PLACEBO in mappings/map_to_atc.py
   static final String REVIEW_REASON_PLACEBO = "blinded study medication (placebo)";
 
@@ -36,8 +38,15 @@ public class ToCodingMapper {
   private final Map<String, MappedTraegerloesung> traegerloesungMapping = new HashMap<>();
   // raw wirkstoff name -> normalized name
   private final Map<String, String> wirkstoffNormalization = new HashMap<>();
-  // normalized wirkstoff name -> codes
+  // (raw or normalized) wirkstoff name -> codes
   private final Map<String, MappedWirkstoff> wirkstoffMapping = new HashMap<>();
+
+  // output files of mappings/map_to_atc.py, not bundled for license reasons
+  @Value("${zenzy-to-fhir.mappings.wirkstoff.normalized-names-path:}")
+  private String normalizedNamesPath;
+
+  @Value("${zenzy-to-fhir.mappings.wirkstoff.atc-snomed-mapping-path:}")
+  private String atcSnomedMappingPath;
 
   @Value("${zenzy-to-fhir.mappings.wirkstoff.extra-path:}")
   private String extraWirkstoffPath;
@@ -48,6 +57,8 @@ public class ToCodingMapper {
         CsvMapper.builder().propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE).build();
 
     var schema = CsvSchema.emptySchema().withHeader().withColumnSeparator(';');
+    // the output files of mappings/map_to_atc.py are read as they are (comma-separated)
+    var mappingOutputSchema = CsvSchema.emptySchema().withHeader();
 
     var resource = new ClassPathResource("mappings/applikationsart.csv");
     var values =
@@ -74,65 +85,89 @@ public class ToCodingMapper {
       traegerloesungMapping.put(row.traegerloesung(), row);
     }
 
-    // both files are the unchanged output of mappings/map_to_atc.py (comma-separated)
-    var outputSchema = CsvSchema.emptySchema().withHeader();
-
-    resource = new ClassPathResource(NORMALIZED_NAMES_FILE);
+    // later files take precedence: bundled < mapping output < extra mappings
+    resource = new ClassPathResource("mappings/wirkstoffe.csv");
     values =
         mapper
-            .readerFor(NormalizedName.class)
-            .with(outputSchema)
-            .readValues(resource.getInputStream())
-            .readAll();
-    var namesByRawValue = new LinkedHashMap<String, List<NormalizedName>>();
-    for (var value : values) {
-      var row = (NormalizedName) value;
-      namesByRawValue.computeIfAbsent(row.rawValue(), k -> new ArrayList<>()).add(row);
-    }
-    for (var entry : namesByRawValue.entrySet()) {
-      var names = entry.getValue();
-      // a Medication has a single code: raw names that split into several substances
-      // ("A + B") can't be represented
-      if (names.size() != 1) {
-        continue;
-      }
-      // the patient may have received the placebo, not the substance
-      if (REVIEW_REASON_PLACEBO.equals(names.getFirst().reviewReason())) {
-        continue;
-      }
-      wirkstoffNormalization.put(entry.getKey(), names.getFirst().value());
-    }
-
-    resource = new ClassPathResource(ATC_SNOMED_MAPPING_FILE);
-    values =
-        mapper
-            .readerFor(AtcSnomedMapping.class)
-            .with(outputSchema)
+            .readerFor(MappedWirkstoff.class)
+            .with(schema)
             .readValues(resource.getInputStream())
             .readAll();
     for (var value : values) {
-      var row = (AtcSnomedMapping) value;
-      if (row.hasCode()) {
-        wirkstoffMapping.put(row.value(), row.toMappedWirkstoff());
+      var row = (MappedWirkstoff) value;
+      wirkstoffMapping.put(row.wirkstoff(), row);
+    }
+
+    var normalizedNamesFile = configuredFile(normalizedNamesPath, "normalized-names-path");
+    if (normalizedNamesFile.isPresent()) {
+      values =
+          mapper
+              .readerFor(NormalizedName.class)
+              .with(mappingOutputSchema)
+              .readValues(Files.newInputStream(normalizedNamesFile.get()))
+              .readAll();
+      var namesByRawValue = new LinkedHashMap<String, List<NormalizedName>>();
+      for (var value : values) {
+        var row = (NormalizedName) value;
+        namesByRawValue.computeIfAbsent(row.rawValue(), k -> new ArrayList<>()).add(row);
+      }
+      for (var entry : namesByRawValue.entrySet()) {
+        var names = entry.getValue();
+        // a Medication has a single code: raw names that split into several substances
+        // ("A + B") can't be represented
+        if (names.size() != 1) {
+          continue;
+        }
+        // the patient may have received the placebo, not the substance
+        if (REVIEW_REASON_PLACEBO.equals(names.getFirst().reviewReason())) {
+          continue;
+        }
+        wirkstoffNormalization.put(entry.getKey(), names.getFirst().value());
       }
     }
 
-    // Load extra wirkstoff mappings if path is configured
-    if (StringUtils.hasText(extraWirkstoffPath)) {
-      var extraPath = Paths.get(extraWirkstoffPath);
-      if (Files.exists(extraPath)) {
-        values =
-            mapper
-                .readerFor(MappedWirkstoff.class)
-                .with(schema)
-                .readValues(Files.newInputStream(extraPath))
-                .readAll();
-        for (var value : values) {
-          var row = (MappedWirkstoff) value;
-          wirkstoffMapping.put(row.wirkstoff(), row);
+    var atcSnomedMappingFile = configuredFile(atcSnomedMappingPath, "atc-snomed-mapping-path");
+    if (atcSnomedMappingFile.isPresent()) {
+      values =
+          mapper
+              .readerFor(AtcSnomedMapping.class)
+              .with(mappingOutputSchema)
+              .readValues(Files.newInputStream(atcSnomedMappingFile.get()))
+              .readAll();
+      for (var value : values) {
+        var row = (AtcSnomedMapping) value;
+        if (row.hasCode()) {
+          wirkstoffMapping.put(row.value(), row.toMappedWirkstoff());
         }
       }
     }
+
+    var extraFile = configuredFile(extraWirkstoffPath, "extra-path");
+    if (extraFile.isPresent()) {
+      values =
+          mapper
+              .readerFor(MappedWirkstoff.class)
+              .with(schema)
+              .readValues(Files.newInputStream(extraFile.get()))
+              .readAll();
+      for (var value : values) {
+        var row = (MappedWirkstoff) value;
+        wirkstoffMapping.put(row.wirkstoff(), row);
+      }
+    }
+  }
+
+  private static Optional<Path> configuredFile(String path, String property) {
+    if (!StringUtils.hasText(path)) {
+      return Optional.empty();
+    }
+    var file = Paths.get(path);
+    if (!Files.exists(file)) {
+      LOG.warn(
+          "zenzy-to-fhir.mappings.wirkstoff.{} {} does not exist, ignoring it", property, path);
+      return Optional.empty();
+    }
+    return Optional.of(file);
   }
 
   public Optional<MappedApplikationsart> mapApplikationsart(@NonNull String applikationsartText) {

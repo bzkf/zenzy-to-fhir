@@ -15,7 +15,7 @@ route ("subcutan", "s.c.", "i.v.", ...) or study label ("/Placebo",
 "/GEPAR 6", "-Studie"). Strength, route and study label are kept in their own
 columns. Names with a study label are flagged for review, as study medication
 (and, for "Placebo" labels, possibly not the substance at all). The raw ->
-normalized names are written to normalized-names.csv, and
+normalized names are written to output/normalized-names.csv, and
 only the normalized names go through the lookups below. Apart from that, matching only
 trims surrounding whitespace and compares case-insensitively. No fuzzy
 matching, no stemming.
@@ -46,16 +46,17 @@ EMA's ATC code is used as a fallback if it still exists in the WIdO index.
 Brands with several substances (combinations, different salts) are flagged.
 
 All input CSVs are combined into a single output file
-(atc-snomed-mapping.csv) with one row per distinct
+(output/atc-snomed-mapping.csv) with one row per distinct
 normalized value. Values occurring in several inputs are written once; the
 "raw_values" column lists the raw names it was normalized from and the
 "sources" column the input files (both "|"-separated). The hand-maintained
 codes in overrides.csv replace the automatic ones of the same normalized name
 (atc_source "overrides.csv").
 
-Both output files are written to lib/src/main/resources/mappings/, where the
-Java mapper (ToCodingMapper) reads them as they are; review a run with git
-diff, see README.md. With --skip-snomed they go to output/ instead.
+Both output files are written to output/ (output/atc-only/ with
+--skip-snomed). The Java mapper (ToCodingMapper) can read them as they are,
+configured via zenzy-to-fhir.mappings.wirkstoff.normalized-names-path and
+atc-snomed-mapping-path, see README.md.
 
 Usage:
     docker compose up -d   # Snowstorm Lite, only needed for SNOMED CT
@@ -80,11 +81,10 @@ HERE = Path(__file__).parent
 DATA_DIR = HERE / "data"
 ATC_FILE = DATA_DIR / "atc" / "ATC GKV-AI 2026.xlsx"
 ATC_SHEET = "WIdO-Index 2026 ATC-Sortiert"
-# read as they are by the Java mapper (ToCodingMapper)
-OUTPUT_DIR = HERE.parent / "lib" / "src" / "main" / "resources" / "mappings"
+OUTPUT_DIR = HERE / "output"
 # an ATC-only run (--skip-snomed) lacks the SNOMED CT codes, so it must not
-# overwrite the files the Java mapper reads
-ATC_ONLY_OUTPUT_DIR = HERE / "output"
+# overwrite the files of a full run
+ATC_ONLY_OUTPUT_DIR = OUTPUT_DIR / "atc-only"
 NAMES_FILE_NAME = "normalized-names.csv"
 MAPPING_FILE_NAME = "atc-snomed-mapping.csv"
 

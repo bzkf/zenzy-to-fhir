@@ -1,0 +1,9 @@
+raw_value,value,applied_rules,study_label,route,strength,needs_review,review_reason,sources
+Avastin*,Avastin,remove trailing * and ^,,,,false,,zenzy.csv
+Trastuzumab subcutan,Trastuzumab,move route,,subcutan,,false,,zenzy.csv
+Durvalumab/CheckRad,Durvalumab,move study label after '/',CheckRad,,,true,study medication,zenzy.csv
+Atezolizumab/Placebo,Atezolizumab,move study label after '/',Placebo,,,true,blinded study medication (placebo),zenzy.csv
+Nivolumab + Relatlimab,Nivolumab,split combination on '+',,,,false,,zenzy.csv
+Nivolumab + Relatlimab,Relatlimab,split combination on '+',,,,false,,zenzy.csv
+"Relatlimab, ungeprüft",Relatlimab,,,,,false,,zenzy.csv
+Fluorouracil,Fluorouracil,,,,,false,,zenzy.csv

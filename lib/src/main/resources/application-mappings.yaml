@@ -27,6 +27,9 @@ zenzy-to-fhir:
   version: "0.1.9" # x-release-please-version
   mappings:
     wirkstoff:
+      # output files of mappings/map_to_atc.py, see mappings/README.md
+      normalized-names-path: ""
+      atc-snomed-mapping-path: ""
       extra-path: ""
     provenance:
       enabled: false

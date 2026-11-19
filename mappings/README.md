@@ -23,13 +23,10 @@ Add .csv files to the ./data/ folder to get them mapped to ATC codes.
    ```
 
    `--skip-snomed` maps ATC only (no terminology server needed) and writes
-   its files to `output/` instead, so it never overwrites the files the Java
-   mapper reads.
+   its files to `output/atc-only/` instead, so it doesn't overwrite a full run.
 
-Two files are written to
-[lib/src/main/resources/mappings/](../lib/src/main/resources/mappings/), where
-the Java mapper reads them as they are (see
-[Updating the Java mapper](#updating-the-java-mapper)):
+Two files are written to `output/` (not committed); the Java mapper can read
+them as they are (see [Using the mapping in the Java mapper](#using-the-mapping-in-the-java-mapper)):
 
 - `normalized-names.csv`: every raw input name, the normalized
   name(s) it was cleaned to and the rules applied, e.g. `Avastin*` → `Avastin`,
@@ -51,18 +48,32 @@ How codes are
 selected and when a value is flagged for review is described at the top of
 [map_to_atc.py](map_to_atc.py).
 
-## Updating the Java mapper
+## Using the mapping in the Java mapper
 
-The Java mapper (`ToCodingMapper`) reads the two output files of a mapping run
-in [lib/src/main/resources/mappings/](../lib/src/main/resources/mappings/) as
-they are, so a run updates the mapper directly. Review the changes with
-`git diff` before committing them. Don't edit the files by hand: fix the rules
-or [overrides.csv](overrides.csv) and run again.
+The Java mapper (`ToCodingMapper`) only bundles the hand-maintained
+[wirkstoffe.csv](../lib/src/main/resources/mappings/wirkstoffe.csv). The output
+of a mapping run contains WIdO data and is therefore not bundled. Instead, it is
+passed in as files via the configuration, as they are:
 
-For a raw Zenzy wirkstoff name, the mapper:
+```yaml
+zenzy-to-fhir:
+  mappings:
+    wirkstoff:
+      normalized-names-path: /path/to/normalized-names.csv
+      atc-snomed-mapping-path: /path/to/atc-snomed-mapping.csv
+```
 
-1. uses the codes of the raw name itself, if it has any (also from the extra
-   mappings file, see below);
+(or `ZENZYTOFHIR_MAPPINGS_WIRKSTOFF_NORMALIZEDNAMESPATH` and
+`ZENZYTOFHIR_MAPPINGS_WIRKSTOFF_ATCSNOMEDMAPPINGPATH` as environment
+variables). A configured file that doesn't exist is ignored with a warning.
+Don't edit the files by hand: fix the rules or [overrides.csv](overrides.csv)
+and run again.
+
+The codes are taken from, later ones taking precedence: the bundled
+`wirkstoffe.csv`, `atc-snomed-mapping.csv`, the extra mappings file (see
+below). For a raw Zenzy wirkstoff name, the mapper:
+
+1. uses the codes of the raw name itself, if it has any;
 2. otherwise looks up its normalized name in `normalized-names.csv`
    (`raw_value` → `value`). Raw names that split into several substances
    (`A + B`, a Medication has only one code) and placebo-blinded study
@@ -91,7 +102,7 @@ Site-specific additions can still be configured with
 `zenzy-to-fhir.mappings.wirkstoff.extra-path`
 (`wirkstoff;atc_code;atc_display;snomed_code;snomed_display`, optionally
 `;snomed_version`); their entries are matched against the raw and the
-normalized name and take precedence over the mapping files.
+normalized name and take precedence over all other mappings.
 
 ## Input files
 
