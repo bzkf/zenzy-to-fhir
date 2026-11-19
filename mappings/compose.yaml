@@ -8,9 +8,11 @@
 #   2. docker compose up -d
 #   3. FHIR API: http://localhost:8080/fhir
 #
-# On first start (empty index volume) the zip is imported, which takes a few
-# minutes; follow it with `docker compose logs -f snowstorm-lite`. Later starts
-# reuse the index. To load a different release, replace the zip and run
+# On first start the zip is imported, which takes a few minutes; follow it with
+# `docker compose logs -f snowstorm-lite`. Once the import has completed, the
+# file import-complete is written into the index volume and later starts reuse
+# the index; an interrupted import is started again from scratch. To load a
+# different release, replace the zip and run
 # `docker compose down -v && docker compose up -d`.
 #
 # The version URI is derived from the zip's file name: the release date
@@ -27,7 +29,8 @@ services:
 
   snowstorm-lite:
     image: docker.io/snomedinternational/snowstorm-lite:3.0.0@sha256:85a0238ce3b3915fb3e24b2ea842cddddb2e68111317e4574e620c0552e27ba3
-    restart: unless-stopped
+    # not "unless-stopped": a missing zip would restart the container forever
+    restart: on-failure:3
     cap_drop:
       - ALL
     privileged: false
@@ -45,9 +48,15 @@ services:
       - |
         set -euo pipefail
         index=/app/lucene-index/data
+        # written only once an import has completed, so an interrupted import is redone
+        marker=/app/lucene-index/import-complete
+        log=/tmp/snowstorm-lite.log
         args=(--index.path="$$index" --admin.password="$$SNOWSTORM_ADMIN_PASSWORD")
 
-        if [ -z "$$(ls -A "$$index" 2>/dev/null)" ]; then
+        importing=false
+        if [ ! -f "$$marker" ]; then
+          rm -rf "$$index"
+          importing=true
           shopt -s nullglob
           zips=(/snomed/*.zip)
           if [ "$${#zips[@]}" -ne 1 ]; then
@@ -72,14 +81,28 @@ services:
             esac
           fi
           version_uri="http://snomed.info/sct/$$module/version/$$version"
-          echo "empty index, importing $$zip as $$version_uri"
+          echo "no complete index, importing $$zip as $$version_uri"
           args+=(--load="$$zip" --version-uri="$$version_uri")
         fi
 
-        exec java --enable-native-access=ALL-UNNAMED -Xms1g -Xmx4g \
+        java --enable-native-access=ALL-UNNAMED -Xms1g -Xmx4g \
           -Djava.security.egd=file:/dev/./urandom \
           -cp @/app/jib-classpath-file org.snomed.snowstormlite.SnowstormLiteApplication \
-          "$${args[@]}"
+          "$${args[@]}" > >(tee "$$log") 2>&1 &
+        pid=$$!
+        trap 'kill -TERM "$$pid" 2>/dev/null; wait "$$pid"' TERM INT
+
+        if [ "$$importing" = true ]; then
+          while kill -0 "$$pid" 2>/dev/null; do
+            if grep -q "Import complete" "$$log"; then
+              touch "$$marker"
+              echo "import complete, marked index as usable"
+              break
+            fi
+            sleep 5
+          done
+        fi
+        wait "$$pid"
     volumes:
       - snowstorm-lite-index:/app/lucene-index
       - ./data/snomed:/snomed:ro

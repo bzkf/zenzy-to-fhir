@@ -115,13 +115,17 @@ public class WirkstoffMedicationMapper {
                   .snomed()
                   .setCode(mapped.snomedCode())
                   .setDisplay(mapped.snomedDisplay());
+          // the version the code was looked up in, the configured default otherwise
+          if (StringUtils.hasText(mapped.snomedVersion())) {
+            ingredient.setVersion(mapped.snomedVersion());
+          }
           medication.addIngredient().setItem(new CodeableConcept().addCoding(ingredient));
         } else {
-          // MII Medications require ingredient to be set, including at least one coding
+          // MII Medications require ingredient to be set, including at least one coding.
+          // The substance has an ingredient, its SNOMED CT code is just not known.
           medication
               .addIngredient()
-              .setItem(
-                  DataAbsentReason.codeableConcept(Enumerations.DataAbsentReason.NOTAPPLICABLE));
+              .setItem(DataAbsentReason.codeableConcept(Enumerations.DataAbsentReason.UNKNOWN));
         }
 
       } else {

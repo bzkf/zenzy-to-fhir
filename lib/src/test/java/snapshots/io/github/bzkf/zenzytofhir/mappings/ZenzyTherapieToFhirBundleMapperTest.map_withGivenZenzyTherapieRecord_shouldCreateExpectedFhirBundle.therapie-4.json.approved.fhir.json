@@ -36,7 +36,7 @@
         "route": {
           "coding": [ {
             "system": "http://snomed.info/sct",
-            "version": "http://snomed.info/sct/900000000000207008/version/20260301",
+            "version": "http://snomed.info/sct/11000274103/version/20260815",
             "code": "47625008",
             "display": "Intravenous route"
           } ]
@@ -44,7 +44,7 @@
         "method": {
           "coding": [ {
             "system": "http://snomed.info/sct",
-            "version": "http://snomed.info/sct/900000000000207008/version/20260301",
+            "version": "http://snomed.info/sct/11000274103/version/20260815",
             "code": "36576007",
             "display": "Infusion (procedure)"
           } ]
@@ -196,7 +196,7 @@
         "itemCodeableConcept": {
           "coding": [ {
             "system": "http://snomed.info/sct",
-            "version": "http://snomed.info/sct/900000000000207008/version/20260301",
+            "version": "http://snomed.info/sct/11000274103/version/20260815",
             "code": "387172005",
             "display": "Fluorouracil (substance)"
           } ]
@@ -247,7 +247,7 @@
         "itemCodeableConcept": {
           "coding": [ {
             "system": "http://snomed.info/sct",
-            "version": "http://snomed.info/sct/900000000000207008/version/20260301",
+            "version": "http://snomed.info/sct/11000274103/version/20260815",
             "code": "768550004",
             "display": "Sodium folinate (substance)"
           } ]
@@ -273,7 +273,7 @@
       "code": {
         "coding": [ {
           "system": "http://snomed.info/sct",
-          "version": "http://snomed.info/sct/900000000000207008/version/20260301",
+          "version": "http://snomed.info/sct/11000274103/version/20260815",
           "code": "1263924005",
           "display": "Product containing precisely sodium chloride 9 milligram/1 milliliter conventional release solution for infusion and/or injection (clinical drug)"
         }, {

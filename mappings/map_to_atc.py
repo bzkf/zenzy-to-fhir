@@ -15,7 +15,7 @@ route ("subcutan", "s.c.", "i.v.", ...) or study label ("/Placebo",
 "/GEPAR 6", "-Studie"). Strength, route and study label are kept in their own
 columns. Names with a study label are flagged for review, as study medication
 (and, for "Placebo" labels, possibly not the substance at all). The raw ->
-normalized names are written to output/<yyyy-mm-dd>-normalized-names.csv, and
+normalized names are written to normalized-names.csv, and
 only the normalized names go through the lookups below. Apart from that, matching only
 trims surrounding whitespace and compares case-insensitively. No fuzzy
 matching, no stemming.
@@ -46,20 +46,20 @@ EMA's ATC code is used as a fallback if it still exists in the WIdO index.
 Brands with several substances (combinations, different salts) are flagged.
 
 All input CSVs are combined into a single output file
-(output/<yyyy-mm-dd>-atc-snomed-mapping.csv) with one row per distinct
+(atc-snomed-mapping.csv) with one row per distinct
 normalized value. Values occurring in several inputs are written once; the
 "raw_values" column lists the raw names it was normalized from and the
-"sources" column the input files (both "|"-separated).
+"sources" column the input files (both "|"-separated). The hand-maintained
+codes in overrides.csv replace the automatic ones of the same normalized name
+(atc_source "overrides.csv").
+
+Both output files are written to lib/src/main/resources/mappings/, where the
+Java mapper (ToCodingMapper) reads them as they are; review a run with git
+diff, see README.md. With --skip-snomed they go to output/ instead.
 
 Usage:
     docker compose up -d   # Snowstorm Lite, only needed for SNOMED CT
-    uv run map_to_atc.py [--skip-snomed] [--snowstorm-url URL] [--export-java]
-
-With --export-java, the lookup files read by the Java mapper are written too:
-lib/src/main/resources/mappings/wirkstoff-normalisierung.csv (raw ->
-normalized name, without combinations and placebo-blinded study medication)
-and wirkstoff-codes.csv (normalized name -> selected ATC and SNOMED CT codes,
-merged with the hand-maintained overrides.csv, which take precedence).
+    uv run map_to_atc.py [--skip-snomed] [--snowstorm-url URL]
 """
 
 import argparse
@@ -72,7 +72,6 @@ import urllib.parse
 import urllib.request
 from collections import Counter, defaultdict
 from dataclasses import dataclass
-from datetime import date
 from pathlib import Path
 
 import openpyxl
@@ -81,16 +80,16 @@ HERE = Path(__file__).parent
 DATA_DIR = HERE / "data"
 ATC_FILE = DATA_DIR / "atc" / "ATC GKV-AI 2026.xlsx"
 ATC_SHEET = "WIdO-Index 2026 ATC-Sortiert"
-OUTPUT_DIR = HERE / "output"
-OUTPUT_FILE = OUTPUT_DIR / f"{date.today().isoformat()}-atc-snomed-mapping.csv"
-NAMES_OUTPUT_FILE = OUTPUT_DIR / f"{date.today().isoformat()}-normalized-names.csv"
+# read as they are by the Java mapper (ToCodingMapper)
+OUTPUT_DIR = HERE.parent / "lib" / "src" / "main" / "resources" / "mappings"
+# an ATC-only run (--skip-snomed) lacks the SNOMED CT codes, so it must not
+# overwrite the files the Java mapper reads
+ATC_ONLY_OUTPUT_DIR = HERE / "output"
+NAMES_FILE_NAME = "normalized-names.csv"
+MAPPING_FILE_NAME = "atc-snomed-mapping.csv"
 
 # hand-maintained codes that take precedence over the automatic ones (by normalized name)
 OVERRIDES_FILE = HERE / "overrides.csv"
-# lookup files read by the Java mapper (ToCodingMapper), written with --export-java
-JAVA_RESOURCES_DIR = HERE.parent / "lib" / "src" / "main" / "resources" / "mappings"
-JAVA_NORMALIZATION_FILE = JAVA_RESOURCES_DIR / "wirkstoff-normalisierung.csv"
-JAVA_CODES_FILE = JAVA_RESOURCES_DIR / "wirkstoff-codes.csv"
 
 # combinations are stored with the literal text "\\n" between the components
 COMPONENT_SEPARATOR = "\\\\n"
@@ -140,9 +139,12 @@ NORMALIZATION_RULES = [
         "move study label after '/'", re.compile(r"\s*/\s*(?P<study>.*)$"), "study"
     ),
 ]
+# applied after all other rules, see unify_case()
+UNIFY_CASE_RULE = "unify upper/lower case"
 REASON_STUDY = "study medication"
 REASON_STUDY_PLACEBO = "blinded study medication (placebo)"
 PARENTERAL_ROUTE = "P"
+ATC_SUBSTANCE_CODE_LENGTH = 7
 
 DEFAULT_SNOWSTORM_URL = "http://localhost:8080/fhir"
 SNOMED_SYSTEM = "http://snomed.info/sct"
@@ -159,9 +161,16 @@ SNOMED_CANDIDATE_LIMIT = 10
 EMA_DIR = DATA_DIR / "ema"
 EMA_MEDICINES_FILE = EMA_DIR / "medicines-output-medicines-report_en.xlsx"
 EMA_ARTICLE57_FILE = EMA_DIR / "article-57-product-data_en.xlsx"
+EMA_NEVER_MARKETED_STATUSES = {
+    "Refused",
+    "Application withdrawn",
+    "Withdrawn from rolling review",
+    "Opinion",
+}
 SOURCE_EMA_MEDICINES = "EMA medicines"
 SOURCE_EMA_ARTICLE57 = "EMA Article 57"
 SOURCE_WIDO = "WIdO"
+SOURCE_OVERRIDES = "overrides.csv"
 ARTICLE57_COUNTRY = "Germany"
 ARTICLE57_IV_ROUTE = "Intravenous Use"
 # the EMA medicines table separates the substances of combinations with ";"
@@ -173,6 +182,7 @@ REASON_NO_PARENTERAL = "multiple codes, none parenteral"
 REASON_MULTIPLE_PARENTERAL = "multiple parenteral codes"
 REASON_NO_EXACT_MATCH = "no exact match"
 REASON_MULTIPLE_EXACT = "multiple exact matches"
+REASON_LOOKUP_FAILED = "lookup failed"
 
 
 @dataclass(frozen=True)
@@ -215,6 +225,7 @@ def split_components(value: str) -> list[str]:
 
 @dataclass
 class CleanName:
+    raw: str
     value: str
     applied: list[str]
     # NormalizationRule.field -> text moved out of the name
@@ -222,10 +233,10 @@ class CleanName:
 
     @property
     def review_reason(self) -> str:
-        study = self.extracted.get("study")
-        if not study:
+        if not self.extracted.get("study"):
             return ""
-        return REASON_STUDY_PLACEBO if "plac" in study.casefold() else REASON_STUDY
+        # "Placebo" can be in the label ("X/Placebo") or the name ("Placebo/STUDY")
+        return REASON_STUDY_PLACEBO if "plac" in self.raw.casefold() else REASON_STUDY
 
 
 def clean_name(raw: str) -> list[CleanName]:
@@ -256,7 +267,7 @@ def clean_name(raw: str) -> list[CleanName]:
                 changed = True
                 break
         if name:
-            names.append(CleanName(name, applied, extracted))
+            names.append(CleanName(raw, name, applied, extracted))
 
     # a study label at the end of "A+B/STUDY" belongs to all parts
     study = next((n.extracted["study"] for n in names if "study" in n.extracted), None)
@@ -264,6 +275,26 @@ def clean_name(raw: str) -> list[CleanName]:
         if study and "study" not in name.extracted:
             name.extracted["study"] = study
     return names
+
+
+def unify_case(cleaned: dict[str, list[CleanName]]) -> None:
+    """Merge normalized names that differ only in case into one spelling.
+
+    The spelling used by the most raw names wins ("nab-Paclitaxel" x4 over
+    "Nab-Paclitaxel" x1), on a tie the first one seen ("ARA-cell", "Ara-cell",
+    "Ara-Cell" -> "ARA-cell").
+    """
+    counts: Counter[str] = Counter(n.value for names in cleaned.values() for n in names)
+    canonical: dict[str, str] = {}
+    # Counter.most_common keeps the first-seen order for equal counts
+    for value, _ in counts.most_common():
+        canonical.setdefault(value.casefold(), value)
+    for names in cleaned.values():
+        for name in names:
+            spelling = canonical[name.value.casefold()]
+            if spelling != name.value:
+                name.value = spelling
+                name.applied.append(UNIFY_CASE_RULE)
 
 
 def clean_cell(value: object) -> str:
@@ -279,7 +310,8 @@ def load_atc_index(path: Path) -> dict[str, list[AtcEntry]]:
     # columns: A = ATC-Code, C = ATC-Bedeutung, E = DDD-Info; row 1 is the header
     for row in ws.iter_rows(min_row=2, values_only=True):
         code, meaning, ddd_info = (clean_cell(row[i]) for i in (0, 2, 4))
-        if not code or not meaning:
+        # only substances (level 5, e.g. L01BC02), not groups like A12CC "Magnesium"
+        if len(code) != ATC_SUBSTANCE_CODE_LENGTH or not meaning:
             continue
         entry = AtcEntry(code=code, meaning=meaning, ddd_info=ddd_info)
         key = normalize(entry.meaning)
@@ -311,12 +343,42 @@ class SnomedClient:
             return json.load(response)
 
     def check(self) -> str:
-        """Return the loaded SNOMED CT version; raises if the server is unusable."""
+        """Return the loaded SNOMED CT version URI; raises if the server is unusable."""
         bundle = self._get("CodeSystem", {"url": SNOMED_SYSTEM})
         versions = [e["resource"].get("version") for e in bundle.get("entry", [])]
-        if not versions:
-            raise RuntimeError("no SNOMED CT code system loaded")
-        return ", ".join(v for v in versions if v)
+        versions = [v for v in versions if v]
+        if len(versions) != 1:
+            # the version is written next to every code, so it must be unambiguous
+            raise RuntimeError(f"expected exactly one SNOMED CT version, found {versions}")
+        return versions[0]
+
+    def lookup_fsn(self, code: str, version: str) -> str | None:
+        """Return the code's fully specified name in the given version, None if unknown."""
+        try:
+            parameters = self._get(
+                "CodeSystem/$lookup",
+                {
+                    "system": SNOMED_SYSTEM,
+                    "code": code,
+                    "version": version,
+                    "property": "designation",
+                },
+            )
+        except urllib.error.HTTPError as e:
+            # Snowstorm Lite answers an unknown code with a 500 (NullPointerException)
+            if e.code in (400, 404, 500):
+                return None
+            raise
+        for parameter in parameters.get("parameter", []):
+            if parameter.get("name") != "designation":
+                continue
+            parts = {p["name"]: p for p in parameter.get("part", [])}
+            if parts.get("use", {}).get("valueCoding", {}).get("code") == SNOMED_FSN:
+                return parts["value"]["valueString"]
+        return next(
+            (p.get("valueString") for p in parameters.get("parameter", []) if p["name"] == "display"),
+            None,
+        )
 
     def search_substances(self, term: str) -> list[SnomedConcept]:
         expansion = self._get(
@@ -396,7 +458,10 @@ def load_sheet(path: Path, first_header: str) -> list[dict[str, str]]:
 
 
 def column(row: dict[str, str], prefix: str) -> str:
-    return next(v for k, v in row.items() if k.startswith(prefix))
+    for key, value in row.items():
+        if key.startswith(prefix):
+            return value
+    raise KeyError(f"no column starting with {prefix!r}, columns: {list(row)}")
 
 
 def load_ema_medicines(path: Path) -> dict[str, list[BrandEntry]]:
@@ -404,6 +469,9 @@ def load_ema_medicines(path: Path) -> dict[str, list[BrandEntry]]:
     brands: dict[str, list[BrandEntry]] = defaultdict(list)
     for row in load_sheet(path, "Category"):
         if column(row, "Category") != "Human":
+            continue
+        # never marketed; withdrawn/expired medicines still occur in older data
+        if column(row, "Medicine status") in EMA_NEVER_MARKETED_STATUSES:
             continue
         substance = column(row, "Active substance") or column(
             row, "International non-proprietary name"
@@ -482,18 +550,18 @@ def main() -> None:
         action="store_true",
         help="only map ATC; leaves the SNOMED CT columns empty",
     )
-    parser.add_argument(
-        "--export-java",
-        action="store_true",
-        help=f"also write the lookup files for the Java mapper to {JAVA_RESOURCES_DIR}",
-    )
     args = parser.parse_args()
 
-    snomed = None
+    snomed, snomed_version = None, ""
+    # an ATC-only run gets its own file, so it doesn't overwrite a full run
+    output_dir = ATC_ONLY_OUTPUT_DIR if args.skip_snomed else OUTPUT_DIR
+    names_file = output_dir / NAMES_FILE_NAME
+    output_file = output_dir / MAPPING_FILE_NAME
     if not args.skip_snomed:
         snomed = SnomedClient(args.snowstorm_url)
         try:
-            print(f"SNOMED CT: {snomed.check()}")
+            snomed_version = snomed.check()
+            print(f"SNOMED CT: {snomed_version}")
         except (urllib.error.URLError, OSError, RuntimeError) as e:
             sys.exit(
                 f"terminology server at {args.snowstorm_url} is not usable ({e}).\n"
@@ -508,7 +576,14 @@ def main() -> None:
     ]
 
     def lookup_snomed(term: str) -> Result | None:
-        return select_snomed(term, snomed.search_substances(term)) if snomed else None
+        if not snomed:
+            return None
+        try:
+            return select_snomed(term, snomed.search_substances(term))
+        except (urllib.error.URLError, OSError, ValueError) as e:
+            # one failing name must not abort the whole run
+            print(f"SNOMED CT lookup of {term!r} failed: {e}", file=sys.stderr)
+            return Result(None, f"{REASON_LOOKUP_FAILED}: {e}", [])
 
     # raw component -> input files it appears in; keeps first-seen order across files
     raw_sources: dict[str, list[str]] = defaultdict(list)
@@ -521,10 +596,11 @@ def main() -> None:
     # normalized name -> raw names and input files; the normalized names are mapped
     raw_values: dict[str, list[str]] = defaultdict(list)
     sources: dict[str, list[str]] = defaultdict(list)
-    cleaned: dict[str, list[CleanName]] = {}
+    cleaned = {raw: clean_name(raw) for raw in raw_sources}
+    unify_case(cleaned)
     names_stats: Counter[str] = Counter()
-    OUTPUT_DIR.mkdir(exist_ok=True)
-    with NAMES_OUTPUT_FILE.open("w", encoding="utf-8", newline="") as f:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    with names_file.open("w", encoding="utf-8", newline="") as f:
         writer = csv.writer(f, lineterminator="\n")
         writer.writerow(
             [
@@ -540,7 +616,6 @@ def main() -> None:
             ]
         )
         for raw, files in raw_sources.items():
-            cleaned[raw] = clean_name(raw)
             for name in cleaned[raw]:
                 writer.writerow(
                     [
@@ -559,15 +634,19 @@ def main() -> None:
                 if raw not in raw_values[name.value]:
                     raw_values[name.value].append(raw)
                 sources[name.value].extend(f for f in files if f not in sources[name.value])
-    print(f"{len(raw_sources)} raw names -> {len(sources)} normalized names -> {NAMES_OUTPUT_FILE}")
+    print(f"{len(raw_sources)} raw names -> {len(sources)} normalized names -> {names_file}")
     print_stats("normalized names", names_stats)
+
+    overrides = load_overrides(snomed, snomed_version)
+    # names that only exist in the overrides still get a row, e.g. for test data
+    for name in overrides:
+        if name not in sources:
+            sources[name] = []
 
     atc_stats: Counter[str] = Counter()
     snomed_stats: Counter[str] = Counter()
     brand_stats: Counter[str] = Counter()
-    # normalized name -> [atc_code, atc_display, snomed_code, snomed_display]
-    codes: dict[str, list[str]] = {}
-    with OUTPUT_FILE.open("w", encoding="utf-8", newline="") as f:
+    with output_file.open("w", encoding="utf-8", newline="") as f:
         writer = csv.writer(f, lineterminator="\n")
         writer.writerow(
             [
@@ -585,6 +664,7 @@ def main() -> None:
                 "atc_candidates",
                 "snomed_code",
                 "snomed_display",
+                "snomed_version",
                 "snomed_needs_review",
                 "snomed_review_reason",
                 "snomed_candidates",
@@ -621,91 +701,108 @@ def main() -> None:
                 if sct:
                     sct = Result(None, REASON_BRAND_MULTIPLE_SUBSTANCES, [])
 
-            atc_stats[atc.reason or "selected"] += 1
-            row = [
-                value,
-                "|".join(raw_values[value]),
-                substance,
-                substance_source,
-                substance_candidates,
-                atc.selected.code if atc.selected else "",
-                atc.selected.meaning if atc.selected else "",
-                atc.selected.ddd_info if atc.selected else "",
-                atc_source,
-                *review_columns(atc),
-                "|".join(c.code for c in atc.candidates),
-            ]
+            atc_selected: AtcEntry | None = atc.selected
+            sct_selected: SnomedConcept | None = sct.selected if sct else None
+            out = {
+                "atc_code": atc_selected.code if atc_selected else "",
+                "atc_meaning": atc_selected.meaning if atc_selected else "",
+                "atc_ddd_info": atc_selected.ddd_info if atc_selected else "",
+                "atc_source": atc_source,
+                "atc_reason": atc.reason,
+                "snomed_code": sct_selected.code if sct_selected else "",
+                "snomed_display": sct_selected.fsn if sct_selected else "",
+                "snomed_version": snomed_version if sct_selected else "",
+                "snomed_reason": sct.reason if sct else "",
+            }
+            override = overrides.get(value)
+            if override:
+                # hand-maintained codes replace the automatic ones completely
+                out.update(
+                    {
+                        "atc_code": override["atc_code"],
+                        "atc_meaning": override["atc_display"],
+                        "atc_ddd_info": "",
+                        "atc_source": SOURCE_OVERRIDES,
+                        "atc_reason": "",
+                        "snomed_code": override["snomed_code"],
+                        "snomed_display": override["snomed_display"],
+                        "snomed_version": override["snomed_version"],
+                        "snomed_reason": "",
+                    }
+                )
 
-            if sct:
-                snomed_stats[sct.reason or "selected"] += 1
-                row += [
-                    sct.selected.code if sct.selected else "",
-                    sct.selected.fsn if sct.selected else "",
-                    *review_columns(sct),
-                    # the selected concept needs no candidate list
-                    ""
-                    if sct.selected
-                    else "|".join(
-                        f"{c.code} {c.fsn}"
-                        for c in sct.candidates[:SNOMED_CANDIDATE_LIMIT]
-                    ),
+            atc_stats[out["atc_reason"] or "selected"] += 1
+            if sct or override:
+                snomed_stats[out["snomed_reason"].split(":")[0] or "selected"] += 1
+            snomed_candidates = (
+                ""
+                if out["snomed_code"] or not sct
+                else "|".join(f"{c.code} {c.fsn}" for c in sct.candidates[:SNOMED_CANDIDATE_LIMIT])
+            )
+            writer.writerow(
+                [
+                    value,
+                    "|".join(raw_values[value]),
+                    substance,
+                    substance_source,
+                    substance_candidates,
+                    out["atc_code"],
+                    out["atc_meaning"],
+                    out["atc_ddd_info"],
+                    out["atc_source"],
+                    "true" if out["atc_reason"] else "false",
+                    out["atc_reason"],
+                    "|".join(c.code for c in atc.candidates),
+                    out["snomed_code"],
+                    out["snomed_display"],
+                    out["snomed_version"],
+                    "true" if out["snomed_reason"] else "false",
+                    out["snomed_reason"],
+                    snomed_candidates,
+                    "|".join(files),
                 ]
-            else:
-                row += ["", "", "", "", ""]
-
-            writer.writerow([*row, "|".join(files)])
-
-            if atc.selected or (sct and sct.selected):
-                codes[value] = [
-                    atc.selected.code if atc.selected else "",
-                    atc.selected.meaning if atc.selected else "",
-                    sct.selected.code if sct and sct.selected else "",
-                    sct.selected.fsn if sct and sct.selected else "",
-                ]
+            )
 
     print(f"{len(sources)} values")
     print_stats("brand names", brand_stats)
     print_stats("ATC", atc_stats)
     if snomed:
         print_stats("SNOMED CT", snomed_stats)
-    print(f"-> {OUTPUT_FILE}")
-
-    if args.export_java:
-        if not snomed:
-            sys.exit("--export-java needs the SNOMED CT lookup, don't combine it with --skip-snomed")
-        export_java(cleaned, codes)
+    print(f"-> {output_file}")
 
 
-def export_java(cleaned: dict[str, list[CleanName]], codes: dict[str, list[str]]) -> None:
-    """Write the normalization and code lookup files read by the Java mapper."""
-    with JAVA_NORMALIZATION_FILE.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.writer(f, delimiter=";", lineterminator="\n")
-        writer.writerow(["raw_value", "value"])
-        exported = 0
-        for raw, names in cleaned.items():
-            # one Medication code per raw name: combinations can't be represented,
-            # and placebo-blinded study medication may not contain the substance
-            if len(names) != 1 or names[0].review_reason == REASON_STUDY_PLACEBO:
-                continue
-            if names[0].value != raw:
-                writer.writerow([raw, names[0].value])
-                exported += 1
-    print(f"{exported} raw -> normalized names -> {JAVA_NORMALIZATION_FILE}")
+OVERRIDE_COLUMNS = [
+    "wirkstoff",
+    "atc_code",
+    "atc_display",
+    "snomed_code",
+    "snomed_display",
+    "snomed_version",
+]
 
+
+def load_overrides(snomed: SnomedClient | None, snomed_version: str) -> dict[str, dict[str, str]]:
+    """Hand-maintained codes by normalized name.
+
+    An override without snomed_version gets the loaded version, after checking
+    that the code exists in it; an explicit snomed_version is kept as it is.
+    Without a terminology server (--skip-snomed) nothing is checked.
+    """
+    overrides, unknown = {}, []
     with OVERRIDES_FILE.open(encoding="utf-8", newline="") as f:
-        overrides = {row["wirkstoff"]: row for row in csv.DictReader(f, delimiter=";")}
-    header = ["wirkstoff", "atc_code", "atc_display", "snomed_code", "snomed_display"]
-    merged = dict(codes)
-    for name, row in overrides.items():
-        merged[name] = [row[column] for column in header[1:]]
-    with JAVA_CODES_FILE.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.writer(f, delimiter=";", lineterminator="\n")
-        writer.writerow(header)
-        for name in sorted(merged, key=str.casefold):
-            writer.writerow([name, *merged[name]])
-    print(
-        f"{len(merged)} codes ({len(overrides)} from {OVERRIDES_FILE.name}) -> {JAVA_CODES_FILE}"
-    )
+        for row in csv.DictReader(f, delimiter=";"):
+            values = {key: (row.get(key) or "").strip() for key in OVERRIDE_COLUMNS}
+            if snomed and values["snomed_code"] and not values["snomed_version"]:
+                if snomed.lookup_fsn(values["snomed_code"], snomed_version) is None:
+                    unknown.append(f"{values['wirkstoff']}: {values['snomed_code']}")
+                values["snomed_version"] = snomed_version
+            overrides[values["wirkstoff"]] = values
+    if unknown:
+        sys.exit(
+            f"SNOMED CT codes in {OVERRIDES_FILE.name} not found in {snomed_version}: "
+            + ", ".join(unknown)
+        )
+    return overrides
 
 
 if __name__ == "__main__":

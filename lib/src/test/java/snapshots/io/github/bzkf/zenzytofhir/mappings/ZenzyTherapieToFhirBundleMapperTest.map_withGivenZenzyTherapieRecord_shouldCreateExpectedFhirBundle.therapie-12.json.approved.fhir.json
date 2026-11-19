@@ -155,7 +155,7 @@
         "itemCodeableConcept": {
           "coding": [ {
             "system": "http://snomed.info/sct",
-            "version": "http://snomed.info/sct/900000000000207008/version/20260301",
+            "version": "http://snomed.info/sct/11000274103/version/20260815",
             "code": "387381009",
             "display": "Methotrexate (substance)"
           } ]
@@ -181,7 +181,7 @@
       "code": {
         "coding": [ {
           "system": "http://snomed.info/sct",
-          "version": "http://snomed.info/sct/900000000000207008/version/20260301",
+          "version": "http://snomed.info/sct/11000274103/version/20260815",
           "code": "1263924005",
           "display": "Product containing precisely sodium chloride 9 milligram/1 milliliter conventional release solution for infusion and/or injection (clinical drug)"
         }, {

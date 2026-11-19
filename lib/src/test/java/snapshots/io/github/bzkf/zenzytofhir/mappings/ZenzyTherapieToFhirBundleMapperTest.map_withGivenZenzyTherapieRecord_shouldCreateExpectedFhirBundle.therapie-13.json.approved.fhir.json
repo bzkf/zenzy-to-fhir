@@ -32,7 +32,7 @@
         "route": {
           "coding": [ {
             "system": "http://snomed.info/sct",
-            "version": "http://snomed.info/sct/900000000000207008/version/20260301",
+            "version": "http://snomed.info/sct/11000274103/version/20260815",
             "code": "34206005",
             "display": "Subcutaneous route"
           } ]
@@ -40,7 +40,7 @@
         "method": {
           "coding": [ {
             "system": "http://snomed.info/sct",
-            "version": "http://snomed.info/sct/900000000000207008/version/20260301",
+            "version": "http://snomed.info/sct/11000274103/version/20260815",
             "code": "300036000",
             "display": "Subcutaneous infusion (procedure)"
           } ]
@@ -138,7 +138,7 @@
         "itemCodeableConcept": {
           "coding": [ {
             "system": "http://snomed.info/sct",
-            "version": "http://snomed.info/sct/900000000000207008/version/20260301",
+            "version": "http://snomed.info/sct/11000274103/version/20260815",
             "code": "407097007",
             "display": "Bortezomib (substance)"
           } ]

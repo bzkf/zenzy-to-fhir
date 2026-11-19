@@ -8,7 +8,8 @@ Add .csv files to the ./data/ folder to get them mapped to ATC codes.
 
 1. Download the lookup files (see [Lookup files](#lookup-files)).
 2. Start the SNOMED CT terminology server (Snowstorm Lite, see
-   [compose.yaml](compose.yaml)). The first start imports the SNOMED CT zip,
+   [compose.yaml](compose.yaml)). The first start imports the SNOMED CT zip
+   (an interrupted import is started again on the next start),
    which takes a few minutes:
 
    ```sh
@@ -18,22 +19,33 @@ Add .csv files to the ./data/ folder to get them mapped to ATC codes.
 3. Run the mapping:
 
    ```sh
-   uv run map_to_atc.py      # or: uv run map_to_atc.py --skip-snomed
+   uv run map_to_atc.py
    ```
 
-Two files are written to `output/`:
+   `--skip-snomed` maps ATC only (no terminology server needed) and writes
+   its files to `output/` instead, so it never overwrites the files the Java
+   mapper reads.
 
-- `<yyyy-mm-dd>-normalized-names.csv`: every raw input name, the normalized
+Two files are written to
+[lib/src/main/resources/mappings/](../lib/src/main/resources/mappings/), where
+the Java mapper reads them as they are (see
+[Updating the Java mapper](#updating-the-java-mapper)):
+
+- `normalized-names.csv`: every raw input name, the normalized
   name(s) it was cleaned to and the rules applied, e.g. `Avastin*` → `Avastin`,
   `Trastuzumab subcutan` → `Trastuzumab` (route `subcutan`),
   `Atezolizumab/Placebo/GBG96` → `Atezolizumab` (study label `Placebo/GBG96`),
-  `Nivolumab + Relatlimab` → `Nivolumab` and `Relatlimab`. Names with a study
-  label are flagged in `needs_review`: they are study medication, and for
-  placebo-controlled studies the patient may not have received the substance.
+  `Nivolumab + Relatlimab` → `Nivolumab` and `Relatlimab`. Finally, names that
+  differ only in upper/lower case are merged into the most frequent spelling
+  (`Ara-cell`, `Ara-Cell` → `ARA-cell`). Names with a study
+  label are flagged in `needs_review`: they are study medication, and if the
+  name contains "Placebo" (`X/Placebo`, `Placebo/STUDY`) the patient may not
+  have received the substance.
   The rules are listed in `NORMALIZATION_RULES` in
   [map_to_atc.py](map_to_atc.py).
-- `<yyyy-mm-dd>-atc-snomed-mapping.csv`: the ATC and SNOMED CT mapping of the
-  normalized names, with the raw names in `raw_values`.
+- `atc-snomed-mapping.csv`: the ATC and SNOMED CT mapping of the
+  normalized names, with the raw names in `raw_values` and the SNOMED CT
+  version the codes were looked up in (`snomed_version`).
 
 How codes are
 selected and when a value is flagged for review is described at the top of
@@ -41,33 +53,45 @@ selected and when a value is flagged for review is described at the top of
 
 ## Updating the Java mapper
 
-The Java mapper (`ToCodingMapper`) first looks up the raw Zenzy wirkstoff name
-in `wirkstoff-normalisierung.csv` to get its normalized name (names without an
-entry are used as they are), then looks up the normalized name in
-`wirkstoff-codes.csv` for its ATC and SNOMED CT codes. Both files are in
-[lib/src/main/resources/mappings/](../lib/src/main/resources/mappings/) and are
-generated, so don't edit them by hand. After reviewing a mapping run, update
-them with:
+The Java mapper (`ToCodingMapper`) reads the two output files of a mapping run
+in [lib/src/main/resources/mappings/](../lib/src/main/resources/mappings/) as
+they are, so a run updates the mapper directly. Review the changes with
+`git diff` before committing them. Don't edit the files by hand: fix the rules
+or [overrides.csv](overrides.csv) and run again.
 
-```sh
-uv run map_to_atc.py --export-java
-```
+For a raw Zenzy wirkstoff name, the mapper:
 
-- `wirkstoff-normalisierung.csv` (`raw_value;value`): all raw names whose
-  normalized name differs, except raw names that split into several substances
-  (`A + B`, one Medication code can't represent them) and placebo-blinded study
-  medication (the patient may not have received the substance).
-- `wirkstoff-codes.csv` (`wirkstoff;atc_code;atc_display;snomed_code;snomed_display`):
-  every normalized name with at least one selected code, plus
-  [overrides.csv](overrides.csv).
+1. uses the codes of the raw name itself, if it has any (also from the extra
+   mappings file, see below);
+2. otherwise looks up its normalized name in `normalized-names.csv`
+   (`raw_value` → `value`). Raw names that split into several substances
+   (`A + B`, a Medication has only one code) and placebo-blinded study
+   medication (`review_reason` "blinded study medication (placebo)", the
+   patient may not have received the substance) are not normalized;
+3. looks up the normalized name in `atc-snomed-mapping.csv` (`value`) and uses
+   `atc_code`/`atc_meaning` and `snomed_code`/`snomed_display`. Rows without any
+   selected code are ignored. Only ATC substance codes (7 characters) are
+   selected, never ATC groups.
 
-[overrides.csv](overrides.csv) holds hand-maintained codes by normalized name,
-in the same format as `wirkstoff-codes.csv`. An override replaces the automatic
-codes of that name completely. Use it for names the pipeline can't map or maps
-ambiguously, e.g. `Methotrexat`, which has several parenteral ATC codes.
+The SNOMED CT coding gets the row's `snomed_version`, the version the code was
+looked up in; `fhir.codings.snomed.version` in
+[application-mappings.yaml](../lib/src/main/resources/application-mappings.yaml)
+is only used for codes without one.
+
+[overrides.csv](overrides.csv) holds hand-maintained codes by normalized name
+(`wirkstoff;atc_code;atc_display;snomed_code;snomed_display;snomed_version`).
+A mapping run uses them instead of the automatic codes of that name
+(`atc_source` "overrides.csv") and adds a row for override names that are not in
+the input. Use it for names the pipeline can't map or maps ambiguously, e.g.
+`Methotrexat`, which has several parenteral ATC codes. Leave `snomed_version`
+empty: the run checks that the SNOMED CT code exists in the loaded version and
+fills it in (it stops with an error otherwise).
+
 Site-specific additions can still be configured with
-`zenzy-to-fhir.mappings.wirkstoff.extra-path`; those are looked up by
-normalized name as well.
+`zenzy-to-fhir.mappings.wirkstoff.extra-path`
+(`wirkstoff;atc_code;atc_display;snomed_code;snomed_display`, optionally
+`;snomed_version`); their entries are matched against the raw and the
+normalized name and take precedence over the mapping files.
 
 ## Input files
 
@@ -126,10 +150,10 @@ deletes the old one and imports the new zip):
 docker compose down -v && docker compose up -d
 ```
 
-Also update the SNOMED CT version in
+Then run the mapping again, so every code carries the new version. Also update the default SNOMED CT version in
 [application-mappings.yaml](../lib/src/main/resources/application-mappings.yaml)
-to the version the codes were mapped against
-(`http://snomed.info/sct/11000274103/version/<yyyymmdd>`).
+(`http://snomed.info/sct/11000274103/version/<yyyymmdd>`): it is used for
+codes without a version, e.g. the carrier solutions in `traegerloesung.csv`.
 
 ### EMA
 
@@ -149,7 +173,7 @@ curl -fL -o data/ema/article-57-product-data_en.xlsx \
   after the first `/` as a study label, so real combinations lose their second
   substance, e.g. `Fosnetupitant/Palonosetron` → `Fosnetupitant` with study
   label `Palonosetron` (flagged for review). Check the flagged names in
-  `<yyyy-mm-dd>-normalized-names.csv` and add the real combinations to a list of
+  `normalized-names.csv` and add the real combinations to a list of
   exact names that are split into their substances instead.
 - [ ] **Abbreviations:** in-house short names are not normalized and therefore
   not mapped, e.g. `Doxo lipos./ GEPAR 6` → `Doxo lipos.`, `Dauno liposomal`,
